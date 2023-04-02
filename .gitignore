@@ -29,3 +29,6 @@ __pycache__
 
 # remote
 remote.toml
+
+# vscode
+.vscode
