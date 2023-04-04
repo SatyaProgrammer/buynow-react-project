@@ -1,0 +1,4 @@
+.great-card::after {
+    content: "";
+    flex: 0 1 47%;
+}
