@@ -27,8 +27,5 @@ yarn-error.log*
 venv
 __pycache__
 
-# remote
-remote.toml
-
 # vscode
 .vscode
