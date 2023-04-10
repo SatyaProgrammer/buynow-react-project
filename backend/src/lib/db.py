@@ -1,7 +1,7 @@
 import mysql.connector as msc
 from mysql.connector.types import RowType
 import os
-from src.lib.result import Result
+from backend.src.lib.result import Result
 
 def create_connection() -> Result[msc.MySQLConnection, Exception]:
     """Create a connection to the database.
