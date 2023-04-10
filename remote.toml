@@ -1,0 +1,7 @@
+[scripts]
+runb = ["python", "-m", "backend.src.main"]
+testenv = ["python", "-m", "backend.src.utils.testenv"]
+activate = ["backend\\venv\\Scripts\\activate"]
+deactivate = ["backend\\venv\\Scripts\\deactivate.bat"]
+
+migrate = ["python", "-m", "backend.src.utils.migrator"]
