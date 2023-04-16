@@ -46,7 +46,7 @@ class MigratorQueue:
         
         # starts committing
         for i in top_sort_res.unwrap():
-            table = MigratorQueue.queue[i][1]
+            table: Table = MigratorQueue.queue[i][1]
             com_res = table.commit(db)
             if com_res.is_err():
                 return Result.Err(com_res.unwrap_err())
@@ -206,6 +206,7 @@ class Table:
         self.name = name
         self.columns = []
         self.refs = []
+        self.seeds = []
     
     def column(self, column_name: str, type: SQLType, primary_key: bool = False, notnull: bool = True, width: int = None, enum_keys: list[str] = None) -> Column:
         if (any([True for c in self.columns if c.name == column_name])):
@@ -231,6 +232,9 @@ class Table:
             if ref[1] == table.name:
                 return True
         return False
+
+    def seed(self, seeds: list[dict]) -> None:
+        self.seeds = seeds
     
     def commit(self, db: msc.MySQLConnection) -> Result[None, str]:
         if not db.is_connected():
@@ -248,10 +252,41 @@ class Table:
         # print(f"Trying: {sql}")
         try:
             cursor.execute(sql)
-            return Result.Ok(None)
         except msc.Error as e:
             return Result.Err(str(e))
-        
+
+        if self.seeds:
+            keys = set()
+            for d in self.seeds:
+                keys = keys.union(set(d.keys()))
+
+            sorted_keys = sorted(keys)
+
+            seed_sql = "INSERT INTO " + self.name + " ("
+            seed_sql += ", ".join(sorted_keys)
+            seed_sql += ") VALUES "
+
+            values = []
+            for d in self.seeds:
+                vals = ", ".join(map(lambda x: str(x), [f"'{d.get(k)}'" if type(d.get(k)) is str else d.get(k) for k in sorted_keys]))
+                vals = vals.replace("None", "NULL")
+                values.append("(" + vals + ")")
+
+            seed_sql += ", ".join(values)
+
+            seed_sql += ";"
+
+            print(f"Executing seed: {seed_sql}")
+
+            try:
+                cursor.execute(seed_sql)
+                cursor.fetchall()
+                return Result.Ok(None)
+            except msc.Error as e:
+                return Result.Err(str(e))
+        else:
+            return Result.Ok(None)
+
     def drop(self, db: msc.MySQLConnection) -> Result[None, str]:
         if not db.is_connected():
             return Result.Err("Database is not connected.")
