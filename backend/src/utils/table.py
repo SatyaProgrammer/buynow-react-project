@@ -1,8 +1,9 @@
 from __future__ import annotations
 from enum import Enum
-from backend.src.lib.graph import Graph, topological_sort
+from backend.src.lib.graph import Graph, topological_sort, matrix_transpose
 from backend.src.lib import Result
 import mysql.connector as msc
+from pprint import pprint
 
 class MigratorQueue:
     queue: list[tuple[str, Table]] = []
@@ -13,7 +14,7 @@ class MigratorQueue:
             for j in range(i + 1, len(MigratorQueue.queue)):
                 if MigratorQueue.queue[i][0] == MigratorQueue.queue[j][0]:
                     return Result.Err("Table names must be unique.")
-                
+
         # check that the tables does not yet exist in the db
         cursor = db.cursor()
         for table in MigratorQueue.queue:
@@ -31,18 +32,30 @@ class MigratorQueue:
 
         # add labels
         graph.set_labels([table[0] for table in MigratorQueue.queue])
+        
+        # print(f"queue: {list(map(lambda x: x[0], MigratorQueue.queue))}")
+        # pprint(f"Refs: {list(map(lambda x: list(map(lambda r: r[1] + '.' + r[2], x[1].refs)), MigratorQueue.queue))}")
 
         # add edges
         for i in range(len(MigratorQueue.queue)):
-            for j in range(i + 1, len(MigratorQueue.queue)):
+            for j in range(len(MigratorQueue.queue)):
                 if MigratorQueue.queue[i][1].is_referencing(MigratorQueue.queue[j][1]):
                     graph.add_edge(MigratorQueue.queue[i][0], MigratorQueue.queue[j][0])
                     
+        # pprint(graph.adj_matrix)
+                    
         # topological sort
-        top_sort_res = topological_sort(graph.adj_matrix)
+        # also had to matrix transpose because i am dumb idiot that reversed the order of the arrows
+        top_sort_res = topological_sort(matrix_transpose(graph.adj_matrix))
         
         if top_sort_res.is_err():
             return Result.Err(top_sort_res.unwrap_err())
+        
+        # print(f"Top sort: {top_sort_res.unwrap()}")
+        # print(f"Top sort result: {list(map(lambda x: enc[x], top_sort_res.unwrap()))}")
+        
+        # print("FORCE TERMINATING")
+        # exit(101)
         
         # starts committing
         for i in top_sort_res.unwrap():
@@ -106,20 +119,21 @@ class SQLType(Enum):
     MEDIUMTEXT = 19
     LONGBLOB = 20
     LONGTEXT = 21
-    ROW = 22
-    TEXT = 23
-    TINYBLOB = 24
-    TINYTEXT = 25
-    VARCHAR = 26
-    VARBINARY = 27
-    SET = 28
-    UUID = 29
+    JSON = 22
+    ROW = 23
+    TEXT = 24
+    TINYBLOB = 25
+    TINYTEXT = 26
+    VARCHAR = 27
+    VARBINARY = 28
+    SET = 29
+    UUID = 30
     
-    DATE = 30
-    TIME = 31
-    DATETIME = 32
-    TIMESTAMP = 33
-    YEAR = 34
+    DATE = 31
+    TIME = 32
+    DATETIME = 33
+    TIMESTAMP = 34
+    YEAR = 35
     
     pass
 
@@ -131,13 +145,14 @@ def _quote(s: str) -> str:
     
 
 class Column:
-    def __init__(self, name: str, type: SQLType, pkey: bool = False, nnull: bool = True, width: int = None, auto_inc: bool = None, deflt: str = None, enum_keys: list[str] = None):
+    def __init__(self, name: str, type: SQLType, pkey: bool = False, nnull: bool = True, width: int = None, auto_inc: bool = None, prec: int = None, deflt: str = None, enum_keys: list[str] = None):
         self.name = name
         self.type = type
         self.nnull = nnull
         self.pkey = pkey
         self.ref = None
-        self.width = width
+        self.wdth = width
+        self.prec = prec
         self.deflt = deflt
         self.enum_keys = enum_keys
         self.auto_inc = auto_inc
@@ -177,18 +192,30 @@ class Column:
         self.enum_keys = keys
         return self
     
-    def width(self, width: int = None) -> Column:
-        self.width = width
+    def width(self, wdth: int = None) -> Column:
+        self.wdth = wdth
+        return self
+    
+    def precision(self, prec: int = None) -> Column:
+        self.prec = prec
         return self
     
     def get_type(self) -> str:
         if self.type == SQLType.ENUM:
             return f"{self.type.name}({','.join([f'{_quote(key)}' for key in self.enum_keys])})"
         
-        if self.width == None:
+        if self.type == SQLType.DECIMAL:
+            if self.prec == None:
+                return f"{self.type.name}({self.wdth})"
+            elif self.wdth == None:
+                return f"{self.type.name}(10, {self.prec})"
+            else:
+                return f"{self.type.name}({self.wdth}, {self.prec})"
+        
+        if self.wdth == None:
             return self.type.name
         else:
-            return f"{self.type.name}({self.width})"
+            return f"{self.type.name}({self.wdth})"
         
     def get_default(self) -> str:
         if self.deflt == None:
@@ -208,19 +235,19 @@ class Table:
         self.refs = []
         self.seeds = []
     
-    def column(self, column_name: str, type: SQLType, primary_key: bool = False, notnull: bool = True, width: int = None, enum_keys: list[str] = None) -> Column:
+    def column(self, column_name: str, type: SQLType, primary_key: bool = False, notnull: bool = True, width: int = None, precision: int = None, enum_keys: list[str] = None) -> Column:
         if (any([True for c in self.columns if c.name == column_name])):
             raise AssertionError("There is already a column with the same name.")
 
-        col = Column(name=column_name, type=type, pkey=primary_key, nnull=notnull, width=width, enum_keys=enum_keys)
+        col = Column(name=column_name, type=type, pkey=primary_key, nnull=notnull, width=width, prec=precision, enum_keys=enum_keys)
         self.columns.append(col)
         return col
     
-    def foreign_key(self, column_name: str, table_name: str, column_name_ref: str) -> Table:
+    def foreign_key(self, column_name: str, table_name: str, column_name_ref: str, _type: SQLType = SQLType.INT) -> Table:
         if (any([True for c in self.columns if c.name == column_name])):
             raise AssertionError("There is already a foreign key with the same name.")
         
-        self.column(column_name, SQLType.INT).reference(table_name, column_name_ref)
+        self.column(column_name, type=_type).reference(table_name, column_name_ref)
         self.refs.append((column_name, table_name, column_name_ref))
         return self
     
@@ -243,13 +270,13 @@ class Table:
         cursor = db.cursor()
         
         sql = f"""CREATE TABLE IF NOT EXISTS {self.name} (
-{" , ".join([str(c) for c in self.columns])}
+{" , ".join([str(c) for c in self.columns])} {"," if self.refs else ""}
 
 {" , ".join([f"FOREIGN KEY ({ref[0]}) REFERENCES {ref[1]}({ref[2]})" for ref in self.refs])}
 );
 """
 
-        # print(f"Trying: {sql}")
+        print(f"Trying: {sql}")
         try:
             cursor.execute(sql)
         except msc.Error as e:
@@ -306,14 +333,29 @@ class Table:
     def int(self, column_name: str) -> Column:
         return self.column(column_name=column_name, type=SQLType.INT)
     
+    def float(self, column_name: str) -> Column:
+        return self.column(column_name=column_name, type=SQLType.FLOAT)
+    
+    def decimal(self, column_name: str, width: int = None, precision: int = None) -> Column:
+        return self.column(column_name=column_name, type=SQLType.DECIMAL, width=width, precision=precision)
+    
     def boolean(self, column_name: str) -> Column:
         return self.column(column_name=column_name, type=SQLType.BOOLEAN)
+    
+    def text(self, column_name: str) -> Column:
+        return self.column(column_name=column_name, type=SQLType.TEXT)
+    
+    def mediumtext(self, column_name: str) -> Column:
+        return self.column(column_name=column_name, type=SQLType.MEDIUMTEXT)
     
     def varchar(self, column_name: str, width: int = None) -> Column:
         return self.column(column_name=column_name, type=SQLType.VARCHAR, width=width)
     
     def varbinary(self, column_name: str, width: int = None) -> Column:
         return self.column(column_name=column_name, type=SQLType.VARBINARY, width=width)
+    
+    def json(self, column_name: str) -> Column:
+        return self.column(column_name=column_name, type=SQLType.JSON)
     
     def enum(self, column_name: str, *enum_keys) -> Column:
         return self.column(column_name=column_name, type=SQLType.ENUM, enum_keys=list(enum_keys))

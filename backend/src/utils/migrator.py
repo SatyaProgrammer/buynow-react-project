@@ -103,7 +103,7 @@ def migrate_database(db_conn: msc.MySQLConnection) -> None:
                 service = import_module(f"backend.migrations.{migration[:-3]}")
                 # names.append(service.TABLE_NAME)
                 table = service.up()
-                if "seed" in dir(service):
+                if "seed" in dir(service) and service.seed() is not None:
                     table.seed(service.seed())
     except Exception as e:
         console.print("[red]Failed to migrate database.[/red]")
@@ -142,7 +142,7 @@ def main() -> None:
         return
         
     if args['new']:
-        create_migration_file(args.get('new'))
+        create_migration_file(args.get('new').lower())
         return
     
     if args['rollback']:

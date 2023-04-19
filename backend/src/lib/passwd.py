@@ -1,5 +1,5 @@
 from hashlib import sha512
-from secrets import choice
+from secrets import choice, compare_digest
 from string import ascii_letters, digits
 
 keys = ascii_letters + digits
@@ -12,3 +12,8 @@ def make_password(passwd: str) -> tuple[str, str]:
     prep_str = passwd + salt
     hashed = sha512(prep_str.encode()).hexdigest()
     return hashed, salt
+
+def safe_compare(passwd: str, hashed: str, salt: str) -> bool:
+    prep_str = passwd + salt
+    hashed2 = sha512(prep_str.encode()).hexdigest()
+    return compare_digest(hashed, hashed2)
