@@ -76,6 +76,9 @@ def topological_sort(adj_matrix: list[list[int]]) -> Result[list[int], str]:
         return Result.Err('Graph has a cycle.')
     else:
         return Result.Ok(top_order)
+    
+def matrix_transpose(mat: list[list[T]]) -> list[list[T]]:
+    return [[mat[j][i] for j in range(len(mat))] for i in range(len(mat[0]))]
 
 def main() -> None:
     adj_matrix = [

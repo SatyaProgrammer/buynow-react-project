@@ -49,11 +49,17 @@ TABLE_NAME = "{table_name}"
 
 def up():
     table = Table(name=TABLE_NAME)
-    table.int(name="id").primary_key()
-    table.migrate()
+    table.int("id").primary_key()
+
+    table.migrate() # always finish with a call to table.migrate()
     
 def down(db_conn: msc.MySQLConnection):
     Table(name=TABLE_NAME).drop(db_conn)
+
+# if you need to seed the database
+def seed() -> list[dict]:
+    # just return a list of key-value pairs
+    pass
 """
 
     with open(filename, 'w') as f:
@@ -96,7 +102,9 @@ def migrate_database(db_conn: msc.MySQLConnection) -> None:
             if migration.endswith(".py"):
                 service = import_module(f"backend.migrations.{migration[:-3]}")
                 # names.append(service.TABLE_NAME)
-                service.up()
+                table = service.up()
+                if "seed" in dir(service) and service.seed() is not None:
+                    table.seed(service.seed())
     except Exception as e:
         console.print("[red]Failed to migrate database.[/red]")
         console.print_exception()
@@ -134,7 +142,7 @@ def main() -> None:
         return
         
     if args['new']:
-        create_migration_file(args.get('new'))
+        create_migration_file(args.get('new').lower())
         return
     
     if args['rollback']:
