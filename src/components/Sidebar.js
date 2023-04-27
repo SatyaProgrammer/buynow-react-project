@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../assets/buynow_pic.png";
+import logo from "../assets/buynow-low-resolution-color-logo.png";
 import { Link } from "react-router-dom";
 import { useProductsContext } from "../context/products_context";
 import { FaTimes } from "react-icons/fa";
@@ -65,11 +65,11 @@ const SidebarContainer = styled.div`
   }
   .logo {
     justify-self: center;
-    height: 100px;
+    width: 175px;
+    height: 51.31px;
   }
   .links {
     margin-bottom: 2rem;
-    margin-top: -1rem;
   }
   .links a {
     display: block;

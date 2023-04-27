@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import logo from "../assets/buynow_pic.png";
+import logo from "../assets/buynow-low-resolution-color-logo.png";
 import { FaBars } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { links } from "../utils/constants";
@@ -14,7 +14,7 @@ const Navbar = () => {
       <div className="nav-center">
         <div className="nav-header">
           <Link to="/">
-            <img src={logo} alt="buy now" />
+            <img src={logo} alt="buy now" className="logo1" />
           </Link>
           <button type="button" className="nav-toggle" onClick={openSidebar}>
             <FaBars />
@@ -42,6 +42,11 @@ const NavContainer = styled.nav`
   align-items: center;
   justify-content: center;
 
+  .logo1 {
+    margin-top: 10px;
+    height: 51.31px;
+  }
+
   .nav-center {
     width: 90vw;
     margin: 0 auto;
@@ -53,7 +58,6 @@ const NavContainer = styled.nav`
     justify-content: space-between;
     img {
       width: 175px;
-      margin-left: -15px;
     }
   }
   .nav-toggle {
