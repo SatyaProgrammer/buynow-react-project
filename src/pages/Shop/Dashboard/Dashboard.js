@@ -200,7 +200,7 @@ function Dashboard() {
 
                 <div className="shadow-md bg-white p-2">
                     <div className="mb-4 p-2">
-                        <p className="text-cldark text-2xl font-semibold">Recent Orders</p>
+                        <p className="text-cldark text-2xl font-semibold">Best Selling</p>
                     </div>
                     <div className="overflow-x-auto table-wrapper h-80 px-2 pb-2">
                         <table className="w-full text-left border-separate border-spacing-0">
