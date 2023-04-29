@@ -1,21 +1,32 @@
-import Navbar from './components/Navbar';
-import { Routes, Route } from 'react-router-dom';
-import Home from './pages/Home/Home'
-import ProductDetail from './pages/ProductDetail';
-import Categories from './pages/Categories';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Navbar, Sidebar, Footer } from "./components";
+import {
+  About,
+  Cart,
+  Checkout,
+  Error,
+  Home,
+  Products,
+  SingleProduct,
+} from "./pages";
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
+    <Router>
       <Navbar />
+      <Sidebar />
       <Routes>
-        <Route path='/' element={<Home />}/>
-        <Route path='/products/:id' element={<ProductDetail />}/>
-        <Route path='/categories' element={<Categories />}/>
-        <Route path='/categories/:id' element={<Categories />}/>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/products/:id" element={<SingleProduct />} />
+        <Route path="*" element={<Error />} />
       </Routes>
-    </div>
+      <Footer />
+    </Router>
   );
-}
-
+};
 export default App;
