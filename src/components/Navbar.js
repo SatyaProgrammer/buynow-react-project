@@ -43,7 +43,6 @@ const NavContainer = styled.nav`
   justify-content: center;
 
   .logo1 {
-    margin-top: 10px;
     height: 51.31px;
   }
 
