@@ -42,8 +42,208 @@ function Dashboard() {
             <div>
               <p className="text-4xl font-bold text-cldark">150</p>
             </div>
+<<<<<<< HEAD
             <div>
               <p className="text-md text-primary4 font-bold">View orders</p>
+=======
+
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                <div className="shadow-md bg-white p-2">
+                    <div className="mb-4 p-2">
+                        <p className="text-cldark text-2xl font-semibold">Recent Orders</p>
+                    </div>
+                    <div className="overflow-x-auto table-wrapper h-80 px-2 pb-2">
+                        <table className="w-full text-left border-separate border-spacing-0">
+                            <thead className="sticky top-0 bg-white z-50">
+                                <tr>
+                                    <th className="text-cldark font-semibold text-md mr-2 pb-4 border-b">OrderID</th>
+                                    <th className="text-cldark font-semibold text-md pb-4 border-b">Customer</th>
+                                    <th className="text-cldark font-semibold text-md pb-4 border-b">Product</th>
+                                    <th className="text-cldark font-semibold text-md pb-4 border-b">Quantity</th>
+                                    <th className="text-cldark font-semibold text-md pb-4 border-b">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody className="">
+                                <tr>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div className="shadow-md bg-white p-2">
+                    <div className="mb-4 p-2">
+                        <p className="text-cldark text-2xl font-semibold">Best Selling</p>
+                    </div>
+                    <div className="overflow-x-auto table-wrapper h-80 px-2 pb-2">
+                        <table className="w-full text-left border-separate border-spacing-0">
+                            <thead className="sticky top-0 bg-white z-50">
+                                <tr>
+                                    <th className="text-cldark font-semibold text-md mr-2 pb-4 border-b">OrderID</th>
+                                    <th className="text-cldark font-semibold text-md pb-4 border-b">Customer</th>
+                                    <th className="text-cldark font-semibold text-md pb-4 border-b">Product</th>
+                                    <th className="text-cldark font-semibold text-md pb-4 border-b">Quantity</th>
+                                    <th className="text-cldark font-semibold text-md pb-4 border-b">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody className="">
+                                <tr>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                    <td className="text-cldark p-2">001</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+>>>>>>> 113094ffabb066b81b5ab13dff80f5dc8b6785ae
             </div>
           </div>
           <div className="h-48 bg-white shadow-md flex flex-col justify-evenly px-6 hover:-translate-y-1 hover:shadow-none transition-full duration-300">
