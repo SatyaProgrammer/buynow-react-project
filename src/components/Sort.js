@@ -3,10 +3,17 @@ import { useFilterContext } from "../context/filter_context";
 import { BsFillGridFill, BsList } from "react-icons/bs";
 import styled from "styled-components";
 const Sort = () => {
-  return <h4>sort </h4>;
+  return (
+    <Wrapper>
+      <h4>Sort</h4>
+    </Wrapper>
+  );
 };
 
 const Wrapper = styled.section`
+  h4 {
+    font-weight: bold;
+  }
   display: grid;
   grid-template-columns: auto auto 1fr auto;
   align-items: center;
