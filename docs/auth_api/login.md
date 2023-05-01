@@ -1,17 +1,16 @@
 # Buynow API: Login
 
-| Key | Value | Description |
-| --- | --- | --- |
-| Endpoint | `api.localhost/auth/login` | |
-| Method | `POST` | |
-| Auth | `No` | |
+| Key | Value |
+| --- | --- |
+| Endpoint | `api.localhost/auth/login` |
+| Method | `POST` |
+| Auth | `No` |
 
 ## Headers
 
 | Key | Value |
 | --- | --- |
 | Content-Type | `application/json` |
-| Accept | `application/json` |
 
 ## Request
 
@@ -19,11 +18,12 @@
 {
     "email": string,
     "password": string,
-    "pub_key": string,
 }
 ```
 
 ## Response
+
+200:
 
 ```ts
 {
@@ -31,4 +31,16 @@
 }
 ```
 
+4xx/5xx:
+
+```ts
+{
+    "error": string,
+}
+```
+
 ## Note
+
+The response token is a JWT token. You need to add this token to the `Authorization` header of all requests that require authentication.
+
+The token is valid for 1 hour.
