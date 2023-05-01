@@ -38,6 +38,29 @@ const Services = () => {
 const Wrapper = styled.section`
   h3,
   h4 {
+    font-weight: bold;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    letter-spacing: var(--spacing);
+    text-transform: capitalize;
+    line-height: 1.25;
+    margin-bottom: 0.75rem;
+  }
+  h1 {
+    font-size: 2.5rem;
+  }
+  h2 {
+    font-size: 2rem;
+  }
+  h3 {
+    font-size: 1.5rem;
+  }
+  h3,
+  h4 {
     color: var(--clr-primary-1);
   }
   padding: 5rem 0;
@@ -95,6 +118,32 @@ const Wrapper = styled.section`
     padding: 0;
     .section-center {
       transform: translateY(5rem);
+    }
+  }
+  @media screen and (min-width: 800px) {
+    h1 {
+      font-size: 3rem;
+    }
+    h2 {
+      font-size: 2.5rem;
+    }
+    h3 {
+      font-size: 2rem;
+    }
+    h4 {
+      font-size: 1.5rem;
+    }
+    h5 {
+      font-size: 1rem;
+    }
+    body {
+      font-size: 1rem;
+    }
+    h1,
+    h2,
+    h3,
+    h4 {
+      line-height: 1;
     }
   }
 `;
