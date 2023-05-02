@@ -1,13 +1,9 @@
 import React from "react";
 import "./Dashboard.css";
-import IconShoppingCart from "../icons/icon_shopping_cart";
-import IconDollar from "../icons/icon_dollar";
-import IconUser from "../icons/icon_user";
-import IconCreditCard from "../icons/icon_credit_card";
-import "../color.css";
 import { LineChart, PieChart } from "../../../components/Chart";
 import { useState } from "react";
 import { UserData } from "../ChartTempData";
+import { IconShoppingCart, IconDollar, IconUser, IconCreditCard } from "../utils/Icons";
 
 function Dashboard() {
   const [userData, setUserData] = useState({

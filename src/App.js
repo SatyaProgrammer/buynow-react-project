@@ -15,6 +15,7 @@ import Shop from "./pages/Shop/Shop/Shop";
 import Dashboard from "./pages/Shop/Dashboard/Dashboard";
 import ShopSidebar from "./pages/Shop/ShopSidebar/ShopSidebar";
 import Product from "./pages/Shop/Product/Product";
+import Order from "./pages/Shop/Order/Order";
 
 const App = () => {
   return (
@@ -45,6 +46,15 @@ const App = () => {
             <>
               <ShopSidebar />
               <Product />
+            </>
+          }
+        />
+        <Route
+          path="/shop/order"
+          element={
+            <>
+              <ShopSidebar />
+              <Order />
             </>
           }
         />

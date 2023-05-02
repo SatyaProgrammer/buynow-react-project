@@ -1,20 +1,19 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useReducer, useEffect } from "react";
-import { productReducer, INITIAL_STATE, ACTION_TYPES } from "./ProductReducer";
+import { orderReducer, INITIAL_STATE, ACTION_TYPES } from "./OrderReducer";
 import axios from "axios";
-import './Product.css'
 import { API } from "../utils/Constant"
 import { IconDelete, IconEdit, IconFile, IconArrowDown } from "../utils/Icons";
 
 
-const Product = () => {
-    const [state, dispatch] = useReducer(productReducer, INITIAL_STATE);
+const Order = () => {
+    const [state, dispatch] = useReducer(orderReducer, INITIAL_STATE);
     
     const handleFetch = async () => {
         dispatch({ type: ACTION_TYPES.FETCH_START })
         const response = await axios.get(API.ALL_PRODUCT).catch((err) => {
-            // console.log("Error:", err)
+            console.log("Error:", err)
         })
         if(response && response.data){
             dispatch({ type: ACTION_TYPES.FETCH_SUCCESS, payload: response.data })
@@ -30,7 +29,6 @@ const Product = () => {
     const handleShowRow = () => {
         dispatch({type: ACTION_TYPES.SHOW_ROW})
     }
-
 
     return ( 
         <>
@@ -73,11 +71,10 @@ const Product = () => {
                             <thead className="bg-gray-100 z-50">
                                 <tr>
                                     <th className="text-cldark font-semibold text-md p-4 border-y name-row">Product</th>
-                                    <th className="text-cldark font-semibold text-md pl-8 p-4 border-y ">Category</th>
-                                    <th className="text-cldark font-semibold text-md p-4 border-y whitespace-nowrap">Added date</th>
-                                    <th className="text-cldark font-semibold text-md p-4 border-y">Price</th>
-                                    <th className="text-cldark font-semibold text-md p-4 border-y">Quantity</th>
-                                    <th className="text-cldark font-semibold text-md p-4 border-y">Status</th>
+                                    <th className="text-cldark font-semibold text-md pl-8 p-4 border-y ">Customer</th>
+                                    <th className="text-cldark font-semibold text-md p-4 border-y whitespace-nowrap">Order date</th>
+                                    <th className="text-cldark font-semibold text-md p-4 border-y whitespace-nowrap">Payment Status</th>
+                                    <th className="text-cldark font-semibold text-md p-4 border-y">Total</th>
                                     <th className="text-cldark font-semibold text-md p-4 border-y">Action</th>
                                 </tr>
                             </thead>
@@ -96,9 +93,8 @@ const Product = () => {
                                         </td>
                                         <td className="text-cldark pl-8 p-4 border-b">{product.category}</td>
                                         <td className="text-cldark p-4 border-b">00-00-0000</td>
+                                        <td className="text-cldark p-4 border-b">Paid</td>
                                         <td className="text-cldark p-4 border-b">${product.price}</td>
-                                        <td className="text-cldark p-4 border-b">200</td>
-                                        <td className="text-cldark p-4 border-b">In-stock</td>
                                         <td className="text-cldark p-4 border-b">
                                             <div className="flex gap-2 items-center">
                                                 <div className="w-5 h-5 hover:scale-110 transition-all duration-300">
@@ -120,7 +116,7 @@ const Product = () => {
             </div>
         </div>
         </>
-    );
+  );
 };
 
-export default Product;
+export default Order;
