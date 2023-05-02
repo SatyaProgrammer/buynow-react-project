@@ -5,6 +5,8 @@ import os
 from backend.src.lib import Global
 from backend.src.lib.passwd import safe_compare, make_password
 from backend.src.middleware.auth_middleware import token_required
+from backend.src.lib.validate import validate_password, validate_email
+from backend.src.lib.mailing import send_verification_email
 
 auth_api = Blueprint('auth_api', __name__)
 
@@ -27,12 +29,18 @@ def login():
         result = cursor.fetchone()
         
         if result is None:
-            return {"error": "Invalid username or password."}, 401, {"Content-Type": "application/json"}
+            return {
+                "error_code": "BX0101",
+                "error": "Invalid username or password."
+            }, 401, {"Content-Type": "application/json"}
         
         user_id, hashed, salt = result
         
         if not safe_compare(password, hashed, salt):
-            return {"error": "Invalid username or password."}, 401, {"Content-Type": "application/json"}
+            return {
+                "error_code": "BX0101",
+                "error": "Invalid username or password."
+            }, 401, {"Content-Type": "application/json"}
         
         rel_key = token_urlsafe(16)
         Global.tokens[user_id] = rel_key
@@ -48,6 +56,7 @@ def login():
     except Exception as e:
         Global.console.print_exception()
         return {
+            "error_code": "BX0000",
             "error": "Something went wrong."
         }, 500, {"Content-Type": "application/json"}
         
@@ -59,6 +68,24 @@ def register():
         password = request_data["password"]
         email = request_data["email"]
         
+        if not name or not password or not email:
+            return {
+                "error_code": "BX0201",
+                "error": "Missing required fields."
+            }, 400, {"Content-Type": "application/json"}
+        
+        if not validate_password(password):
+            return {
+                "error_code": "BX0202",
+                "error": "Invalid password."
+            }, 400, {"Content-Type": "application/json"}
+        
+        if not validate_email(email):
+            return {
+                "error_code": "BX0203",
+                "error": "Invalid email."
+            }, 400, {"Content-Type": "application/json"}
+        
         db_conn = Global.db_conn
         cursor = db_conn.cursor()
         
@@ -67,14 +94,19 @@ def register():
         cursor.execute(sql, (name,))
         
         if cursor.fetchone() is not None:
-            return {"error": "Username already exists."}, 400, {"Content-Type": "application/json"}
+            return {
+                "error_code": "BX0204",
+                "error": "Username already exists."}, 400, {"Content-Type": "application/json"}
         
         sql = "SELECT id FROM users WHERE email = %s"
         
         cursor.execute(sql, (email,))
         
         if cursor.fetchone() is not None:
-            return {"error": "Email already exists."}, 400, {"Content-Type": "application/json"}
+            return {
+                "error_code": "BX0205",
+                "error": "Email already exists."
+            }, 400, {"Content-Type": "application/json"}
         
         passwd, salt = make_password(password)
         
@@ -84,7 +116,8 @@ def register():
         
         db_conn.commit()
         
-        
+        verify_token = token_urlsafe(32)
+        send_verification_email(email, name, verify_token)
         
         return {
             "message": "User created."
@@ -92,6 +125,7 @@ def register():
     except Exception as e:
         Global.console.print_exception()
         return {
+            "error_code": "BX0000",
             "error": "Something went wrong."
         }, 500, {"Content-Type": "application/json"}
 

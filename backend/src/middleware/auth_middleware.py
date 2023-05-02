@@ -1,6 +1,6 @@
 from functools import wraps
 import jwt
-from flask import request, abort
+from flask import request
 import os
 from backend.src.lib import Global
 
@@ -22,16 +22,19 @@ def token_required(f):
             rel_key = Global.tokens.get(user_id)
             if rel_key is None:
                 return {
+                    "error_code": "BX0001",
                     "error": "Token is invalid."
                 }, 401, {"Content-Type": "application/json"}
             
             if rel_key != data["key"]:
                 return {
+                    "error_code": "BX0001",
                     "error": "Token is invalid."
                 }, 401, {"Content-Type": "application/json"}
         except Exception as e:
             Global.console.print_exception()
             return {
+                "error_code": "BX0000",
                 "error": "Something went wrong."
             }, 500, {"Content-Type": "application/json"}
             
