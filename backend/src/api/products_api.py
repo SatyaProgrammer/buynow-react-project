@@ -8,11 +8,17 @@ prod_api = Blueprint('products_api', __name__)
 @prod_api.get("/products/<product_id>")
 def get_product(product_id: str):
     if len(product_id) != 43:
-        abort(404)
+        return {
+            "error_code": "BX0301",
+            "error": "Invalid product id."
+        }, 400, {"Content-Type": "application/json"}
         
     # product_id must be base64
     if not base64_valid(product_id):
-        abort(404)
+        return {
+            "error_code": "BX0301",
+            "error": "Invalid product id."
+        }, 400, {"Content-Type": "application/json"}
     
     db_conn = Global.db_conn
     cursor = db_conn.cursor()
