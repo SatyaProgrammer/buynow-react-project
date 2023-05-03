@@ -1,14 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useReducer, useEffect } from "react";
-import { orderReducer, INITIAL_STATE, ACTION_TYPES } from "./OrderReducer";
+import { customerReducer, INITIAL_STATE, ACTION_TYPES } from "./CustomerReducer";
 import axios from "axios";
 import { API_CALL } from "../utils/Constant"
 import { IconDelete, IconEdit, IconFile, IconArrowDown } from "../utils/Icons";
 
 
-const Order = () => {
-    const [state, dispatch] = useReducer(orderReducer, INITIAL_STATE);
+const Customer = () => {
+    const [state, dispatch] = useReducer(customerReducer, INITIAL_STATE);
     
     const handleFetch = async () => {
         dispatch({ type: ACTION_TYPES.FETCH_START })
@@ -33,7 +33,7 @@ const Order = () => {
     return ( 
         <>
         <div className="p-4 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
-            <p className="text-cldark text-4xl font-bold my-4 text-medium">Product</p>
+            <p className="text-cldark text-4xl font-bold my-4 text-medium">Customer</p>
 
             <div className="shadow-md bg-white py-4">
                     <div className="mb-4 p-2 px-4">
@@ -83,8 +83,8 @@ const Order = () => {
                                     <tr key={idx} className="hover:bg-gray-50 ">
                                         <td className="text-cldark p-4 border-b overflow-hidden whitespace-nowrap name-row">
                                             <div className="w-fit flex items-center gap-2">
-                                                <div className="w-16">
-                                                    <img src={product.image} alt="product image" className="w-full h-10 rounded-md shadow-md object-cover"/>
+                                                <div className="w-10">
+                                                    <img src={product.image} alt="product image" className="w-full h-10 rounded-full shadow-md object-cover"/>
                                                 </div>
                                                 <div className="font-semibold overflow-hidden">
                                                     {product.title}
@@ -119,4 +119,4 @@ const Order = () => {
   );
 };
 
-export default Order;
+export default Customer;

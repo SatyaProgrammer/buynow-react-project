@@ -16,6 +16,8 @@ import Dashboard from "./pages/Shop/Dashboard/Dashboard";
 import ShopSidebar from "./pages/Shop/ShopSidebar/ShopSidebar";
 import Product from "./pages/Shop/Product/Product";
 import Order from "./pages/Shop/Order/Order";
+import Customer from "./pages/Shop/Customer/Customer";
+import AddProduct from "./pages/Shop/AddProduct/AddProduct";
 
 const App = () => {
   return (
@@ -55,6 +57,24 @@ const App = () => {
             <>
               <ShopSidebar />
               <Order />
+            </>
+          }
+        />
+        <Route
+          path="/shop/customer"
+          element={
+            <>
+              <ShopSidebar />
+              <Customer />
+            </>
+          }
+        />
+        <Route
+          path="/shop/add_product"
+          element={
+            <>
+              <ShopSidebar />
+              <AddProduct />
             </>
           }
         />

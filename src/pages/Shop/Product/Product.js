@@ -4,7 +4,7 @@ import { useReducer, useEffect } from "react";
 import { productReducer, INITIAL_STATE, ACTION_TYPES } from "./ProductReducer";
 import axios from "axios";
 import './Product.css'
-import { API } from "../utils/Constant"
+import { API_CALL } from "../utils/Constant"
 import { IconDelete, IconEdit, IconFile, IconArrowDown } from "../utils/Icons";
 
 
@@ -13,7 +13,7 @@ const Product = () => {
     
     const handleFetch = async () => {
         dispatch({ type: ACTION_TYPES.FETCH_START })
-        const response = await axios.get(API.ALL_PRODUCT).catch((err) => {
+        const response = await axios.get(API_CALL.ALL_PRODUCT).catch((err) => {
             // console.log("Error:", err)
         })
         if(response && response.data){
