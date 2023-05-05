@@ -1,19 +1,23 @@
 from dotenv import load_dotenv
 from flask import Flask, abort, Blueprint
+from flask_cors import CORS
 from werkzeug.middleware.proxy_fix import ProxyFix
 from rich.console import Console
 from backend.src.api.products_api import prod_api
 from backend.src.api.auth_api import auth_api
 from backend.src.lib.db import create_connection
 from backend.src.lib import Global
+from backend.src.middleware.rate_limiter import limiter
 
 load_dotenv(dotenv_path=".env.local")
 
 app = Flask(__name__, subdomain_matching=True)
+CORS(app)
 app.config['SERVER_NAME'] = "localhost"
 app.wsgi_app = ProxyFix(
     app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
 )
+limiter.init_app(app)
 
 __db_conn = create_connection()
 if __db_conn.is_ok():

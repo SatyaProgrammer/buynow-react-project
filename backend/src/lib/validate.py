@@ -22,7 +22,7 @@ def validate_email(email: str) -> bool:
     if len(email) > 255:
         return False
     
-    if not re.match(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$", email):
+    if not re.match(r"^.+@.+\..+$", email):
         return False
-    
+
     return True

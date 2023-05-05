@@ -16,7 +16,7 @@
 
 ```ts
 {
-    "email": string,
+    "username": string,
     "password": string,
 }
 ```
@@ -34,7 +34,8 @@
 4xx/5xx:
 
 ```ts
-{
+{   
+    "error_code": string, // "BXxxxx"
     "error": string,
 }
 ```

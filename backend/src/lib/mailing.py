@@ -1,10 +1,11 @@
 import smtplib as smtp
 import ssl
 import os
+from typing import Any
 from backend.src.lib import Global
 from backend.src.lib import Result
 
-def send_verification_email(email: str, user: str, token: str) -> Result[smtp._SendErrs, Exception]:
+def send_verification_email(email: str, user: str, token: str) -> Result[Any, Exception]:
     Global.verification_map[token] = email
     
     sender = os.getenv('EMAIL_ADDR')
