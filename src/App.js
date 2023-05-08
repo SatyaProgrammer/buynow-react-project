@@ -34,7 +34,7 @@ const App = () => {
 
         {/* Shop Routes */}
         <Route
-          path="/shop"
+          path="/shop/dashboard"
           element={
             <>
               <ShopSidebar />

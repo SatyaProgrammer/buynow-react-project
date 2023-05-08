@@ -19,7 +19,7 @@ export const links = [
   {
     id: 4,
     text: "shop",
-    url: "/shop",
+    url: "/shop/dashboard",
   }
 ];
 
