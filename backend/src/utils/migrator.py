@@ -70,7 +70,7 @@ def seed() -> list[dict]:
     
 def rollback_database(db_conn: msc.MySQLConnection) -> None:
     try:
-        cursor = db_conn.cursor()
+        cursor = db_conn.cursor(prepared=True)
         query = "SELECT m.id, m.name, m.table_name, m.batch_id, m.order_id FROM migrations_log as m INNER JOIN ( SELECT MAX(batch_id) as max_batch_id FROM migrations_log ) as max_m ON m.batch_id = max_m.max_batch_id;"
         cursor.execute(query)
         result = cursor.fetchall()

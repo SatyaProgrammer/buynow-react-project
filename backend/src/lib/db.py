@@ -44,7 +44,7 @@ def execute_query(query: str, db_conn: msc.MySQLConnection, values: tuple[str | 
     """
     
     try:
-        cursor = db_conn.cursor()
+        cursor = db_conn.cursor(prepared=True)
         cursor.execute(query, values)
         rt_result = cursor.fetchall()
         cursor.close()

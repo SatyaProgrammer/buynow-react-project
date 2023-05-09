@@ -21,7 +21,7 @@ def get_product(product_id: str):
         }, 400, {"Content-Type": "application/json"}
     
     db_conn = Global.db_conn
-    cursor = db_conn.cursor()
+    cursor = db_conn.cursor(prepared=True)
     sql = "SELECT pid, name, images, catId, owner, price, customization, rating, description, availability, deliveryOption FROM products WHERE pid = %s"
     cursor.execute(sql, (product_id,))
     pid, name, images, cat_id, owner, price, cust, rating, desc, avail, delop = cursor.fetchone()
