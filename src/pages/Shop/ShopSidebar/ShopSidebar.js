@@ -39,7 +39,7 @@ function ShopSidebar() {
           <ul className="font-medium">
             {SidebarItems.map((item) => (
               <li>
-                <NavLink to={item.link} className={({isActive}) => isActive ? 'bg-gray-100 flex p-5 text-lg text-cldark hover:bg-gray-100 transition-all duration-300' : 'flex p-5 text-lg text-cldark hover:bg-gray-100 transition-all duration-300'}>
+                <NavLink to={item.link} className={({isActive}) => isActive ? 'bg-gray-100 flex p-5 text-lg text-cldark hover:bg-gray-100 transition-all duration-300' : 'flex p-5 text-lg text-cldark hover:bg-gray-100 transition-all duration-300 bg-white'}>
                   <div className="flex flex-wrap gap-2">
                     <div className="w-6 h-6">
                       {item.icon}
