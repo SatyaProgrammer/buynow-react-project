@@ -1,6 +1,7 @@
 import React from "react";
 import { useReducer, useEffect, useRef } from "react";
 import { addProductReducer, INITIAL_STATE, ACTION_TYPES } from "./AddProductReducer";
+import { IconPlus } from "../utils/Icons";
 
 const price_regex = /^[0-9\b]+$/
 
@@ -142,7 +143,9 @@ const AddProduct = () => {
                                                         name="subCustom"
                                                         className="border border-gray-300 w-full p-3 rounded-lg text-cldark"
                                                     />   
-                                                    <div className="w-8 h-8 border" onClick={() => handleAddSubCustom(i)}></div>  
+                                                    <div className="w-8 h-8 border" onClick={() => handleAddSubCustom(i)}>
+                                                        <IconPlus fill='#222'/>
+                                                    </div>  
                                                 </div>
                                             </div>
                                         ))}    
