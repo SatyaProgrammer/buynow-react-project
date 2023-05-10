@@ -37,16 +37,19 @@ function ShopSidebar() {
       >
         <div className="h-full overflow-y-auto bg-primary dark:bg-gray-800">
           <ul className="font-medium">
-            {SidebarItems.map((item) => (
-              <li>
-                <NavLink to={item.link} className={({isActive}) => isActive ? 'bg-gray-100 flex p-5 text-lg text-cldark hover:bg-gray-100 transition-all duration-300' : 'flex p-5 text-lg text-cldark hover:bg-gray-100 transition-all duration-300 bg-white'}>
+            {SidebarItems.map((item, i) => (
+              <li key={i}>
+                <NavLink
+                  to={item.link}
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-gray-100 flex p-5 text-lg text-cldark hover:bg-gray-100 transition-all duration-300"
+                      : "flex p-5 text-lg text-cldark hover:bg-gray-100 transition-all duration-300 bg-white"
+                  }
+                >
                   <div className="flex flex-wrap gap-2">
-                    <div className="w-6 h-6">
-                      {item.icon}
-                    </div>
-                    <div className="capitalize">
-                      {item.name}
-                    </div>
+                    <div className="w-6 h-6">{item.icon}</div>
+                    <div className="capitalize">{item.name}</div>
                   </div>
                 </NavLink>
               </li>
