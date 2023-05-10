@@ -37,8 +37,8 @@ function ShopSidebar() {
       >
         <div className="h-full overflow-y-auto bg-primary dark:bg-gray-800">
           <ul className="font-medium">
-            {SidebarItems.map((item) => (
-              <li>
+            {SidebarItems.map((item, i) => (
+              <li key={i}>
                 <NavLink
                   to={item.link}
                   className={({ isActive }) =>
