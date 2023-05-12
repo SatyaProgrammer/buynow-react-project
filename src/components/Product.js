@@ -7,9 +7,9 @@ import { Link } from "react-router-dom";
 const Product = ({ image, name, price, id }) => {
   return (
     <Wrapper>
-      <div className="container">
-        <img src={image} alt={name} />
-        <Link to={`products/${id}`} className="link">
+      <div className="container p-0">
+        <img src={image} alt={name} className="" />
+        <Link to={`/products/${id}`} className="link">
           <FaSearch />
         </Link>
       </div>
@@ -22,10 +22,12 @@ const Product = ({ image, name, price, id }) => {
 };
 
 const Wrapper = styled.article`
+  /*  global classes */
   .container {
     position: relative;
     background: var(--clr-black);
     border-radius: var(--radius);
+    padding: 0;
   }
   img {
     width: 100%;

@@ -92,6 +92,9 @@ const SingleProductPage = () => {
 };
 
 const Wrapper = styled.main`
+  h2 {
+    font-weight: bold;
+  }
   .product-center {
     display: grid;
     gap: 4rem;

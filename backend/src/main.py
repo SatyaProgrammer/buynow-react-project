@@ -38,9 +38,9 @@ app.register_blueprint(api, subdomain="api")
 app.register_blueprint(prod_api, subdomain="api")
 app.register_blueprint(auth_api, subdomain="api")
 
-# def main() -> None:
-#     app.run()
-#     pass
+def main() -> None:
+    app.run()
+    pass
 
-# if __name__ == '__main__':
-#     main()
+if __name__ == '__main__':
+    main()
