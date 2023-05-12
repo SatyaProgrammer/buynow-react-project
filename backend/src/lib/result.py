@@ -157,7 +157,7 @@ class Result(Generic[T, U]):
         if self.is_err():
             return self.error
         else:
-            raise self.value
+            raise Exception("tried to unwrap an error that doesn't exist")
         
     def unwrap_or(self, default: T) -> T:
         """Unwrap the Result or return a default value.

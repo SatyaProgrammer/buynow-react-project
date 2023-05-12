@@ -1,5 +1,5 @@
 from hashlib import sha512
-from secrets import choice, compare_digest
+from secrets import choice, compare_digest, token_urlsafe
 from string import ascii_letters, digits
 
 keys = ascii_letters + digits
@@ -17,3 +17,6 @@ def safe_compare(passwd: str, hashed: str, salt: str) -> bool:
     prep_str = passwd + salt
     hashed2 = sha512(prep_str.encode()).hexdigest()
     return compare_digest(hashed, hashed2)
+
+def make_product_id() -> str:
+    return token_urlsafe(32)
