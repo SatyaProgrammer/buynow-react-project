@@ -1,6 +1,4 @@
 import json
-import jwt
-import os
 from flask import Blueprint, request
 from backend.src.lib.passwd import make_product_id
 from backend.src.lib.validate import base64_valid
@@ -17,36 +15,30 @@ prod_api = Blueprint('products_api', __name__)
 def get_product(product_id: str):
     if len(product_id) != 43:
         return {
-            "error_code": "BX0301",
+            "error_code": "BX1101",
             "error": "Invalid product id."
         }, 400, {"Content-Type": "application/json"}
         
     # product_id must be base64
     if not base64_valid(product_id):
         return {
-            "error_code": "BX0301",
+            "error_code": "BX1101",
             "error": "Invalid product id."
         }, 400, {"Content-Type": "application/json"}
     
-    db_conn = Global.db_conn
-    cursor = db_conn.cursor(prepared=True)
-    sql = "SELECT pid, name, images, c.cat, owner, price, customization, rating, description, availability, deliveryOption FROM products WHERE pid = %s"
-    cursor.execute(sql, (product_id,))
-    pid, name, images, cat_id, owner, price, cust, rating, desc, avail, delop = cursor.fetchone()
-    print(images, cust)
-    cursor.close()
+    result = Product.pid(product_id)
     return ({
-        "pid": pid,
-        "name": name,
-        "images": json.loads(images),
-        "category": cat_id,
-        "owner": owner,
-        "price": price,
-        "customization": json.loads(cust),
-        "rating": rating,
-        "description": desc,
-        "availability": avail,
-        "deliveryOption": delop
+        "pid": result["pid"],
+        "name": result["name"],
+        "images": result["images"],
+        "category": result["catName"],
+        "owner": result["ownerName"],
+        "price": result["price"],
+        "customization": result["customization"],
+        "rating": result["rating"],
+        "description": result["description"],
+        "availability": result["availability"],
+        "deliveryOption": result["deliveryOption"]
     }, 200, {"Content-Type": "application/json"})
 
 @prod_api.get("/products/matching")
@@ -72,11 +64,24 @@ def get_matching_products():
             limit = request.args.get("limit", 25)
             
             result = Product.fetch_matching([], search_criteria, offset, limit, sort_newest=True)
-            return (result, 200, {"Content-Type": "application/json"})
+            res = {
+                "pid": result["pid"],
+                "name": result["name"],
+                "images": result["images"],
+                "category": result["catName"],
+                "owner": result["ownerName"],
+                "price": result["price"],
+                "customization": result["customization"],
+                "rating": result["rating"],
+                "description": result["description"],
+                "availability": result["availability"],
+                "deliveryOption": result["deliveryOption"]
+            }
+            return (res, 200, {"Content-Type": "application/json"})
     except Exception as e:
         Global.console.print_exception(show_locals=True)
         return ({
-            "error_code": "BX0300",
+            "error_code": "BX1000",
             "error": "Something went wrong."
         }, 500, {"Content-Type": "application/json"})
 
@@ -89,17 +94,16 @@ def add_products(uid):
         user = User.id(user_id)
         if user["userType"] != "vendor":
             return {
-                "error_code": "BX0401",
+                "error_code": "BX1201",
                 "error": "You are not a vendor."
             }, 401, {"Content-Type": "application/json"}
-        
         
         request_data = request.get_json()
         cat_name = request_data["category"]
         cat = Category.fetch_matching(["id", "name"], {"name": cat_name})
         if len(cat) == 0:
             return {
-                "error_code": "BX0402",
+                "error_code": "BX1202",
                 "error": "Invalid category."
             }, 400, {"Content-Type": "application/json"}
 
@@ -116,10 +120,18 @@ def add_products(uid):
         
         if not validate_json(images) or not validate_json(customization):
             return {
-                "error_code": "BX0403",
+                "error_code": "BX1203",
                 "error": "Invalid JSON."
             }, 400, {"Content-Type": "application/json"}
-            
+        
+        try:
+            price = float(price)
+        except:
+            return {
+                "error_code": "BX1204",
+                "error": "Invalid price."
+            }, 400, {"Content-Type": "application/json"}
+        
         pid = make_product_id()
         while not Product.attest_nonexistent(pid):
             pid = make_product_id()
@@ -145,7 +157,7 @@ def add_products(uid):
         else:
             Global.console.print(res.unwrap_err())
             return {
-                "error_code": "BX0404",
+                "error_code": "BX1299",
                 "error": "Couldn't add product."
             }, 500, {"Content-Type": "application/json"}
 

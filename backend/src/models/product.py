@@ -101,7 +101,12 @@ LIMIT %s OFFSET %s"""
     def id(cls, __id: str | int) -> dict[str]:
         db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True)
-        cursor.execute("SELECT * FROM products WHERE id = %s", (__id,))
+        sql = """SELECT p.id, p.pid, p.name, p.images, c.name as catName,
+u.username as ownerName, p.price, p.customization, p.rating, p.availability, p.soldAmount,
+p.deliveryOption, p.description, p.createdAt FROM products AS p
+INNER JOIN categories AS c ON p.catId = c.id
+INNER JOIN users as u ON p.owner = u.id
+WHERE p.id = %s"""
         result = cursor.fetchone()
         cursor.close()
         
@@ -114,7 +119,12 @@ LIMIT %s OFFSET %s"""
     def pid(cls, __pid: str) -> dict[str]:
         db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True)
-        cursor.execute("SELECT * FROM products WHERE pid = %s", (__pid,))
+        sql = """SELECT p.id, p.pid, p.name, p.images, c.name as catName,
+u.username as ownerName, p.price, p.customization, p.rating, p.availability, p.soldAmount,
+p.deliveryOption, p.description, p.createdAt FROM products AS p
+INNER JOIN categories AS c ON p.catId = c.id
+INNER JOIN users as u ON p.owner = u.id
+WHERE p.pid = %s"""
         result = cursor.fetchone()
         cursor.close()
         
