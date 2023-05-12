@@ -139,7 +139,7 @@ def verify_email():
         
         if not data:
             return {
-                "error_code": "BX0301",
+                "error_code": "BX0201",
                 "error": "Missing required fields."
             }, 400, {"Content-Type": "application/json"}
             
@@ -147,14 +147,14 @@ def verify_email():
         
         if not token:
             return {
-                "error_code": "BX0301",
+                "error_code": "BX0201",
                 "error": "Missing required fields."
             }, 400, {"Content-Type": "application/json"}
             
         email = Global.verification_map.get(token)
         if email is None:
             return {
-                "error_code": "BX0302",
+                "error_code": "BX0301",
                 "error": "Invalid token."
             }, 400, {"Content-Type": "application/json"}
         
@@ -185,3 +185,24 @@ def test_auth_api(uid):
     return {
         "message": f"Test successful: {uid}"
     }, 200, {"Content-Type": "application/json"}
+    
+@auth_api.get("/auth/logout")
+@token_required
+def logout(uid):
+    try:
+        token = Global.tokens.pop(uid)
+        if token is None:
+            return {
+                "error_code": "BX9901",
+                "error": "Not logged in. (Also this is an absurd error)"
+            }, 401, {"Content-Type": "application/json"}
+        
+        return {
+            "message": "Logged out."
+        }, 200, {"Content-Type": "application/json"}
+    except Exception as e:
+        Global.console.print_exception()
+        return {
+            "error_code": "BX0000",
+            "error": "Something went wrong."
+        }, 500, {"Content-Type": "application/json"}

@@ -20,3 +20,6 @@ class RefreshingDict:
 
     def __setitem__(self, key, value):
         self._dict[key] = value
+        
+    def pop(self, key):
+        return self._dict.pop(key)

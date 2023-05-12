@@ -1,5 +1,6 @@
 from string import ascii_letters, digits
 import re
+import json
 
 url_safe = ascii_letters + digits + "-_"
 def base64_valid(s: str) -> bool:
@@ -25,4 +26,11 @@ def validate_email(email: str) -> bool:
     if not re.match(r"^.+@.+\..+$", email):
         return False
 
+    return True
+
+def validate_json(js: str) -> bool:
+    try:
+        json.loads(js)
+    except ValueError as e:
+        return False
     return True
