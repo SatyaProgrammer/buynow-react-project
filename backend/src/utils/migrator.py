@@ -49,9 +49,10 @@ TABLE_NAME = "{table_name}"
 
 def up():
     table = Table(name=TABLE_NAME)
-    table.int("id").primary_key()
+    table.int("id").primary_key().auto_increment()
 
     table.migrate() # always finish with a call to table.migrate()
+    return table
     
 def down(db_conn: msc.MySQLConnection):
     Table(name=TABLE_NAME).drop(db_conn)
@@ -69,8 +70,8 @@ def seed() -> list[dict]:
     
 def rollback_database(db_conn: msc.MySQLConnection) -> None:
     try:
-        cursor = db_conn.cursor()
-        query = "SELECT id, name, table_name, batch_id, order_id FROM migrations_log as m HAVING m.batch_id = MAX(m.batch_id)"
+        cursor = db_conn.cursor(prepared=True)
+        query = "SELECT m.id, m.name, m.table_name, m.batch_id, m.order_id FROM migrations_log as m INNER JOIN ( SELECT MAX(batch_id) as max_batch_id FROM migrations_log ) as max_m ON m.batch_id = max_m.max_batch_id;"
         cursor.execute(query)
         result = cursor.fetchall()
     
@@ -104,7 +105,8 @@ def migrate_database(db_conn: msc.MySQLConnection) -> None:
                 # names.append(service.TABLE_NAME)
                 table = service.up()
                 if "seed" in dir(service) and service.seed() is not None:
-                    table.seed(service.seed())
+                    seed = service.seed()
+                    table.seed(seed)
     except Exception as e:
         console.print("[red]Failed to migrate database.[/red]")
         console.print_exception()

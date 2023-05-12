@@ -27,6 +27,9 @@ const AboutPage = () => {
 };
 
 const Wrapper = styled.section`
+  h2 {
+    font-weight: bold;
+  }
   display: grid;
   gap: 4rem;
   img {

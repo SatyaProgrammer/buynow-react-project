@@ -35,6 +35,9 @@ const Contact = () => {
 };
 
 const Wrapper = styled.section`
+  h3 {
+    font-weight: bold;
+  }
   padding: 5rem 0;
   h3 {
     text-transform: none;

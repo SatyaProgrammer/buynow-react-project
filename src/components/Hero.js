@@ -31,10 +31,25 @@ const Hero = () => {
 };
 
 const Wrapper = styled.section`
+  h1 {
+    font-weight: bold;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    letter-spacing: var(--spacing);
+    text-transform: capitalize;
+    line-height: 1.25;
+    margin-bottom: 0.75rem;
+  }
+  h1 {
+    font-size: 2.5rem;
+  }
   min-height: 60vh;
   display: grid;
   place-items: center;
-  margin-top: 15px;
   .img-container {
     display: none;
   }
@@ -89,6 +104,32 @@ const Wrapper = styled.section`
       bottom: 0%;
       left: -8%;
       border-radius: var(--radius);
+    }
+  }
+  @media screen and (min-width: 800px) {
+    h1 {
+      font-size: 3rem;
+    }
+    h2 {
+      font-size: 2.5rem;
+    }
+    h3 {
+      font-size: 2rem;
+    }
+    h4 {
+      font-size: 1.5rem;
+    }
+    h5 {
+      font-size: 1rem;
+    }
+    body {
+      font-size: 1rem;
+    }
+    h1,
+    h2,
+    h3,
+    h4 {
+      line-height: 1;
     }
   }
 `;
