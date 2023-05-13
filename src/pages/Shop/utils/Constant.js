@@ -5,7 +5,8 @@ export const API = {
 }
 
 export const API_CALL = {
-    ALL_PRODUCT: API.API_URL.concat("/products")
+    ALL_PRODUCT: API.API_URL.concat("/products"),
+    SINGLE_PRODUCT: API.API_URL.concat("/products/")
 }
 
 const iconColor = '#222'

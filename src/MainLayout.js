@@ -81,7 +81,7 @@ const MainLayout = () => {
           }
         />
         <Route
-          path="/shop/product/1"
+          path="/shop/product/:id"
           element={
             <>
               <ShopSidebar />

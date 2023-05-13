@@ -5,7 +5,7 @@ import {
   INITIAL_STATE,
   ACTION_TYPES,
 } from "./AddProductReducer";
-import { IconPlus, IconBin, IconCross } from "../utils/Icons";
+import { IconPlus, IconBin } from "../utils/Icons";
 
 const price_regex = /^[0-9\b]+$/;
 
