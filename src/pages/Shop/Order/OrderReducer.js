@@ -11,7 +11,7 @@ export const INITIAL_STATE = {
     post: ([]),
 }
 
-export const productReducer = (state, action) => {
+export const orderReducer = (state, action) => {
     switch (action.type) {
         case ACTION_TYPES.FETCH_START:
             return {

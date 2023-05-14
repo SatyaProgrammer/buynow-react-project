@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../assets/buynow-low-resolution-color-logo.png";
+import logo from "../assets/buynowLogo.png";
 import { Link } from "react-router-dom";
 import { useProductsContext } from "../context/products_context";
 import { FaTimes } from "react-icons/fa";

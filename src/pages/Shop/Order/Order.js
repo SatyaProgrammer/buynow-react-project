@@ -1,20 +1,19 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useReducer, useEffect } from "react";
-import { productReducer, INITIAL_STATE, ACTION_TYPES } from "./ProductReducer";
+import { orderReducer, INITIAL_STATE, ACTION_TYPES } from "./OrderReducer";
 import axios from "axios";
-import "./Product.css";
 import { API_CALL } from "../utils/Constant";
 import { IconDelete, IconEdit, IconFile, IconArrowDown } from "../utils/Icons";
 import { Loading } from "../../../components";
 
-const Product = () => {
-  const [state, dispatch] = useReducer(productReducer, INITIAL_STATE);
+const Order = () => {
+  const [state, dispatch] = useReducer(orderReducer, INITIAL_STATE);
 
   const handleFetch = async () => {
     dispatch({ type: ACTION_TYPES.FETCH_START });
     const response = await axios.get(API_CALL.ALL_PRODUCT).catch((err) => {
-      // console.log("Error:", err)
+      console.log("Error:", err);
     });
     if (response && response.data) {
       dispatch({ type: ACTION_TYPES.FETCH_SUCCESS, payload: response.data });
@@ -38,14 +37,11 @@ const Product = () => {
       ) : (
         <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
           <p className="text-cldark text-4xl font-bold my-4 text-medium">
-            Product
+            Order
           </p>
 
-          <div className="shadow-md bg-white pt-4">
-            <div className="mb-4 p-2 px-4">
-              <Link to='/shop/add_product' className="btn">Add Product</Link>
-            </div>
-            <div className="p-4 border-t flex items-center sm:justify-between sm:flex-row gap-1 flex-col justify-center">
+          <div className="shadow-md bg-white">
+            <div className="p-4 flex items-center sm:justify-between sm:flex-row gap-1 flex-col justify-center">
               <div className="flex items-center gap-1">
                 <div className="text-md text-cldark font-semibold">Show</div>
                 <div>
@@ -107,19 +103,16 @@ const Product = () => {
                       Product
                     </th>
                     <th className="text-cldark font-semibold text-md pl-8 p-4 border-y ">
-                      Category
+                      Customer
                     </th>
                     <th className="text-cldark font-semibold text-md p-4 border-y whitespace-nowrap">
-                      Added date
+                      Order date
+                    </th>
+                    <th className="text-cldark font-semibold text-md p-4 border-y whitespace-nowrap">
+                      Payment Status
                     </th>
                     <th className="text-cldark font-semibold text-md p-4 border-y">
-                      Price
-                    </th>
-                    <th className="text-cldark font-semibold text-md p-4 border-y">
-                      Quantity
-                    </th>
-                    <th className="text-cldark font-semibold text-md p-4 border-y">
-                      Status
+                      Total
                     </th>
                     <th className="text-cldark font-semibold text-md p-4 border-y">
                       Action
@@ -147,18 +140,15 @@ const Product = () => {
                         {product.category}
                       </td>
                       <td className="text-cldark p-4 border-b">00-00-0000</td>
+                      <td className="text-cldark p-4 border-b">Paid</td>
                       <td className="text-cldark p-4 border-b">
                         ${product.price}
                       </td>
-                      <td className="text-cldark p-4 border-b">200</td>
-                      <td className="text-cldark p-4 border-b">In-stock</td>
                       <td className="text-cldark p-4 border-b">
                         <div className="flex gap-2 items-center">
-                          <Link to={"/shop/product/".concat(product.id)}>
-                            <div className="w-5 h-5 hover:scale-110 transition-all duration-300">
-                              <IconFile fill="hsl(22, 28%, 45%)" />
-                            </div>
-                          </Link>
+                          <div className="w-5 h-5 hover:scale-110 transition-all duration-300">
+                            <IconFile fill="hsl(22, 28%, 45%)" />
+                          </div>
                           <div className="w-6 h-6 hover:scale-110 transition-all duration-300">
                             <IconEdit fill="hsl(22, 28%, 45%)" />
                           </div>
@@ -179,4 +169,4 @@ const Product = () => {
   );
 };
 
-export default Product;
+export default Order;
