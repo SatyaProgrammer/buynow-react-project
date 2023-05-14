@@ -52,24 +52,27 @@ const Signup = () => {
   }, [state.username, state.email, state.password, state.confirmPassword]);
 
   const handleSubmit = async (e) => {
-    console.log("work")
+    console.log("work");
     e.preventDefault();
     // if button enabled with JS hack
     const v1 = USERNAME_REGEX.test(state.username);
     const v2 = PASSWORD_REGEX.test(state.password);
-    const username = state.username;
-    const password = state.password;
-    if (!v1 || !v2) {
+    const v3 = EMAIL_REGEX.test(state.email);
+    let data = JSON.stringify({
+      username: state.username,
+      password: state.password,
+      email: state.email,
+    });
+    if (!v1 || !v2 || !v3) {
       dispatch({ type: ACTION_TYPES.SET_ERROR_MSG, payload: "Invalid Entry" });
       return;
     }
     try {
       const response = await axios.post(
-        "http://localhost:5000/auth/register",
-        JSON.stringify({ username, password }),
+        "http://api.localhost/auth/register",
+        data,
         {
           headers: { "Content-Type": "application/json" },
-          withCredentials: true,
         }
       );
       console.log(response?.data);

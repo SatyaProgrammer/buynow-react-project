@@ -14,7 +14,6 @@ import { Link } from "react-router-dom";
 const ProductDetail = () => {
   const [state, dispatch] = useReducer(productDetailReducer, INITIAL_STATE);
   const id = useParams().id;
-  let images = [];
 
   const handleFetch = async () => {
     dispatch({ type: ACTION_TYPES.FETCH_START });
@@ -30,7 +29,6 @@ const ProductDetail = () => {
 
   useEffect(() => {
     handleFetch();
-    images = [state.post.image];
   }, []);
 
   return (
@@ -38,22 +36,19 @@ const ProductDetail = () => {
       {state.loading ? (
         <Loading />
       ) : (
-        <div className="p-4 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
+        <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
           <p className="text-cldark text-4xl font-bold my-4">Product Detail</p>
 
           <div className="bg-white shadow-md p-4 flex flex-col gap-4">
             <div>
-              <Link
-                to={"/shop/product"}
-              >
-                <div className="btn">
-                  Back
-                </div>
+              <Link to={"/shop/product"}>
+                <div className="btn">Back</div>
               </Link>
             </div>
             <div>
               <div className="flex gap-10">
                 <div className="w-96 h-64 ">
+                  {/* <ProductImages images={images}/> */}
                   <img
                     src={state.post.image}
                     alt="product image"
@@ -65,6 +60,9 @@ const ProductDetail = () => {
                     {state.post.title}
                   </div>
                   <div>
+                    <div>
+                      <Stars stars="4.7" reviews="200" />
+                    </div>
                     <div className="text-xl text-primary4">
                       $ {state.post.price}
                     </div>

@@ -7,7 +7,7 @@ import { SidebarItems } from "../utils/Constant";
 function ShopSidebar() {
   return (
     <>
-      <button
+      {/* <button
         data-drawer-target="sidebar-multi-level-sidebar"
         data-drawer-toggle="sidebar-multi-level-sidebar"
         aria-controls="sidebar-multi-level-sidebar"
@@ -28,14 +28,14 @@ function ShopSidebar() {
             d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"
           ></path>
         </svg>
-      </button>
+      </button> */}
 
       <aside
         id="sidebar-multi-level-sidebar"
-        className="absolute left-0 z-40 w-64 transition-transform -translate-x-full md:translate-x-0"
+        className="absolute left-0 z-40 w-64 transition-transform -translate-x-3/4 md:translate-x-0"
         aria-label="Sidebar"
       >
-        <div className="h-full overflow-y-auto bg-primary dark:bg-gray-800">
+        <div className="h-full overflow-y-auto">
           <ul className="font-medium">
             {SidebarItems.map((item, i) => (
               <li key={i}>
@@ -47,9 +47,14 @@ function ShopSidebar() {
                       : "flex p-5 text-lg text-cldark hover:bg-gray-100 transition-all duration-300 bg-white"
                   }
                 >
-                  <div className="flex flex-wrap gap-2">
-                    <div className="w-6 h-6">{item.icon}</div>
-                    <div className="capitalize">{item.name}</div>
+                  <div className="flex w-full justify-between">
+                    <div className="flex flex-wrap gap-2">
+                      <div className="w-6 h-6">{item.icon}</div>
+                      <div className="capitalize">{item.name}</div>
+                    </div>
+                    <div className="">
+                      <div className="w-6 h-6 md:hidden">{item.icon}</div>
+                    </div>
                   </div>
                 </NavLink>
               </li>

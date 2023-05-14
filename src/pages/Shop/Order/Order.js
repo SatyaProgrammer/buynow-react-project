@@ -35,16 +35,13 @@ const Order = () => {
       {state.loading ? (
         <Loading />
       ) : (
-        <div className="p-4 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
+        <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
           <p className="text-cldark text-4xl font-bold my-4 text-medium">
-            Product
+            Order
           </p>
 
-          <div className="shadow-md bg-white py-4">
-            <div className="mb-4 p-2 px-4">
-              <Link className="btn">Add Product</Link>
-            </div>
-            <div className="p-4 border-t flex items-center sm:justify-between sm:flex-row gap-1 flex-col justify-center">
+          <div className="shadow-md bg-white">
+            <div className="p-4 flex items-center sm:justify-between sm:flex-row gap-1 flex-col justify-center">
               <div className="flex items-center gap-1">
                 <div className="text-md text-cldark font-semibold">Show</div>
                 <div>
@@ -98,7 +95,7 @@ const Order = () => {
                 </div>
               </form>
             </div>
-            <div className="overflow-x-auto pb-2">
+            <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse border-spacing-0 table-fixed">
                 <thead className="bg-gray-100 z-50">
                   <tr>

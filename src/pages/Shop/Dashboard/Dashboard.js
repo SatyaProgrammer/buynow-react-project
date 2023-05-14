@@ -3,7 +3,13 @@ import "./Dashboard.css";
 import { LineChart, PieChart } from "../../../components/Chart";
 import { useState } from "react";
 import { UserData } from "../ChartTempData";
-import { IconShoppingCart, IconDollar, IconUser, IconCreditCard } from "../utils/Icons";
+import {
+  IconShoppingCart,
+  IconDollar,
+  IconUser,
+  IconCreditCard,
+} from "../utils/Icons";
+import { Link } from "react-router-dom";
 
 function Dashboard() {
   const [userData, setUserData] = useState({
@@ -25,63 +31,75 @@ function Dashboard() {
 
   return (
     <>
-      <div className="p-4 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
+      <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
         <p className="text-cldark text-4xl font-bold my-4">Dashboard</p>
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-4">
           <div className="h-48 bg-white shadow-md flex flex-col justify-evenly px-6 hover:-translate-y-1 hover:shadow-none transition-full duration-300">
             <div className="flex justify-between items-center">
-              <p className="text-xl text-gray-600 font-bold">Orders</p>
+              <div className="text-xl text-gray-600 font-bold">Orders</div>
               <div className="w-8">
                 <IconShoppingCart fill="#936a53" />
               </div>
             </div>
             <div>
-              <p className="text-4xl font-bold text-cldark">150</p>
+              <div className="text-4xl font-bold text-cldark">150</div>
             </div>
-            <div>
-              <p className="text-md text-primary4 font-bold">View orders</p>
-            </div>
+            <Link to="/shop/order">
+              <div>
+                <div className="text-md text-primary4 font-bold">
+                  View orders
+                </div>
+              </div>
+            </Link>
           </div>
           <div className="h-48 bg-white shadow-md flex flex-col justify-evenly px-6 hover:-translate-y-1 hover:shadow-none transition-full duration-300">
             <div className="flex justify-between items-center">
-              <p className="text-xl text-gray-600 font-bold">Revenue</p>
+              <div className="text-xl text-gray-600 font-bold">Revenue</div>
               <div className="w-7">
                 <IconDollar fill="#936a53" />
               </div>
             </div>
             <div>
-              <p className="text-4xl font-bold text-cldark">$1500</p>
+              <div className="text-4xl font-bold text-cldark">$1500</div>
             </div>
             <div>
-              <p className="text-md text-primary4 font-bold">View earning</p>
+              <div className="text-md text-primary4 font-bold">
+                View earning
+              </div>
             </div>
           </div>
           <div className="h-48 bg-white shadow-md flex flex-col justify-evenly px-6 hover:-translate-y-1 hover:shadow-none transition-full duration-300">
             <div className="flex justify-between items-center">
-              <p className="text-xl text-gray-600 font-bold">Customer</p>
+              <div className="text-xl text-gray-600 font-bold">Customer</div>
               <div className="w-8">
                 <IconUser fill="#936a53" />
               </div>
             </div>
             <div>
-              <p className="text-4xl font-bold text-cldark">94</p>
+              <div className="text-4xl font-bold text-cldark">94</div>
             </div>
-            <div>
-              <p className="text-md text-primary4 font-bold">All customer</p>
-            </div>
+            <Link to='/shop/customer'>
+              <div>
+                <div className="text-md text-primary4 font-bold">
+                  All customer
+                </div>
+              </div>
+            </Link>
           </div>
           <div className="h-48 bg-white shadow-md flex flex-col justify-evenly px-6 hover:-translate-y-1 hover:shadow-none transition-full duration-300">
             <div className="flex justify-between items-center">
-              <p className="text-xl text-gray-600 font-bold">Balance</p>
+              <div className="text-xl text-gray-600 font-bold">Balance</div>
               <div className="w-7">
                 <IconCreditCard fill="#936a53" />
               </div>
             </div>
             <div>
-              <p className="text-4xl font-bold text-cldark">$5300</p>
+              <div className="text-4xl font-bold text-cldark">$5300</div>
             </div>
             <div>
-              <p className="text-md text-primary4 font-bold">View balance</p>
+              <div className="text-md text-primary4 font-bold">
+                View balance
+              </div>
             </div>
           </div>
         </div>

@@ -52,7 +52,7 @@ const AddProduct = () => {
   };
 
   useEffect(() => {
-    nameRef.current.focus();
+    // nameRef.current.focus();
     dispatch({
       type: ACTION_TYPES.ADD_CUSTOMIZATION,
       payload: { type: "", value: [""] },
@@ -75,7 +75,7 @@ const AddProduct = () => {
 
   return (
     <>
-      <div className="p-4 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
+      <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
         <p className="text-cldark text-4xl font-bold my-4 text-medium">
           Add Product
         </p>
