@@ -18,6 +18,10 @@ const CartButtons = () => {
     navigate("/");
   };
 
+  const login = () => {
+    navigate("/login");
+  };
+
   return (
     <Wrapper className="cart-btn-wrapper">
       <Link to="/cart" className="cart-btn" onClick={closeSidebar}>
@@ -32,7 +36,7 @@ const CartButtons = () => {
           Logout <FaUserMinus />
         </button>
       ) : (
-        <button type="button" className="auth-btn">
+        <button type="button" className="auth-btn" onClick={login}>
           Login <FaUserPlus />
         </button>
       )}
