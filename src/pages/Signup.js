@@ -58,15 +58,15 @@ const Signup = () => {
     const v1 = USERNAME_REGEX.test(state.username);
     const v2 = PASSWORD_REGEX.test(state.password);
     const v3 = EMAIL_REGEX.test(state.email);
+    if (!v1 || !v2 || !v3) {
+      dispatch({ type: ACTION_TYPES.SET_ERROR_MSG, payload: "Invalid Entry" });
+      return;
+    }
     let data = JSON.stringify({
       username: state.username,
       password: state.password,
       email: state.email,
     });
-    if (!v1 || !v2 || !v3) {
-      dispatch({ type: ACTION_TYPES.SET_ERROR_MSG, payload: "Invalid Entry" });
-      return;
-    }
     try {
       const response = await axios.post(
         "http://api.localhost/auth/register",

@@ -10,34 +10,15 @@ const Verify = () => {
 
   const handleVerify = async (e) => {
     let verifyToken = { token: searchParams.get("token") };
-    try {
-      const response = await axios.post(
-        "http://api.localhost/auth/verify",
-        verifyToken,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-      navigate("/");
-    } catch (err) {
-      if (!err?.response) {
-        //     dispatch({
-        //       type: ACTION_TYPES.SET_ERROR_MSG,
-        //       payload: "No Server Response",
-        //     });
-        //   } else if (err.response?.status === 409) {
-        //     dispatch({
-        //       type: ACTION_TYPES.SET_ERROR_MSG,
-        //       payload: "Username Taken",
-        //     });
-        //   } else {
-        //     dispatch({
-        //       type: ACTION_TYPES.SET_ERROR_MSG,
-        //       payload: "Regitration Failed",
-        //     });
+
+    const response = await axios.post(
+      "http://api.localhost/auth/verify",
+      verifyToken,
+      {
+        headers: { "Content-Type": "application/json" },
       }
-      // errRef.current.focus();
-    }
+    );
+    navigate("/");
   };
 
   useEffect(() => {
