@@ -109,7 +109,7 @@ const Signup = () => {
   return (
     <div className="h-screen bg-white grid place-items-center">
       <div className="w-80 bg-primary4 text-white shadow-lg flex flex-col gap-4">
-        <div className="text-2xl font-semibold px-8 border-l-4 border-gray-100 mt-8">
+        <div className="text-2xl font-semibold px-8  border-gray-100 mt-8">
           Sign up
         </div>
         <form onSubmit={handleSubmit}>
@@ -122,6 +122,7 @@ const Signup = () => {
                   name="username"
                   value={state.username}
                   required
+                  autoComplete="off"
                   ref={usernameRef}
                   onChange={(e) =>
                     dispatch({
@@ -167,6 +168,7 @@ const Signup = () => {
                   placeholder="Email"
                   name="email"
                   required
+                  autoComplete="off"
                   value={state.email}
                   onChange={(e) =>
                     dispatch({
@@ -206,6 +208,7 @@ const Signup = () => {
                   placeholder="Password"
                   name="password"
                   required
+                  autoComplete="off"
                   value={state.password}
                   onChange={(e) =>
                     dispatch({
@@ -251,6 +254,7 @@ const Signup = () => {
                   placeholder="Confirm password"
                   name="confirmPassword"
                   required
+                  autoComplete="off"
                   value={state.confirmPassword}
                   onChange={(e) =>
                     dispatch({

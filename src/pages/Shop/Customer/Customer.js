@@ -33,7 +33,9 @@ const Customer = () => {
     return (
       <>
         {state.loading ? (
-          <Loading />
+          <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
+            <Loading />
+          </div>
         ) : (
           <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
             <p className="text-cldark text-4xl font-bold my-4 text-medium">
@@ -95,26 +97,26 @@ const Customer = () => {
                   </div>
                 </form>
               </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse border-spacing-0 table-fixed">
+              <div className="overflow-x-auto table-scrolling">
+                <table className="w-full">
                   <thead className="bg-gray-100 z-50">
                     <tr>
-                      <th className="text-cldark font-semibold text-md p-4 border-y name-row">
+                      <th className="text-cldark text-left font-semibold text-md p-4 border-y name-row whitespace-nowrap">
                         Product
                       </th>
-                      <th className="text-cldark font-semibold text-md pl-8 p-4 border-y ">
+                      <th className="text-cldark text-left font-semibold text-md p-4 border-y name-row whitespace-nowrap">
                         Customer
                       </th>
-                      <th className="text-cldark font-semibold text-md p-4 border-y whitespace-nowrap">
+                      <th className="text-cldark text-left font-semibold text-md p-4 border-y name-row whitespace-nowrap">
                         Order date
                       </th>
-                      <th className="text-cldark font-semibold text-md p-4 border-y whitespace-nowrap">
+                      <th className="text-cldark text-left font-semibold text-md p-4 border-y name-row whitespace-nowrap">
                         Payment Status
                       </th>
-                      <th className="text-cldark font-semibold text-md p-4 border-y">
+                      <th className="text-cldark text-left font-semibold text-md p-4 border-y name-row whitespace-nowrap">
                         Total
                       </th>
-                      <th className="text-cldark font-semibold text-md p-4 border-y">
+                      <th className="text-cldark text-left font-semibold text-md p-4 border-y name-row whitespace-nowrap">
                         Action
                       </th>
                     </tr>
@@ -122,8 +124,8 @@ const Customer = () => {
                   <tbody className="">
                     {state.post?.map((product, idx) => (
                       <tr key={idx} className="hover:bg-gray-50 ">
-                        <td className="text-cldark p-4 border-b overflow-hidden whitespace-nowrap name-row">
-                          <div className="w-fit flex items-center gap-2">
+                        <td className="text-cldark p-4 border-b whitespace-nowrap overflow-hidden">
+                          <div className="flex items-center gap-2 w-48">
                             <div className="w-10">
                               <img
                                 src={product.image}
@@ -131,17 +133,21 @@ const Customer = () => {
                                 className="w-full h-10 rounded-full shadow-md object-cover"
                               />
                             </div>
-                            <div className="font-semibold overflow-hidden">
+                            <div className="font-semibold w-32 overflow-hidden">
                               {product.title}
                             </div>
                           </div>
                         </td>
-                        <td className="text-cldark pl-8 p-4 border-b">
+                        <td className="text-cldark p-4 border-b whitespace-nowrap">
                           {product.category}
                         </td>
-                        <td className="text-cldark p-4 border-b">00-00-0000</td>
-                        <td className="text-cldark p-4 border-b">Paid</td>
-                        <td className="text-cldark p-4 border-b">
+                        <td className="text-cldark p-4 border-b whitespace-nowrap">
+                          00-00-0000
+                        </td>
+                        <td className="text-cldark p-4 border-b whitespace-nowrap">
+                          Paid
+                        </td>
+                        <td className="text-cldark p-4 border-b whitespace-nowrap">
                           ${product.price}
                         </td>
                         <td className="text-cldark p-4 border-b">

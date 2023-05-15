@@ -7,6 +7,8 @@ import "./Product.css";
 import { API_CALL } from "../utils/Constant";
 import { IconDelete, IconEdit, IconFile, IconArrowDown } from "../utils/Icons";
 import { Loading } from "../../../components";
+import Table from "../../../components/Table";
+import { ProductTableHeader, ProductTableData } from "../utils/Constant";
 
 const Product = () => {
   const [state, dispatch] = useReducer(productReducer, INITIAL_STATE);
@@ -34,7 +36,9 @@ const Product = () => {
   return (
     <>
       {state.loading ? (
-        <Loading />
+        <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
+          <Loading />
+        </div>
       ) : (
         <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
           <p className="text-cldark text-4xl font-bold my-4 text-medium">
@@ -43,7 +47,9 @@ const Product = () => {
 
           <div className="shadow-md bg-white pt-4">
             <div className="mb-4 p-2 px-4">
-              <Link to='/shop/add_product' className="btn">Add Product</Link>
+              <Link to="/shop/add_product" className="btn">
+                Add Product
+              </Link>
             </div>
             <div className="p-4 border-t flex items-center sm:justify-between sm:flex-row gap-1 flex-col justify-center">
               <div className="flex items-center gap-1">
@@ -99,79 +105,11 @@ const Product = () => {
                 </div>
               </form>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse border-spacing-0 table-fixed">
-                <thead className="bg-gray-100 z-50">
-                  <tr>
-                    <th className="text-cldark font-semibold text-md p-4 border-y name-row">
-                      Product
-                    </th>
-                    <th className="text-cldark font-semibold text-md pl-8 p-4 border-y ">
-                      Category
-                    </th>
-                    <th className="text-cldark font-semibold text-md p-4 border-y whitespace-nowrap">
-                      Added date
-                    </th>
-                    <th className="text-cldark font-semibold text-md p-4 border-y">
-                      Price
-                    </th>
-                    <th className="text-cldark font-semibold text-md p-4 border-y">
-                      Quantity
-                    </th>
-                    <th className="text-cldark font-semibold text-md p-4 border-y">
-                      Status
-                    </th>
-                    <th className="text-cldark font-semibold text-md p-4 border-y">
-                      Action
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="">
-                  {state.post?.map((product, idx) => (
-                    <tr key={idx} className="hover:bg-gray-50 ">
-                      <td className="text-cldark p-4 border-b overflow-hidden whitespace-nowrap name-row">
-                        <div className="w-fit flex items-center gap-2">
-                          <div className="w-16">
-                            <img
-                              src={product.image}
-                              alt="product image"
-                              className="w-full h-10 rounded-md shadow-md object-cover"
-                            />
-                          </div>
-                          <div className="font-semibold overflow-hidden">
-                            {product.title}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="text-cldark pl-8 p-4 border-b">
-                        {product.category}
-                      </td>
-                      <td className="text-cldark p-4 border-b">00-00-0000</td>
-                      <td className="text-cldark p-4 border-b">
-                        ${product.price}
-                      </td>
-                      <td className="text-cldark p-4 border-b">200</td>
-                      <td className="text-cldark p-4 border-b">In-stock</td>
-                      <td className="text-cldark p-4 border-b">
-                        <div className="flex gap-2 items-center">
-                          <Link to={"/shop/product/".concat(product.id)}>
-                            <div className="w-5 h-5 hover:scale-110 transition-all duration-300">
-                              <IconFile fill="hsl(22, 28%, 45%)" />
-                            </div>
-                          </Link>
-                          <div className="w-6 h-6 hover:scale-110 transition-all duration-300">
-                            <IconEdit fill="hsl(22, 28%, 45%)" />
-                          </div>
-                          <div className="w-7 h-7 hover:scale-110 transition-all duration-300">
-                            <IconDelete fill="hsl(22, 28%, 45%)" />
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <Table
+              th={ProductTableHeader}
+              tr={state.post}
+              td={ProductTableData}
+            />
           </div>
         </div>
       )}
