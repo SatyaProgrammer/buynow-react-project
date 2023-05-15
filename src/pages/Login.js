@@ -1,19 +1,19 @@
 import { useRef, useState, useEffect } from "react";
-import useAuth from "../hooks/useAuth";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
+import Cookies from "universal-cookie";
 
-const LOGIN_URL = "/auth";
+const LOGIN_URL = "http://api.localhost/auth/login";
 
 const Login = () => {
-  const { setAuth } = useAuth();
+  // Initialize cookies
+  const cookies = new Cookies();
 
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
 
   const userRef = useRef();
-  const errRef = useRef();
 
   const [user, setUser] = useState("");
   const [pwd, setPwd] = useState("");
@@ -27,35 +27,19 @@ const Login = () => {
     setErrMsg("");
   }, [user, pwd]);
 
+  let data = {
+    username: user,
+    password: pwd,
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let data = JSON.stringify({
-      username: user,
-      password: pwd,
-    });
     try {
-      // const response = await axios.post(
-      //   LOGIN_URL,
-      //   JSON.stringify({ user, pwd }),
-      //   {
-      //     headers: { "Content-Type": "application/json" },
-      //     withCredentials: true,
-      //   }
-      // );
-      // const accessToken = response?.data?.accessToken;
-      // const roles = response?.data?.roles;
-      // setAuth({ user, pwd, roles, accessToken });
-      const response = await axios.post(
-        "http://api.localhost/auth/login",
-        data,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-      console.log(response?.data);
-      console.log(response?.accessToken);
-      console.log(JSON.stringify(response));
-      setAuth(true);
+      const response = await axios.post(LOGIN_URL, data, {
+        headers: { "Content-Type": "application/json" },
+      });
+      // Set Cookies
+      cookies.set("jwt_authorization", response.data.token);
       setUser("");
       setPwd("");
       navigate(from, { replace: true });
@@ -69,7 +53,6 @@ const Login = () => {
       } else {
         setErrMsg("Login Failed");
       }
-      errRef.current.focus();
     }
   };
 
