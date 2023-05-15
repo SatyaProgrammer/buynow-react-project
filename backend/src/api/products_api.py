@@ -1,4 +1,3 @@
-import json
 from flask import Blueprint, request
 from backend.src.lib.passwd import make_product_id
 from backend.src.lib.validate import base64_valid
@@ -175,7 +174,7 @@ def update_product(uid):
     try:
         user_id = uid
         user = User.id(user_id)
-        if user["userType"] != "vendor":
+        if user["userType"] != "vendor" or user["userType"] != "administrator":
             return {
                 "error_code": "BX1201",
                 "error": "You are not a vendor."
@@ -277,7 +276,7 @@ def delete_product(uid):
     try:
         user_id = uid
         user = User.id(user_id)
-        if user["userType"] != "vendor":
+        if user["userType"] != "vendor" or user["userType"] != "administrator":
             return {
                 "error_code": "BX1201",
                 "error": "You are not a vendor."
