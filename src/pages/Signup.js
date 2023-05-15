@@ -107,11 +107,9 @@ const Signup = () => {
   };
 
   return (
-    <div className="h-screen bg-white grid place-items-center">
-      <div className="w-80 bg-primary4 text-white shadow-lg flex flex-col gap-4">
-        <div className="text-2xl font-semibold px-8  border-gray-100 mt-8">
-          Sign up
-        </div>
+    <div className="h-screen bg-gray-100 grid place-items-center">
+      <div className="w-80 bg-white text-primary4 shadow-lg flex flex-col gap-4">
+        <div className="text-2xl font-semibold px-8 mt-8">Sign up</div>
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col gap-6 px-8 pb-8">
             <div className="flex flex-col gap-4">
@@ -142,7 +140,7 @@ const Signup = () => {
                       payload: false,
                     })
                   }
-                  className="border-b border-gray-300 w-full py-2 placeholder-white bg-primary4 outline-none text-white caret-white focus:outline focus:outline-1"
+                  className="border-b border-gray-400 w-full py-2 placeholder-gray-400 bg-white outline-none text-gray-500 caret-gray-400 focus:outline focus:outline-1"
                 />
                 <div
                   className={
@@ -153,7 +151,7 @@ const Signup = () => {
                       : "hidden"
                   }
                 >
-                  <div className="text-xs font-normal">
+                  <div className="text-xs font-normal text-gray-400">
                     4 to 24 characters.
                     <br />
                     Must begin with a letter.
@@ -188,7 +186,7 @@ const Signup = () => {
                       payload: false,
                     })
                   }
-                  className="border-b border-gray-300 w-full py-2 placeholder-white bg-primary4 outline-none text-white caret-white focus:outline focus:outline-1"
+                  className="border-b border-gray-400 w-full py-2 placeholder-gray-400 bg-white outline-none text-gray-500 caret-gray-400 focus:outline focus:outline-1"
                 />
                 <div
                   className={
@@ -197,7 +195,7 @@ const Signup = () => {
                       : "hidden"
                   }
                 >
-                  <div className="text-xs font-normal">
+                  <div className="text-xs font-normal text-gray-400">
                     Must input valid email for this field
                   </div>
                 </div>
@@ -228,7 +226,7 @@ const Signup = () => {
                       payload: false,
                     })
                   }
-                  className="border-b border-gray-300 w-full py-2 placeholder-white bg-primary4 outline-none text-white caret-white focus:outline focus:outline-1"
+                  className="border-b border-gray-400 w-full py-2 placeholder-gray-400 bg-white outline-none text-gray-500 caret-gray-400 focus:outline focus:outline-1"
                 />
                 <div
                   className={
@@ -239,7 +237,7 @@ const Signup = () => {
                       : "hidden"
                   }
                 >
-                  <div className="text-xs font-normal">
+                  <div className="text-xs font-normal text-gray-400">
                     8 to 24 characters.
                     <br />
                     Must include uppercase and lowercase letters, a number and a
@@ -274,7 +272,7 @@ const Signup = () => {
                       payload: false,
                     })
                   }
-                  className="border-b border-gray-300 w-full py-2 placeholder-white bg-primary4 outline-none text-white caret-white focus:outline focus:outline-1"
+                  className="border-b border-gray-400 w-full py-2 placeholder-gray-400 bg-white outline-none text-gray-500 caret-gray-400 focus:outline focus:outline-1"
                 />
                 <div
                   className={
@@ -285,13 +283,13 @@ const Signup = () => {
                       : "hidden"
                   }
                 >
-                  <div className="text-xs font-normal">
+                  <div className="text-xs font-normal text-gray-400">
                     Must match the first password input field.
                   </div>
                 </div>
               </div>
             </div>
-            <button className="w-full bg-white text-primary4 font-semibold py-2 text-center border-2 border-white hover:bg-primary4 hover:text-white transition-all duration-300">
+            <button className="w-full bg-primary4 text-white font-semibold py-2 text-center border-2 border-primary4 hover:bg-white hover:text-primary4 transition-all duration-300">
               NEXT
             </button>
           </div>

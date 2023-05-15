@@ -34,7 +34,7 @@ const Order = () => {
   return (
     <>
       {state.loading ? (
-        <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
+        <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex justify-center items-center transition-full duration-300">
           <Loading />
         </div>
       ) : (
