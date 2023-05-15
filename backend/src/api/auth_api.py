@@ -89,7 +89,7 @@ def register():
                 "error": "Invalid email."
             }, 400, {"Content-Type": "application/json"}
             
-        if user_type not in ["customer", "vendor", "administrator"]:
+        if user_type not in ["customer", "vendor"]:
             return {
                 "error_code": "BX0206",
                 "error": "Invalid user type."
