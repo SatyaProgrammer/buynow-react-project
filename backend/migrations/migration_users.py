@@ -24,6 +24,15 @@ def down(db_conn: msc.MySQLConnection):
 def seed() -> list[dict]:
     return [
         {
+            # password is "hakurei"
+            "username": "reimu",
+            "email": "ikasakimatou@gmail.com",
+            "password": "67862050521e6ea8b8b9a1c6258568b57e77663d86425f45acc8c4c0e8cf75882c8d297afcd0f9aeecc8ac68a0575dca1e2fcdb6be9355f8d633d607314c0647", # cspell: disable-line
+            "salt": "IeQrVMC1or06wxm48gJjBx3KxKnNwmkA", # cspell: disable-line
+            "verified": 1,
+            "userType": "vendor"
+        },
+        {
             # password is "null"
             "username": "kaze",
             "email": "teng.thaisothyrak@gmail.com",
