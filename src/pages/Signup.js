@@ -85,6 +85,7 @@ const Signup = () => {
       dispatch({ type: ACTION_TYPES.SET_EMAIL, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_CONFIRM_PASSWORD, payload: "" });
     } catch (err) {
+      console.log(err?.response)
       if (!err?.response) {
         dispatch({
           type: ACTION_TYPES.SET_ERROR_MSG,
