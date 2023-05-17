@@ -59,8 +59,8 @@ def get_matching_products():
             return (result, 200, {"Content-Type": "application/json"})
         else:
             # return matching products
-            offset = request.args.get("offset", 0)
-            limit = request.args.get("limit", 25)
+            offset = int(request.args.get("offset", 0))
+            limit = int(request.args.get("limit", 25))
             
             result = Product.fetch_matching([], search_criteria, offset, limit, sort_newest=True)
             res = list(map(lambda r: {
