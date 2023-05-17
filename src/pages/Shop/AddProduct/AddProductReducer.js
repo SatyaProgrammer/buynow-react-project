@@ -37,7 +37,7 @@ export const INITIAL_STATE = {
   imageUrl: [],
 
   errMessage: "",
-  sucess: false,
+  sucess: "",
 };
 
 export const addProductReducer = (state, action) => {

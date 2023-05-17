@@ -5,14 +5,13 @@ import {
   INITIAL_STATE,
   ACTION_TYPES,
 } from "./AddProductReducer";
-import { IconPlus, IconBin, IconAlert } from "../utils/Icons";
+import { IconPlus, IconBin, IconAlert, IconCheck } from "../utils/Icons";
 import axios from "axios";
 import Cookies from "universal-cookie";
 
 const AddProduct = () => {
   const [state, dispatch] = useReducer(addProductReducer, INITIAL_STATE);
   const nameRef = useRef();
-  const errRef = useRef();
   const cookies = new Cookies();
 
   const handleAddCustom = () => {
@@ -55,14 +54,12 @@ const AddProduct = () => {
   const handleAddImage = () => {
     let inputData = state.image;
     inputData.push("");
-    console.log(inputData);
     dispatch({ type: ACTION_TYPES.SET_IMAGE, payload: inputData });
   };
 
   const handleChangeImage = (file, i) => {
     let inputData = state.image;
     inputData[i] = file;
-    console.log(inputData);
     dispatch({ type: ACTION_TYPES.SET_IMAGE, payload: inputData });
   };
 
@@ -82,7 +79,6 @@ const AddProduct = () => {
 
   useEffect(() => {
     dispatch({ type: ACTION_TYPES.SET_ERROR, payload: "" });
-    // dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: false });
   }, [
     state.name,
     state.description,
@@ -99,7 +95,6 @@ const AddProduct = () => {
     const preset_key = "c003351q";
     const cloud_name = "dlplvjf9l";
     const token = cookies.get("jwt_authorization");
-    console.log(token);
 
     if (token) {
       for (let i = 0; i < state.image.length; i++) {
@@ -116,7 +111,6 @@ const AddProduct = () => {
             .then((res) => {
               let inputData = state.imageUrl;
               inputData.push(res.data.secure_url);
-              // console.log(inputData)
               dispatch({
                 type: ACTION_TYPES.SET_IMAGE_URL,
                 payload: inputData,
@@ -126,7 +120,12 @@ const AddProduct = () => {
                 payload: [""],
               });
             })
-            .catch((err) => console.log(err));
+            .catch((err) =>
+              dispatch({
+                type: ACTION_TYPES.SET_ERROR,
+                payload: "Image upload fail",
+              })
+            );
         }
       }
     } else {
@@ -143,7 +142,6 @@ const AddProduct = () => {
       availability: state.availability,
       deliveryOption: state.deliveryOption,
     });
-    console.log("data: " + data);
 
     try {
       const response = await axios.post(
@@ -163,13 +161,16 @@ const AddProduct = () => {
       dispatch({ type: ACTION_TYPES.SET_PRICE, payload: "" });
       dispatch({
         type: ACTION_TYPES.SET_CUSTOMIZATION,
-        payload: { type: "", value: [""] },
+        payload: [],
       });
       dispatch({ type: ACTION_TYPES.SET_AVAILABILITY, payload: 1 });
       dispatch({ type: ACTION_TYPES.SET_DELIVERYOPTION, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_IMAGE, payload: [""] });
       dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: [""] });
-      dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: true });
+      dispatch({
+        type: ACTION_TYPES.SET_SUCCESS,
+        payload: "Product listed for sale",
+      });
       window.scrollTo(0, 0);
     } catch (err) {
       dispatch({
@@ -189,18 +190,18 @@ const AddProduct = () => {
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col gap-4">
             {state.success ? (
-              <div className="p-4 flex gap-1 items-center bg-green-50 text-clgreen font-semibold rounded-md shadow-lg border-2 border-green-200">
+              <div className="p-4 flex gap-1 items-center bg-green-50 text-clgreen font-semibold rounded-md shadow-md border-2 border-green-200">
                 <div className="w-4 h-4">
-                  <IconAlert fill="#bb2525" />
+                  <IconCheck fill="#25bb32" />
                 </div>
-                <div className="font-bold">Error:</div>
-                <div>{state.errMessage}</div>
+                <div className="font-bold">Success:</div>
+                <div>{state.success}</div>
               </div>
             ) : (
               ""
             )}
             {state.errMessage ? (
-              <div className="p-4 flex gap-1 items-center bg-red-50 text-cldanger font-semibold rounded-md shadow-lg border-2 border-red-200">
+              <div className="p-4 flex gap-1 items-center bg-red-50 text-cldanger font-semibold rounded-md shadow-md border-2 border-red-200">
                 <div className="w-4 h-4">
                   <IconAlert fill="#bb2525" />
                 </div>
@@ -221,6 +222,9 @@ const AddProduct = () => {
                   name="productName"
                   required
                   ref={nameRef}
+                  onFocus={() =>
+                    dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: "" })
+                  }
                   onChange={(e) =>
                     dispatch({
                       type: ACTION_TYPES.SET_NAME,
@@ -239,6 +243,9 @@ const AddProduct = () => {
                   type="text"
                   placeholder="Product description"
                   required
+                  onFocus={() =>
+                    dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: "" })
+                  }
                   onChange={(e) =>
                     dispatch({
                       type: ACTION_TYPES.SET_DESCRIPTION,
@@ -262,6 +269,9 @@ const AddProduct = () => {
                   type="text"
                   placeholder="Product category"
                   required
+                  onFocus={() =>
+                    dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: "" })
+                  }
                   onChange={(e) =>
                     dispatch({
                       type: ACTION_TYPES.SET_CATEGORY,
@@ -278,6 +288,9 @@ const AddProduct = () => {
                 <input
                   type="number"
                   required
+                  onFocus={() =>
+                    dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: "" })
+                  }
                   placeholder="Product price"
                   onChange={(e) =>
                     dispatch({
@@ -306,6 +319,12 @@ const AddProduct = () => {
                               type="text"
                               placeholder="Color"
                               required
+                              onFocus={() =>
+                                dispatch({
+                                  type: ACTION_TYPES.SET_SUCCESS,
+                                  payload: "",
+                                })
+                              }
                               onChange={(e) => handleChangeCustom(e, i)}
                               value={state.customization[i]["type"]}
                               name="customTitle"
@@ -344,6 +363,12 @@ const AddProduct = () => {
                                     type="text"
                                     placeholder="Blue"
                                     required
+                                    onFocus={() =>
+                                      dispatch({
+                                        type: ACTION_TYPES.SET_SUCCESS,
+                                        payload: "",
+                                      })
+                                    }
                                     onChange={(e) =>
                                       handleChangeSubCustom(e, i, k)
                                     }
@@ -391,6 +416,9 @@ const AddProduct = () => {
                     id="availability"
                     name="availability"
                     className="border border-gray-300 w-full p-3 rounded-lg text-cldark focus:outline focus:outline-1"
+                    onFocus={() =>
+                      dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: "" })
+                    }
                     onChange={(e) => {
                       dispatch({
                         type: ACTION_TYPES.SET_AVAILABILITY,
@@ -412,6 +440,9 @@ const AddProduct = () => {
                   type="text"
                   placeholder="Delivery option"
                   required
+                  onFocus={() =>
+                    dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: "" })
+                  }
                   onChange={(e) =>
                     dispatch({
                       type: ACTION_TYPES.SET_DELIVERYOPTION,
@@ -450,6 +481,12 @@ const AddProduct = () => {
                           accept="image/png, image/jpg, image/gif, image/jpeg"
                           name="image"
                           id="image"
+                          onFocus={() =>
+                            dispatch({
+                              type: ACTION_TYPES.SET_SUCCESS,
+                              payload: "",
+                            })
+                          }
                           onChange={(e) => {
                             handleChangeImage(e.target.files[0], idx);
                             e.target.value = null;
