@@ -57,14 +57,14 @@ const Login = () => {
   };
 
   return (
-    <div className="h-screen bg-white grid place-items-center">
-      <div className="w-80 bg-primary4 text-white shadow-lg flex flex-col">
-        <div className="text-2xl font-semibold border-gray-100 mt-8 mb-6 ml-6">
+    <div className="h-screen bg-gray-100 grid place-items-center">
+      <div className="w-80 bg-primary4 text-white shadow-lg flex flex-col gap-8">
+        <div className="text-2xl font-semibold border-gray-100 mt-8 px-8">
           Sign In
         </div>
         <form onSubmit={handleSubmit}>
-          <div className="flex flex-col gap-6 px-8 pb-8">
-            <div className="flex flex-col gap-4">
+          <div className="px-8 pb-8">
+            <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-2">
                 <input
                   type="text"
@@ -89,19 +89,18 @@ const Login = () => {
                   className="border-b border-gray-300 w-full py-2 placeholder-white bg-primary4 outline-none text-white caret-white focus:outline focus:outline-1"
                 />
               </div>
+              <button className="w-full bg-white text-primary4 font-semibold py-2 text-center border-2 border-white hover:bg-primary4 hover:text-white transition-all duration-300">
+                Sign In
+              </button>
             </div>
-            <button className="w-full bg-white text-primary4 font-semibold py-2 text-center border-2 border-white hover:bg-primary4 hover:text-white transition-all duration-300">
-              Sign In
-            </button>
+            <div className="mt-2">
+              <span className="text-sm">Need an account?</span>
+              <span className="text-sm underline ml-2">
+                <Link to={"/signup"}>Sign up</Link>
+              </span>
+            </div>
           </div>
         </form>
-        <p className="text-white ml-8">
-          Need an Account?
-          <br />
-          <span className="line">
-            <Link to={"/signup"}>Sign up</Link>
-          </span>
-        </p>
       </div>
     </div>
   );

@@ -36,6 +36,14 @@ const MainLayout = () => {
         <Route path="/products/:id" element={<SingleProduct />} />
         {/* Shop Routes */}
         <Route
+          path="/shop"
+          element={
+            <>
+              <Shop />
+            </>
+          }
+        />
+        <Route
           path="/shop/dashboard"
           element={
             <>
