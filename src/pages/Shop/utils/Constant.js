@@ -37,3 +37,22 @@ export const SidebarItems = [
         icon: <IconUser fill = {iconColor}/>
     },
 ]
+
+export const ProductTableHeader = [
+    'Product',
+    'Category',
+    'Added date',
+    'Price',
+    'Quantity',
+    'Status',
+    'Action'
+]
+
+export const ProductTableData = [
+    'title',
+    'category',
+    'category',
+    'price',
+    'price',
+    'price'
+]

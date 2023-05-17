@@ -1,4 +1,5 @@
 from flask import Blueprint, request
+import json
 from backend.src.lib.passwd import make_product_id
 from backend.src.lib.validate import base64_valid
 from backend.src.lib import Global
@@ -111,7 +112,7 @@ def add_products(uid):
         availability = request_data["availability"]
         deliveryOption = request_data["deliveryOption"]
         
-        if not validate_json(images) or not validate_json(customization):
+        if not validate_json(json.dumps(images)) or not validate_json(json.dumps(customization)):
             return {
                 "error_code": "BX1203",
                 "error": "Invalid JSON."
@@ -132,11 +133,11 @@ def add_products(uid):
         res = Product.add({
             "pid": pid,
             "name": name,
-            "images": images,
+            "images": json.dumps(images),
             "catId": cat_id,
             "owner": owner,
             "price": price,
-            "customization": customization,
+            "customization": json.dumps(customization),
             "rating": 0,
             "description": description,
             "availability": availability,

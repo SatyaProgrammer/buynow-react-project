@@ -3,8 +3,11 @@ import styled from "styled-components";
 import { useCartContext } from "../context/cart_context";
 import { formatPrice } from "../utils/helpers";
 import { Link } from "react-router-dom";
+import Cookies from "universal-cookie";
 
 const CartTotals = () => {
+  const cookies = new Cookies();
+  const data = cookies.get("jwt_authorization");
   const { total_amount, shipping_fee } = useCartContext();
   return (
     <Wrapper>
@@ -22,9 +25,15 @@ const CartTotals = () => {
             <span>{formatPrice(total_amount + shipping_fee)}</span>
           </h4>
         </article>
-        <Link to="/checkout" className="btn">
-          proceed to checkout
-        </Link>
+        {data ? (
+          <Link to="/checkout" className="btn">
+            proceed to checkout
+          </Link>
+        ) : (
+          <Link to="/login" className="btn">
+            Please login
+          </Link>
+        )}
       </div>
     </Wrapper>
   );

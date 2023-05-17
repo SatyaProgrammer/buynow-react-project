@@ -34,7 +34,9 @@ const ProductDetail = () => {
   return (
     <>
       {state.loading ? (
-        <Loading />
+        <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex justify-center items-center transition-full duration-300">
+          <Loading />
+        </div>
       ) : (
         <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
           <p className="text-cldark text-4xl font-bold my-4">Product Detail</p>
