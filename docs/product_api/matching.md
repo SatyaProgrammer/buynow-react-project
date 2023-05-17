@@ -63,6 +63,14 @@ Any of the following query parameters can be used to filter the results.
 
 ## Note
 
-Search by `category` or `owner` is not supported by this endpoint. Use the dedicated `/products/category?cat=<category>` and `/products/owner?owner=<owner>` endpoints instead.
+Search by `customization` is not supported.
 
-Search by `customization` is not supported either.
+Matching keys:
+
+- `m<criteria>`: Match the criteria loosely, equivalent to `LIKE '%<criteria>%'`
+- `r<from>-<to>`: Match the criteria in the range `[from, to]`
+- `<<criteria>`: Match less than the criteria, equivalent to `< <criteria>`
+- `><criteria>`: Match greater than the criteria, equivalent to `> <criteria>`
+- `l<criteria>`: Match less than or equal to the criteria, equivalent to `<= <criteria>`
+- `g<criteria>`: Match greater than or equal to the criteria, equivalent to `>= <criteria>`
+- `=<criteria>`: Match equal to the criteria, equivalent to `= <criteria>`
