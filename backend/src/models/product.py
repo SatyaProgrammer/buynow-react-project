@@ -17,25 +17,28 @@ u.username as ownerName, p.price, p.customization, p.rating, p.availability, p.s
 p.deliveryOption, p.description, p.createdAt FROM products AS p
 INNER JOIN categories AS c ON p.catId = c.id
 INNER JOIN users as u ON p.owner = u.id
-WHERE {" AND ".join([f"{'c' if k == 'catName' else 'u' if k == 'username' else 'p'}.{k} {Product.__tsl(__cond[k][0])}" for k in __cond.keys()])}
+WHERE {" AND ".join([f"{'c' if k == 'catName' else 'u' if k == 'username' else 'p'}.{Product.__canonical_name(k)} {Product.__tsl(__cond[k][0])}" for k in __cond.keys()])}
 {"ORDER BY p.createdAt DESC" if sort_newest else ""}
 {"LIMIT %s OFFSET %s" if limit != -1 else ""}"""
         else:
+            criteria, args = Product.criteria_to_arguments(__cond)
             sb = "SELECT "
             sb += ", ".join(taking)
             sb += " FROM products"
             sb += " INNER JOIN categories AS c ON p.catId = c.id"
             sb += " INNER JOIN users as u ON p.owner = u.id"
             sb += " WHERE "
-            sb += " AND ".join([f"{k} = %s" for k in __cond.keys()])
+            sb += criteria
             if sort_newest: sb += " ORDER BY p.createdAt DESC"
             if limit != -1: sb += " LIMIT %s OFFSET %s"
             
         print(sb)
         
         cursor = db_conn.cursor(prepared=True)
-        print(tuple(map(lambda x: x[1: ], tuple(__cond.values()))) + (limit, offset) if limit != -1 else tuple(map(lambda x: x[1:], tuple(__cond.values()))))
-        cursor.execute(sb, tuple(map(lambda x: x[1: ] if x[0] != "m" else f"%{x[1:]}%", tuple(__cond.values()))) + (limit, offset) if limit != -1 else tuple(map(lambda x: x[1:] if x[0] != "m" else f"%{x[1:]}%", tuple(__cond.values()))))
+        
+        #* scuffed code, can't be bothered to fix
+        # print(tuple(map(lambda x: x[1: ], tuple(__cond.values()))) + (limit, offset) if limit != -1 else tuple(map(lambda x: x[1:], tuple(__cond.values()))))
+        cursor.execute(sb, args + (limit, offset) if limit != -1 else args)
 
         result = cursor.fetchall()
         cursor.close()
@@ -107,6 +110,7 @@ p.deliveryOption, p.description, p.createdAt FROM products AS p
 INNER JOIN categories AS c ON p.catId = c.id
 INNER JOIN users as u ON p.owner = u.id
 WHERE p.id = %s"""
+        cursor.execute(sql, (__id, ))
         result = cursor.fetchone()
         cursor.close()
         
@@ -125,6 +129,7 @@ p.deliveryOption, p.description, p.createdAt FROM products AS p
 INNER JOIN categories AS c ON p.catId = c.id
 INNER JOIN users as u ON p.owner = u.id
 WHERE p.pid = %s"""
+        cursor.execute(sql, (__pid, ))
         result = cursor.fetchone()
         cursor.close()
         
@@ -186,6 +191,25 @@ WHERE p.pid = %s"""
         except Exception as e:
             Global.console.print_exception()
             return Result.Err(str(e))
+        
+    @staticmethod
+    def update(pid: str, keys: dict[str]) -> Result[tuple, str]:
+        try:
+            keys_keys = sorted(keys)
+            
+            sb = "UPDATE products SET "
+            sb += ", ".join([f"{key} = %s" for key in keys_keys])
+            sb += " WHERE pid = %s"
+            
+            db_conn = Global.db_conn
+            cursor = db_conn.cursor(prepared=True)
+            cursor.execute(sb, tuple([keys[key] for key in keys_keys] + [pid]))
+            db_conn.commit()
+            cursor.close()
+            return Result.Ok(())
+        except Exception as e:
+            Global.console.print_exception()
+            return Result.Err(str(e))
     
     @staticmethod
     def attest_nonexistent(pid: str) -> bool:
@@ -198,8 +222,45 @@ WHERE p.pid = %s"""
         return result[0] == 0
     
     @staticmethod
-    def __tsl(st: str) -> str:
-        if st == "m":
-            return r"LIKE %s"
+    def __canonical_name(k: str) -> str:
+        if k == "catName":
+            return "c.name"
+        elif k == "ownerName":
+            return "u.username"
         else:
-            return f"{st[0]} %s"
+            return f"p.{k}"
+        
+    @staticmethod
+    def criteria_to_arguments(c: dict[str]) -> tuple[str, tuple]:
+        sb = []
+        args = []
+        
+        for k in c:
+            s = c[k][0]
+            if s == "r":
+                sb.append(f"{Product.__canonical_name(k)} BETWEEN %s AND %s")
+                r1, r2 = c[k][1].split("-")
+                args.append(r1)
+                args.append(r2)
+            elif s == "m":
+                sb.append(f"{Product.__canonical_name(k)} LIKE %s")
+                args.append(f"%{c[k][1:]}%")
+            elif s == "<":
+                sb.append(f"{Product.__canonical_name(k)} < %s")
+                args.append(c[k][1:])
+            elif s == ">":
+                sb.append(f"{Product.__canonical_name(k)} > %s")
+                args.append(c[k][1:])
+            elif s == "l":
+                sb.append(f"{Product.__canonical_name(k)} <= %s")
+                args.append(c[k][1:])
+            elif s == "g":
+                sb.append(f"{Product.__canonical_name(k)} >= %s")
+                args.append(c[k][1:])
+            elif s == "=":
+                sb.append(f"{Product.__canonical_name(k)} = %s")
+                args.append(c[k][1:])
+            else:
+                raise ValueError("Invalid search type")
+            
+        return " AND ".join(sb), tuple(args)

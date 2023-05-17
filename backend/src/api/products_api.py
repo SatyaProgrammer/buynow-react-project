@@ -1,4 +1,3 @@
-import json
 from flask import Blueprint, request
 from backend.src.lib.passwd import make_product_id
 from backend.src.lib.validate import base64_valid
@@ -60,23 +59,23 @@ def get_matching_products():
             return (result, 200, {"Content-Type": "application/json"})
         else:
             # return matching products
-            offset = request.args.get("offset", 0)
-            limit = request.args.get("limit", 25)
+            offset = int(request.args.get("offset", 0))
+            limit = int(request.args.get("limit", 25))
             
             result = Product.fetch_matching([], search_criteria, offset, limit, sort_newest=True)
-            res = {
-                "pid": result["pid"],
-                "name": result["name"],
-                "images": result["images"],
-                "category": result["catName"],
-                "owner": result["ownerName"],
-                "price": result["price"],
-                "customization": result["customization"],
-                "rating": result["rating"],
-                "description": result["description"],
-                "availability": result["availability"],
-                "deliveryOption": result["deliveryOption"]
-            }
+            res = list(map(lambda r: {
+                "pid": r["pid"],
+                "name": r["name"],
+                "images": r["images"],
+                "category": r["catName"],
+                "owner": r["ownerName"],
+                "price": r["price"],
+                "customization": r["customization"],
+                "rating": r["rating"],
+                "description": r["description"],
+                "availability": r["availability"],
+                "deliveryOption": r["deliveryOption"]
+            }, result))
             return (res, 200, {"Content-Type": "application/json"})
     except Exception as e:
         Global.console.print_exception(show_locals=True)
@@ -161,6 +160,169 @@ def add_products(uid):
                 "error": "Couldn't add product."
             }, 500, {"Content-Type": "application/json"}
 
+    except Exception as e:
+        Global.console.print_exception()
+        return {
+            "error_code": "BX0000",
+            "error": "Something went wrong."
+        }, 500, {"Content-Type": "application/json"}
+        
+@prod_api.post("/products/update")
+@limiter.limit("5 per minute")
+@token_required
+def update_product(uid):
+    try:
+        user_id = uid
+        user = User.id(user_id)
+        if user["userType"] != "vendor" or user["userType"] != "administrator":
+            return {
+                "error_code": "BX1201",
+                "error": "You are not a vendor."
+            }, 401, {"Content-Type": "application/json"}
+        
+        request_data = request.get_json()
+        pid = request_data["pid"]
+        if len(pid) != 43:
+            return {
+                "error_code": "BX1205",
+                "error": "Invalid product id."
+            }, 400, {"Content-Type": "application/json"}
+        
+        # product_id must be base64
+        if not base64_valid(pid):
+            return {
+                "error_code": "BX1205",
+                "error": "Invalid product id."
+            }, 400, {"Content-Type": "application/json"}
+        
+        if not Product.attest_exists(pid):
+            return {
+                "error_code": "BX1206",
+                "error": "Product doesn't exist."
+            }, 400, {"Content-Type": "application/json"}
+        
+        product = Product.pid(pid)
+        if product["owner"] != user_id:
+            return {
+                "error_code": "BX1207",
+                "error": "You don't own this product."
+            }, 401, {"Content-Type": "application/json"}
+        
+        cat_name = request_data["category"]
+        cat = Category.fetch_matching(["id", "name"], {"name": cat_name})
+        if len(cat) == 0:
+            return {
+                "error_code": "BX1202",
+                "error": "Invalid category."
+            }, 400, {"Content-Type": "application/json"}
+
+        cat_id = cat[0]["id"]
+        
+        name = request_data["name"]
+        images = request_data["images"]
+        price = request_data["price"]
+        customization = request_data["customization"]
+        description = request_data["description"]
+        availability = request_data["availability"]
+        deliveryOption = request_data["deliveryOption"]
+        
+        if not validate_json(images) or not validate_json(customization):
+            return {
+                "error_code": "BX1203",
+                "error": "Invalid JSON."
+            }, 400, {"Content-Type": "application/json"}
+        
+        try:
+            price = float(price)
+        except:
+            return {
+                "error_code": "BX1204",
+                "error": "Invalid price."
+            }, 400, {"Content-Type": "application/json"}
+        
+        res = Product.update(pid, {
+            "name": name,
+            "images": images,
+            "catId": cat_id,
+            "price": price,
+            "customization": customization,
+            "description": description,
+            "availability": availability,
+            "deliveryOption": deliveryOption
+        })
+        
+        if res.is_ok():
+            return {
+                "pid": pid
+            }, 200, {"Content-Type": "application/json"}
+        else:
+            Global.console.print(res.unwrap_err())
+            return {
+                "error_code": "BX1299",
+                "error": "Couldn't update product."
+            }, 500, {"Content-Type": "application/json"}
+            
+    except Exception as e:
+        Global.console.print_exception()
+        return {
+            "error_code": "BX0000",
+            "error": "Something went wrong."
+        }, 500, {"Content-Type": "application/json"}
+        
+@prod_api.post("/products/delete")
+@limiter.limit("5 per minute")
+@token_required
+def delete_product(uid):
+    try:
+        user_id = uid
+        user = User.id(user_id)
+        if user["userType"] != "vendor" or user["userType"] != "administrator":
+            return {
+                "error_code": "BX1201",
+                "error": "You are not a vendor."
+            }, 401, {"Content-Type": "application/json"}
+        
+        request_data = request.get_json()
+        pid = request_data["pid"]
+        if len(pid) != 43:
+            return {
+                "error_code": "BX1205",
+                "error": "Invalid product id."
+            }, 400, {"Content-Type": "application/json"}
+        
+        # product_id must be base64
+        if not base64_valid(pid):
+            return {
+                "error_code": "BX1205",
+                "error": "Invalid product id."
+            }, 400, {"Content-Type": "application/json"}
+        
+        if not Product.attest_exists(pid):
+            return {
+                "error_code": "BX1206",
+                "error": "Product doesn't exist."
+            }, 400, {"Content-Type": "application/json"}
+        
+        product = Product.pid(pid)
+        if product["owner"] != user_id:
+            return {
+                "error_code": "BX1207",
+                "error": "You don't own this product."
+            }, 401, {"Content-Type": "application/json"}
+        
+        res = Product.delete(pid)
+        
+        if res.is_ok():
+            return {
+                "pid": pid
+            }, 200, {"Content-Type": "application/json"}
+        else:
+            Global.console.print(res.unwrap_err())
+            return {
+                "error_code": "BX1299",
+                "error": "Couldn't delete product."
+            }, 500, {"Content-Type": "application/json"}
+            
     except Exception as e:
         Global.console.print_exception()
         return {
