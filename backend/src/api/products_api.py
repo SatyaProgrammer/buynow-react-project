@@ -90,12 +90,6 @@ def get_matching_products():
 def add_products(uid):
     try:
         user_id = uid
-        user = User.id(user_id)
-        if user["userType"] != "vendor":
-            return {
-                "error_code": "BX1201",
-                "error": "You are not a vendor."
-            }, 401, {"Content-Type": "application/json"}
         
         request_data = request.get_json()
         cat_name = request_data["category"]
@@ -173,12 +167,6 @@ def add_products(uid):
 def update_product(uid):
     try:
         user_id = uid
-        user = User.id(user_id)
-        if user["userType"] != "vendor" or user["userType"] != "administrator":
-            return {
-                "error_code": "BX1201",
-                "error": "You are not a vendor."
-            }, 401, {"Content-Type": "application/json"}
         
         request_data = request.get_json()
         pid = request_data["pid"]
@@ -275,12 +263,6 @@ def update_product(uid):
 def delete_product(uid):
     try:
         user_id = uid
-        user = User.id(user_id)
-        if user["userType"] != "vendor" or user["userType"] != "administrator":
-            return {
-                "error_code": "BX1201",
-                "error": "You are not a vendor."
-            }, 401, {"Content-Type": "application/json"}
         
         request_data = request.get_json()
         pid = request_data["pid"]
