@@ -5,16 +5,14 @@ import {
   INITIAL_STATE,
   ACTION_TYPES,
 } from "./AddProductReducer";
-import { IconPlus, IconBin } from "../utils/Icons";
+import { IconPlus, IconBin, IconAlert } from "../utils/Icons";
 import axios from "axios";
 import Cookies from "universal-cookie";
-
-const price_regex = /^[0-9\b]+$/;
 
 const AddProduct = () => {
   const [state, dispatch] = useReducer(addProductReducer, INITIAL_STATE);
   const nameRef = useRef();
-  const priceRef = useRef("");
+  const errRef = useRef();
   const cookies = new Cookies();
 
   const handleAddCustom = () => {
@@ -75,7 +73,6 @@ const AddProduct = () => {
   };
 
   useEffect(() => {
-    // nameRef.current.focus();
     dispatch({
       type: ACTION_TYPES.ADD_CUSTOMIZATION,
       payload: { type: "", value: [""] },
@@ -84,21 +81,25 @@ const AddProduct = () => {
   }, []);
 
   useEffect(() => {
-    priceRef.current = state.price;
-    if (price_regex.test(state.price)) {
-      dispatch({ type: ACTION_TYPES.SET_PRICE, payload: state.price });
-    } else {
-      dispatch({ type: ACTION_TYPES.SET_PRICE, payload: priceRef.current });
-    }
-  }, [state.price]);
+    dispatch({ type: ACTION_TYPES.SET_ERROR, payload: "" });
+    // dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: false });
+  }, [
+    state.name,
+    state.description,
+    state.category,
+    state.price,
+    state.customization,
+    state.availability,
+    state.deliveryOption,
+    state.image,
+  ]);
 
   const handleSubmit = async (e) => {
-    // console.log("work");
     e.preventDefault();
     const preset_key = "c003351q";
     const cloud_name = "dlplvjf9l";
     const token = cookies.get("jwt_authorization");
-    console.log(token)
+    console.log(token);
 
     if (token) {
       for (let i = 0; i < state.image.length; i++) {
@@ -120,6 +121,10 @@ const AddProduct = () => {
                 type: ACTION_TYPES.SET_IMAGE_URL,
                 payload: inputData,
               });
+              dispatch({
+                type: ACTION_TYPES.SET_IMAGE_URL,
+                payload: [""],
+              });
             })
             .catch((err) => console.log(err));
         }
@@ -127,8 +132,7 @@ const AddProduct = () => {
     } else {
       console.log("Token expired");
     }
-    // let customization = JSON.stringify(state.customization);
-    // let imageUrl = JSON.stringify(state.imageUrl);
+
     let data = JSON.stringify({
       name: state.name,
       images: state.imageUrl,
@@ -152,45 +156,29 @@ const AddProduct = () => {
           },
         }
       );
-      console.log(response?.data);
-      console.log(response?.accessToken);
-      console.log(JSON.stringify(response));
       dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: true });
       dispatch({ type: ACTION_TYPES.SET_NAME, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_DESCRIPTION, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_CATEGORY, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_PRICE, payload: "" });
-      dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [""] });
+      dispatch({
+        type: ACTION_TYPES.SET_CUSTOMIZATION,
+        payload: { type: "", value: [""] },
+      });
       dispatch({ type: ACTION_TYPES.SET_AVAILABILITY, payload: 1 });
       dispatch({ type: ACTION_TYPES.SET_DELIVERYOPTION, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_IMAGE, payload: [""] });
       dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: [""] });
+      dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: true });
+      window.scrollTo(0, 0);
     } catch (err) {
-      console.log(err?.response);
-      // if (!err?.response) {
-      //   dispatch({
-      //     type: ACTION_TYPES.SET_ERROR_MSG,
-      //     payload: "No Server Response",
-      //   });
-      // } else if (err.response?.status === 409) {
-      //   dispatch({
-      //     type: ACTION_TYPES.SET_ERROR_MSG,
-      //     payload: "Username Taken",
-      //   });
-      // } else {
-      //   dispatch({
-      //     type: ACTION_TYPES.SET_ERROR_MSG,
-      //     payload: "Regitration Failed",
-      //   });
-      // }
-      // errRef.current.focus();
+      dispatch({
+        type: ACTION_TYPES.SET_ERROR,
+        payload: err?.response.data.error,
+      });
+      window.scrollTo(0, 0);
     }
   };
-
-  // console.log(state.name)
-  // console.log(state.description)
-  // console.log(state.brand)
-  // console.log(state.price)
 
   return (
     <>
@@ -200,6 +188,28 @@ const AddProduct = () => {
         </p>
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col gap-4">
+            {state.success ? (
+              <div className="p-4 flex gap-1 items-center bg-green-50 text-clgreen font-semibold rounded-md shadow-lg border-2 border-green-200">
+                <div className="w-4 h-4">
+                  <IconAlert fill="#bb2525" />
+                </div>
+                <div className="font-bold">Error:</div>
+                <div>{state.errMessage}</div>
+              </div>
+            ) : (
+              ""
+            )}
+            {state.errMessage ? (
+              <div className="p-4 flex gap-1 items-center bg-red-50 text-cldanger font-semibold rounded-md shadow-lg border-2 border-red-200">
+                <div className="w-4 h-4">
+                  <IconAlert fill="#bb2525" />
+                </div>
+                <div className="font-bold">Error:</div>
+                <div>{state.errMessage}</div>
+              </div>
+            ) : (
+              ""
+            )}
             <div className="bg-white p-4 shadow-lg rounded-md flex flex-col gap-4">
               <div className="flex flex-col gap-2">
                 <div className="text-xl font-semibold text-cldark">
@@ -268,7 +278,6 @@ const AddProduct = () => {
                 <input
                   type="number"
                   required
-                  ref={priceRef}
                   placeholder="Product price"
                   onChange={(e) =>
                     dispatch({

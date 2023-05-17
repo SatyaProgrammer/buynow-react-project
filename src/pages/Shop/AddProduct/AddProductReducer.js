@@ -12,6 +12,8 @@ export const ACTION_TYPES = {
   ADD_IMAGE: "ADD_IMAGE",
   SET_IMAGE: "SET_IMAGE",
   SET_IMAGE_URL: "SET_IMAGE_URL",
+  SET_ERROR: "SET_ERROR",
+  SET_SUCCESS: "SET_SUCCESS",
 };
 
 export const INITIAL_STATE = {
@@ -102,6 +104,16 @@ export const addProductReducer = (state, action) => {
       return {
         ...state,
         imageUrl: action.payload,
+      };
+    case ACTION_TYPES.SET_ERROR:
+      return {
+        ...state,
+        errMessage: action.payload,
+      };
+    case ACTION_TYPES.SET_SUCCESS:
+      return {
+        ...state,
+        success: action.payload,
       };
 
     default:
