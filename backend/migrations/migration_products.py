@@ -18,7 +18,7 @@ def up():
     table.float("rating")
     table.mediumtext("description")
     table.int("availability")
-    table.int("soldAmount")
+    table.int("soldAmount").default("0")
     table.text("deliveryOption")
     table.timestamp("createdAt").default("CURRENT_TIMESTAMP")
 
