@@ -8,11 +8,13 @@ import {
 import { IconPlus, IconBin, IconAlert, IconCheck } from "../utils/Icons";
 import axios from "axios";
 import Cookies from "universal-cookie";
+import { useNavigate } from "react-router-dom";
 
 const AddProduct = () => {
   const [state, dispatch] = useReducer(addProductReducer, INITIAL_STATE);
   const nameRef = useRef();
   const cookies = new Cookies();
+  const navigate = useNavigate();
 
   const handleAddCustom = () => {
     dispatch({
@@ -154,6 +156,7 @@ const AddProduct = () => {
           },
         }
       );
+      console.log(response);
       dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: true });
       dispatch({ type: ACTION_TYPES.SET_NAME, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_DESCRIPTION, payload: "" });
@@ -173,6 +176,10 @@ const AddProduct = () => {
       });
       window.scrollTo(0, 0);
     } catch (err) {
+      console.log(err);
+      if (err?.response.data.error_code == "BX0001") {
+        navigate("/login");
+      }
       dispatch({
         type: ACTION_TYPES.SET_ERROR,
         payload: err?.response.data.error,

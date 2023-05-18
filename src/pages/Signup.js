@@ -7,7 +7,7 @@ import {
 import axios from "axios";
 import { API_CALL } from "./Shop/utils/Constant";
 import { Link } from "react-router-dom";
-import { IconAlert, IconDollar } from "./Shop/utils/Icons";
+import { IconAlert, IconCheck } from "./Shop/utils/Icons";
 
 const USERNAME_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PASSWORD_REGEX =
@@ -50,7 +50,7 @@ const Signup = () => {
   }, [state.password, state.confirmPassword]);
 
   useEffect(() => {
-    dispatch({ type: ACTION_TYPES.SET_ERROR_MSG, payload: "" });
+    dispatch({ type: ACTION_TYPES.SET_ERROR, payload: "" });
   }, [state.username, state.email, state.password, state.confirmPassword]);
 
   const handleSubmit = async (e) => {
@@ -60,7 +60,7 @@ const Signup = () => {
     const v2 = PASSWORD_REGEX.test(state.password);
     const v3 = EMAIL_REGEX.test(state.email);
     if (!v1 || !v2 || !v3) {
-      dispatch({ type: ACTION_TYPES.SET_ERROR_MSG, payload: "Invalid Entry" });
+      dispatch({ type: ACTION_TYPES.SET_ERROR, payload: "Invalid Entry" });
       return;
     }
     let data = JSON.stringify({
@@ -76,44 +76,49 @@ const Signup = () => {
           headers: { "Content-Type": "application/json" },
         }
       );
-      console.log(response?.data);
-      console.log(response?.accessToken);
-      console.log(JSON.stringify(response));
       dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: true });
       dispatch({ type: ACTION_TYPES.SET_USERNAME, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_PASSWORD, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_EMAIL, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_CONFIRM_PASSWORD, payload: "" });
+      window.scrollTo(0, 0);
+      dispatch({type:ACTION_TYPES.SET_SUCCESS, payload: "Signup successful"})
     } catch (err) {
-      console.log(err?.response)
-      if (!err?.response) {
-        dispatch({
-          type: ACTION_TYPES.SET_ERROR_MSG,
-          payload: "No Server Response",
-        });
-      } else if (err.response?.status === 409) {
-        dispatch({
-          type: ACTION_TYPES.SET_ERROR_MSG,
-          payload: "Username Taken",
-        });
-      } else {
-        dispatch({
-          type: ACTION_TYPES.SET_ERROR_MSG,
-          payload: "Regitration Failed",
-        });
-      }
-      // errRef.current.focus();
+      dispatch({type:ACTION_TYPES.SET_ERROR, payload: err?.response.data.error})
+      window.scrollTo(0, 0);
     }
   };
 
   return (
     <div className=" p-8 bg-gray-100 grid place-items-center">
       <div className="w-96 bg-white shadow-lg flex flex-col gap-6 rounded-md">
-        <div className="text-3xl font-semibold text-primary4 underline px-8 mt-6">Sign up</div>
+        <div className="text-3xl font-semibold text-primary4 underline px-8 mt-6">
+          Sign up
+        </div>
         <form onSubmit={handleSubmit}>
           <div className="px-8 pb-8">
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-4">
+                {state.success ? (
+                  <div className="p-3 px-2 flex gap-1 items-center bg-green-50 text-clgreen font-semibold rounded-lg border-2 border-green-200">
+                    <div className="w-4 h-4">
+                      <IconCheck fill="#25bb32" />
+                    </div>
+                    <div>{state.success}</div>
+                  </div>
+                ) : (
+                  ""
+                )}
+                {state.errorMsg ? (
+                  <div className="p-3 px-2 flex gap-1 items-center bg-red-50 text-cldanger font-semibold rounded-lg border-2 border-red-200">
+                    <div className="w-4 h-4">
+                      <IconAlert fill="#bb2525" />
+                    </div>
+                    <div>{state.errorMsg}</div>
+                  </div>
+                ) : (
+                  ""
+                )}
                 <div className="flex flex-col gap-2">
                   <label
                     htmlFor="username"
