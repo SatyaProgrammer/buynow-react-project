@@ -1,23 +1,45 @@
 import React from "react";
 import { FaShoppingCart, FaUserMinus, FaUserPlus } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useProductsContext } from "../context/products_context";
+import { useCartContext } from "../context/cart_context";
+import Cookies from "universal-cookie";
 
 const CartButtons = () => {
+  const cookies = new Cookies();
+  const navigate = useNavigate();
   const { closeSidebar } = useProductsContext();
+  const { total_items } = useCartContext();
+  const data = cookies.get("jwt_authorization");
+
+  const logout = () => {
+    cookies.remove("jwt_authorization");
+    navigate("/");
+  };
+
+  const login = () => {
+    navigate("/login");
+  };
+
   return (
     <Wrapper className="cart-btn-wrapper">
       <Link to="/cart" className="cart-btn" onClick={closeSidebar}>
         Cart
         <span className="cart-container">
           <FaShoppingCart />
-          <span className="cart-value">12</span>
+          <span className="cart-value">{total_items}</span>
         </span>
       </Link>
-      <button type="button" className="auth-btn">
-        Login <FaUserPlus />
-      </button>
+      {data ? (
+        <button type="button" className="auth-btn" onClick={logout}>
+          Logout <FaUserMinus />
+        </button>
+      ) : (
+        <button type="button" className="auth-btn" onClick={login}>
+          Login <FaUserPlus />
+        </button>
+      )}
     </Wrapper>
   );
 };

@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import logo from "../assets/buynow-low-resolution-color-logo.png";
+import logo from "../assets/buynowLogo.png";
 import { FaBars } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { links } from "../utils/constants";
 import CartButtons from "./CartButtons";
 import { useProductsContext } from "../context/products_context";
@@ -25,7 +25,14 @@ const Navbar = () => {
             const { id, text, url } = link;
             return (
               <li key={id}>
-                <Link to={url}>{text}</Link>
+                <NavLink
+                  to={url}
+                  className={({ isActive }) =>
+                    isActive ? "border-b-2 border-primary4" : ""
+                  }
+                >
+                  {text}
+                </NavLink>
               </li>
             );
           })}

@@ -65,6 +65,7 @@ const SingleProductPage = () => {
         </Link>
         <div className="product-center">
           <ProductImages images={images} />
+          {console.log(images)}
           <section>
             <h2>{name}</h2>
             <Stars stars={stars} reviews={reviews} />

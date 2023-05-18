@@ -20,7 +20,7 @@ export const links = [
     id: 4,
     text: "shop",
     url: "/shop",
-  }
+  },
 ];
 
 export const services = [
