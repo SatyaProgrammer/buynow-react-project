@@ -69,9 +69,8 @@ def register():
         name = request_data["username"]
         password = request_data["password"]
         email = request_data["email"]
-        user_type = request_data["userType"]
         
-        if not name or not password or not email or not user_type:
+        if not name or not password or not email:
             return {
                 "error_code": "BX0201",
                 "error": "Missing required fields."
@@ -89,12 +88,6 @@ def register():
                 "error": "Invalid email."
             }, 400, {"Content-Type": "application/json"}
             
-        if user_type not in ["customer", "vendor"]:
-            return {
-                "error_code": "BX0206",
-                "error": "Invalid user type."
-            }, 400, {"Content-Type": "application/json"}
-        
         db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True)
         
@@ -119,9 +112,9 @@ def register():
         
         passwd, salt = make_password(password)
         
-        sql = "INSERT INTO users (username, password, salt, email, userType) VALUES (%s, %s, %s, %s, %s)"
+        sql = "INSERT INTO users (username, password, salt, email) VALUES (%s, %s, %s, %s)"
         
-        cursor.execute(sql, (name, passwd, salt, email, user_type))
+        cursor.execute(sql, (name, passwd, salt, email))
         
         db_conn.commit()
         

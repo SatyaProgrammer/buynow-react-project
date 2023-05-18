@@ -1,4 +1,5 @@
 from flask import Blueprint, request
+import json
 from backend.src.lib.passwd import make_product_id
 from backend.src.lib.validate import base64_valid
 from backend.src.lib import Global
@@ -90,12 +91,6 @@ def get_matching_products():
 def add_products(uid):
     try:
         user_id = uid
-        user = User.id(user_id)
-        if user["userType"] != "vendor":
-            return {
-                "error_code": "BX1201",
-                "error": "You are not a vendor."
-            }, 401, {"Content-Type": "application/json"}
         
         request_data = request.get_json()
         cat_name = request_data["category"]
@@ -117,7 +112,7 @@ def add_products(uid):
         availability = request_data["availability"]
         deliveryOption = request_data["deliveryOption"]
         
-        if not validate_json(images) or not validate_json(customization):
+        if not validate_json(json.dumps(images)) or not validate_json(json.dumps(customization)):
             return {
                 "error_code": "BX1203",
                 "error": "Invalid JSON."
@@ -138,11 +133,11 @@ def add_products(uid):
         res = Product.add({
             "pid": pid,
             "name": name,
-            "images": images,
+            "images": json.dumps(images),
             "catId": cat_id,
             "owner": owner,
             "price": price,
-            "customization": customization,
+            "customization": json.dumps(customization),
             "rating": 0,
             "description": description,
             "availability": availability,
@@ -173,12 +168,6 @@ def add_products(uid):
 def update_product(uid):
     try:
         user_id = uid
-        user = User.id(user_id)
-        if user["userType"] != "vendor" or user["userType"] != "administrator":
-            return {
-                "error_code": "BX1201",
-                "error": "You are not a vendor."
-            }, 401, {"Content-Type": "application/json"}
         
         request_data = request.get_json()
         pid = request_data["pid"]
@@ -275,12 +264,6 @@ def update_product(uid):
 def delete_product(uid):
     try:
         user_id = uid
-        user = User.id(user_id)
-        if user["userType"] != "vendor" or user["userType"] != "administrator":
-            return {
-                "error_code": "BX1201",
-                "error": "You are not a vendor."
-            }, 401, {"Content-Type": "application/json"}
         
         request_data = request.get_json()
         pid = request_data["pid"]
