@@ -4,12 +4,13 @@ import { formatPrice } from "../utils/helpers";
 import { FaSearch } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
-const Product = ({ image, name, price, id }) => {
+const Product = ({ images, name, price, pid }) => {
+  const image = images.images[0];
   return (
     <Wrapper>
       <div className="container p-0">
         <img src={image} alt={name} className="" />
-        <Link to={`/products/${id}`} className="link">
+        <Link to={`/products/${pid}`} className="link">
           <FaSearch />
         </Link>
       </div>

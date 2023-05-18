@@ -40,7 +40,9 @@ export const ProductsProvider = ({ children }) => {
   const fetchProducts = async (url) => {
     dispatch({ type: GET_PRODUCTS_BEGIN });
     try {
-      const response = await axios.get(url);
+      const response = await axios.get(
+        "http://api.localhost/products/matching?limit=-1"
+      );
       const products = response.data;
       dispatch({ type: GET_PRODUCTS_SUCCESS, payload: products });
     } catch (error) {
