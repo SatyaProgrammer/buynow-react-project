@@ -9,7 +9,7 @@
   - [BX1xxx: Product errors](#bx1xxx-product-errors)
     - [BX10xx: General product errors](#bx10xx-general-product-errors)
     - [BX11xx: Fetch product errors](#bx11xx-fetch-product-errors)
-    - [BX12xx: Create product errors](#bx12xx-create-product-errors)
+    - [BX12xx: General Product Manipulation errors](#bx12xx-general-product-manipulation-errors)
   - [BX99xx: Absurd errors](#bx99xx-absurd-errors)
 
 ## BX0xxx: Auth errors
@@ -57,7 +57,7 @@
 | --- | --- |
 | BX1101 | Invalid product id |
 
-### BX12xx: Create product errors
+### BX12xx: General Product Manipulation errors
 
 | Code | Message |
 | --- | --- |
@@ -65,6 +65,9 @@
 | BX1202 | Invalid category |
 | BX1203 | Invalid JSON |
 | BX1204 | Invalid price |
+| BX1205 | Invalid product ID |
+| BX1206 | Product does not exists |
+| BX1207 | You don't own the product |
 | BX1299 | Unknown upstream error |
 
 ## BX99xx: Absurd errors

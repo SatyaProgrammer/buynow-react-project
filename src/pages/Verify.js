@@ -11,14 +11,18 @@ const Verify = () => {
   const handleVerify = async (e) => {
     let verifyToken = { token: searchParams.get("token") };
 
-    const response = await axios.post(
-      "http://api.localhost/auth/verify",
-      verifyToken,
-      {
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-    navigate("/");
+    if(verifyToken){
+      const response = await axios.post(
+        "http://api.localhost/auth/verify",
+        verifyToken,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      navigate("/login");
+    }else {
+      navigate("/")
+    }
   };
 
   useEffect(() => {

@@ -8,8 +8,8 @@ const Filters = () => {
   const {
     filters: {
       text,
-      category,
-      company,
+      catName,
+      ownerName,
       color,
       min_price,
       price,
@@ -21,9 +21,11 @@ const Filters = () => {
     all_products,
   } = useFilterContext();
 
-  const categories = getUniqueValues(all_products, "category");
-  const companies = getUniqueValues(all_products, "company");
-  const colors = getUniqueValues(all_products, "colors");
+  console.log(all_products);
+
+  const categories = getUniqueValues(all_products, "catName");
+  const companies = getUniqueValues(all_products, "ownerName");
+  const colors = getUniqueValues(all_products, "customization");
 
   return (
     <Wrapper>
@@ -50,11 +52,9 @@ const Filters = () => {
                   <button
                     key={index}
                     onClick={updateFilters}
-                    name="category"
+                    name="catName"
                     type="button"
-                    className={`${
-                      category === c.toLowerCase() ? "active" : null
-                    }`}
+                    className={`${catName === c ? "active" : null}`}
                   >
                     {c}
                   </button>
@@ -65,10 +65,10 @@ const Filters = () => {
           {/* end of categories */}
           {/* companies */}
           <div className="form-control">
-            <h5>company</h5>
+            <h5>Vendors</h5>
             <select
-              name="company"
-              value={company}
+              name="ownerName"
+              value={ownerName}
               onChange={updateFilters}
               className="company"
             >
@@ -135,7 +135,7 @@ const Filters = () => {
           </div>
           {/* end of price */}
           {/* shipping */}
-          <div className="form-control shipping">
+          {/* <div className="form-control shipping">
             <label htmlFor="shipping">free shipping</label>
             <input
               type="checkbox"
@@ -144,7 +144,7 @@ const Filters = () => {
               onChange={updateFilters}
               checked={shipping}
             />
-          </div>
+          </div> */}
           {/* end of shipping */}
         </form>
         <button type="button" className="clear-btn" onClick={clearFilters}>

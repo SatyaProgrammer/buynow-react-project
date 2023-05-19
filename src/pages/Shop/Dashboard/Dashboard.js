@@ -11,7 +11,7 @@ import {
 } from "../utils/Icons";
 import { Link } from "react-router-dom";
 
-function Dashboard() {
+const Dashboard = () => {
   const [userData, setUserData] = useState({
     labels: UserData.map((data) => data.year),
     datasets: [
@@ -78,7 +78,7 @@ function Dashboard() {
             <div>
               <div className="text-4xl font-bold text-cldark">94</div>
             </div>
-            <Link to='/shop/customer'>
+            <Link to="/shop/customer">
               <div>
                 <div className="text-md text-primary4 font-bold">
                   All customer
@@ -337,6 +337,6 @@ function Dashboard() {
       </div>
     </>
   );
-}
+};
 
 export default Dashboard;

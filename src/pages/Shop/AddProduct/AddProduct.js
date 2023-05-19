@@ -5,14 +5,16 @@ import {
   INITIAL_STATE,
   ACTION_TYPES,
 } from "./AddProductReducer";
-import { IconPlus, IconBin } from "../utils/Icons";
-
-const price_regex = /^[0-9\b]+$/;
+import { IconPlus, IconBin, IconAlert, IconCheck } from "../utils/Icons";
+import axios from "axios";
+import Cookies from "universal-cookie";
+import { useNavigate } from "react-router-dom";
 
 const AddProduct = () => {
   const [state, dispatch] = useReducer(addProductReducer, INITIAL_STATE);
   const nameRef = useRef();
-  const priceRef = useRef("");
+  const cookies = new Cookies();
+  const navigate = useNavigate();
 
   const handleAddCustom = () => {
     dispatch({
@@ -51,27 +53,140 @@ const AddProduct = () => {
     dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
   };
 
+  const handleAddImage = () => {
+    let inputData = state.image;
+    inputData.push("");
+    dispatch({ type: ACTION_TYPES.SET_IMAGE, payload: inputData });
+  };
+
+  const handleChangeImage = (file, i) => {
+    let inputData = state.image;
+    inputData[i] = file;
+    dispatch({ type: ACTION_TYPES.SET_IMAGE, payload: inputData });
+  };
+
+  const handleRemoveImage = (i) => {
+    let inputData = state.image;
+    inputData.splice(i, 1);
+    dispatch({ type: ACTION_TYPES.SET_IMAGE, payload: inputData });
+  };
+
   useEffect(() => {
-    // nameRef.current.focus();
     dispatch({
       type: ACTION_TYPES.ADD_CUSTOMIZATION,
       payload: { type: "", value: [""] },
     });
+    dispatch({ type: ACTION_TYPES.ADD_IMAGE, payload: "" });
   }, []);
 
   useEffect(() => {
-    priceRef.current = state.price;
-    if (price_regex.test(state.price)) {
-      dispatch({ type: ACTION_TYPES.SET_PRICE, payload: state.price });
-    } else {
-      dispatch({ type: ACTION_TYPES.SET_PRICE, payload: priceRef.current });
-    }
-  }, [state.price]);
+    dispatch({ type: ACTION_TYPES.SET_ERROR, payload: "" });
+  }, [
+    state.name,
+    state.description,
+    state.category,
+    state.price,
+    state.customization,
+    state.availability,
+    state.deliveryOption,
+    state.image,
+  ]);
 
-  // console.log(state.name)
-  // console.log(state.description)
-  // console.log(state.brand)
-  // console.log(state.price)
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const preset_key = "c003351q";
+    const cloud_name = "dlplvjf9l";
+    const token = cookies.get("jwt_authorization");
+
+    if (token) {
+      for (let i = 0; i < state.image.length; i++) {
+        if (state.image[i] != "") {
+          const file = state.image[i];
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("upload_preset", preset_key);
+          await axios
+            .post(
+              `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
+              formData
+            )
+            .then((res) => {
+              let inputData = state.imageUrl;
+              inputData.push(res.data.secure_url);
+              dispatch({
+                type: ACTION_TYPES.SET_IMAGE_URL,
+                payload: inputData,
+              });
+              dispatch({
+                type: ACTION_TYPES.SET_IMAGE_URL,
+                payload: [""],
+              });
+            })
+            .catch((err) =>
+              dispatch({
+                type: ACTION_TYPES.SET_ERROR,
+                payload: "Image upload fail",
+              })
+            );
+        }
+      }
+    } else {
+      console.log("Token expired");
+    }
+
+    let data = JSON.stringify({
+      name: state.name,
+      images: state.imageUrl,
+      category: state.category,
+      price: state.price,
+      customization: state.customization,
+      description: state.description,
+      availability: state.availability,
+      deliveryOption: state.deliveryOption,
+    });
+
+    try {
+      const response = await axios.post(
+        "http://api.localhost/products/add",
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Basic ${token}`,
+          },
+        }
+      );
+      console.log(response);
+      dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: true });
+      dispatch({ type: ACTION_TYPES.SET_NAME, payload: "" });
+      dispatch({ type: ACTION_TYPES.SET_DESCRIPTION, payload: "" });
+      dispatch({ type: ACTION_TYPES.SET_CATEGORY, payload: "" });
+      dispatch({ type: ACTION_TYPES.SET_PRICE, payload: "" });
+      dispatch({
+        type: ACTION_TYPES.SET_CUSTOMIZATION,
+        payload: [],
+      });
+      dispatch({ type: ACTION_TYPES.SET_AVAILABILITY, payload: 1 });
+      dispatch({ type: ACTION_TYPES.SET_DELIVERYOPTION, payload: "" });
+      dispatch({ type: ACTION_TYPES.SET_IMAGE, payload: [""] });
+      dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: [""] });
+      dispatch({
+        type: ACTION_TYPES.SET_SUCCESS,
+        payload: "Product listed for sale",
+      });
+      window.scrollTo(0, 0);
+    } catch (err) {
+      console.log(err);
+      if (err?.response.data.error_code == "BX0001") {
+        navigate("/login");
+      }
+      dispatch({
+        type: ACTION_TYPES.SET_ERROR,
+        payload: err?.response.data.error,
+      });
+      window.scrollTo(0, 0);
+    }
+  };
 
   return (
     <>
@@ -79,8 +194,30 @@ const AddProduct = () => {
         <p className="text-cldark text-4xl font-bold my-4 text-medium">
           Add Product
         </p>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="flex flex-col gap-4">
+            {state.success ? (
+              <div className="p-4 flex gap-1 items-center bg-green-50 text-clgreen font-semibold rounded-md shadow-md border-2 border-green-200">
+                <div className="w-4 h-4">
+                  <IconCheck fill="#25bb32" />
+                </div>
+                <div className="font-bold">Success:</div>
+                <div>{state.success}</div>
+              </div>
+            ) : (
+              ""
+            )}
+            {state.errMessage ? (
+              <div className="p-4 flex gap-1 items-center bg-red-50 text-cldanger font-semibold rounded-md shadow-md border-2 border-red-200">
+                <div className="w-4 h-4">
+                  <IconAlert fill="#bb2525" />
+                </div>
+                <div className="font-bold">Error:</div>
+                <div>{state.errMessage}</div>
+              </div>
+            ) : (
+              ""
+            )}
             <div className="bg-white p-4 shadow-lg rounded-md flex flex-col gap-4">
               <div className="flex flex-col gap-2">
                 <div className="text-xl font-semibold text-cldark">
@@ -89,14 +226,18 @@ const AddProduct = () => {
                 <input
                   type="text"
                   placeholder="Product name"
+                  name="productName"
+                  required
                   ref={nameRef}
+                  onFocus={() =>
+                    dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: "" })
+                  }
                   onChange={(e) =>
                     dispatch({
                       type: ACTION_TYPES.SET_NAME,
                       payload: e.target.value,
                     })
                   }
-                  name="name"
                   value={state.name}
                   className="border border-gray-300 w-full p-3 rounded-lg text-cldark focus:outline focus:outline-1"
                 />
@@ -108,6 +249,10 @@ const AddProduct = () => {
                 <textarea
                   type="text"
                   placeholder="Product description"
+                  required
+                  onFocus={() =>
+                    dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: "" })
+                  }
                   onChange={(e) =>
                     dispatch({
                       type: ACTION_TYPES.SET_DESCRIPTION,
@@ -124,26 +269,35 @@ const AddProduct = () => {
 
             <div className="bg-white p-4 shadow-lg rounded-md flex flex-col gap-4">
               <div className="flex flex-col gap-2">
-                <div className="text-xl font-semibold text-cldark">Brand</div>
+                <div className="text-xl font-semibold text-cldark">
+                  Category
+                </div>
                 <input
                   type="text"
-                  placeholder="Product brand"
+                  placeholder="Product category"
+                  required
+                  onFocus={() =>
+                    dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: "" })
+                  }
                   onChange={(e) =>
                     dispatch({
-                      type: ACTION_TYPES.SET_BRAND,
+                      type: ACTION_TYPES.SET_CATEGORY,
                       payload: e.target.value,
                     })
                   }
-                  name="brand"
-                  value={state.brand}
+                  name="category"
+                  value={state.category}
                   className="border border-gray-300 w-full p-3 rounded-lg text-cldark focus:outline focus:outline-1"
                 />
               </div>
               <div className="flex flex-col gap-2">
                 <div className="text-xl font-semibold text-cldark">Price</div>
                 <input
-                  type="text"
-                  ref={priceRef}
+                  type="number"
+                  required
+                  onFocus={() =>
+                    dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: "" })
+                  }
                   placeholder="Product price"
                   onChange={(e) =>
                     dispatch({
@@ -161,7 +315,6 @@ const AddProduct = () => {
                 <div className="text-xl font-semibold text-cldark">
                   Customization
                 </div>
-                {console.log(JSON.stringify(state.customization))}
                 {state.customization?.map((custom, i) => (
                   <div key={i} className="flex flex-col gap-1">
                     {/* <div className="text-cldark text-sm font-semibold">Type</div> */}
@@ -172,6 +325,13 @@ const AddProduct = () => {
                             <input
                               type="text"
                               placeholder="Color"
+                              required
+                              onFocus={() =>
+                                dispatch({
+                                  type: ACTION_TYPES.SET_SUCCESS,
+                                  payload: "",
+                                })
+                              }
                               onChange={(e) => handleChangeCustom(e, i)}
                               value={state.customization[i]["type"]}
                               name="customTitle"
@@ -209,6 +369,13 @@ const AddProduct = () => {
                                   <input
                                     type="text"
                                     placeholder="Blue"
+                                    required
+                                    onFocus={() =>
+                                      dispatch({
+                                        type: ACTION_TYPES.SET_SUCCESS,
+                                        payload: "",
+                                      })
+                                    }
                                     onChange={(e) =>
                                       handleChangeSubCustom(e, i, k)
                                     }
@@ -244,6 +411,133 @@ const AddProduct = () => {
                   </div>
                 ))}
               </div>
+            </div>
+
+            <div className="bg-white p-4 shadow-lg rounded-md flex flex-col gap-4">
+              <div className="flex flex-col gap-2">
+                <div className="text-xl font-semibold text-cldark">
+                  Availability
+                </div>
+                <div>
+                  <select
+                    id="availability"
+                    name="availability"
+                    className="border border-gray-300 w-full p-3 rounded-lg text-cldark focus:outline focus:outline-1"
+                    onFocus={() =>
+                      dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: "" })
+                    }
+                    onChange={(e) => {
+                      dispatch({
+                        type: ACTION_TYPES.SET_AVAILABILITY,
+                        payload: e.target.value,
+                      });
+                      console.log(state.availability);
+                    }}
+                  >
+                    <option value={0}>Available</option>
+                    <option value={1}>Unavailable</option>
+                  </select>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
+                <div className="text-xl font-semibold text-cldark">
+                  Delivery Option
+                </div>
+                <input
+                  type="text"
+                  placeholder="Delivery option"
+                  required
+                  onFocus={() =>
+                    dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: "" })
+                  }
+                  onChange={(e) =>
+                    dispatch({
+                      type: ACTION_TYPES.SET_DELIVERYOPTION,
+                      payload: e.target.value,
+                    })
+                  }
+                  name="brand"
+                  value={state.deliveryOption}
+                  className="border border-gray-300 w-full p-3 rounded-lg text-cldark focus:outline focus:outline-1"
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <div className="text-xl font-semibold text-cldark">Image</div>
+                {state.image.map((image, idx) => (
+                  <div key={idx} className="flex items-center gap-2">
+                    {state.image[idx] ? (
+                      <div className="w-16 h-10">
+                        <img
+                          alt="not found"
+                          src={URL.createObjectURL(state.image[idx])}
+                          className="w-full h-full rounded-md object-cover shadow-md"
+                        />
+                      </div>
+                    ) : (
+                      ""
+                    )}
+                    <div className="flex w-full border rounded-md items-center">
+                      <label
+                        htmlFor="image"
+                        className="w-full cursor-pointer p-3 hover:bg-gray-300"
+                      >
+                        {/* Select image */}
+                        <input
+                          type="file"
+                          // required
+                          accept="image/png, image/jpg, image/gif, image/jpeg"
+                          name="image"
+                          id="image"
+                          onFocus={() =>
+                            dispatch({
+                              type: ACTION_TYPES.SET_SUCCESS,
+                              payload: "",
+                            })
+                          }
+                          onChange={(e) => {
+                            handleChangeImage(e.target.files[0], idx);
+                            e.target.value = null;
+                          }}
+                          className=""
+                        />
+                      </label>
+                      <div
+                        onClick={() => handleAddImage()}
+                        className="p-2 hover:scale-110 transition-full duration-300"
+                      >
+                        <div className="w-4 h-4">
+                          <IconPlus fill="#222" />
+                        </div>
+                      </div>
+                    </div>
+                    {state.image.length > 1 ? (
+                      <div
+                        onClick={() => handleRemoveImage(idx)}
+                        className="w-5 h-5 hover:scale-110 duration-300 transition-all"
+                      >
+                        <IconBin fill="#222" />
+                      </div>
+                    ) : state.image[0] ? (
+                      <div
+                        onClick={() => {
+                          let inputData = state.image;
+                          inputData = [""];
+                          dispatch({
+                            type: ACTION_TYPES.SET_IMAGE,
+                            payload: inputData,
+                          });
+                        }}
+                        className="w-5 h-5 hover:scale-110 duration-300 transition-all"
+                      >
+                        <IconBin fill="#222" />
+                      </div>
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                ))}
+              </div>
+              <button className="btn">Submit</button>
             </div>
           </div>
         </form>

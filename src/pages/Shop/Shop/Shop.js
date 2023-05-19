@@ -1,15 +1,35 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./Shop.css";
-import ShopSidebar from "../ShopSidebar/ShopSidebar";
+import { useNavigate } from "react-router";
+import Cookies from "universal-cookie";
+import { Link } from "react-router-dom";
 
-function Shop() {
+const Shop = () => {
+  const navigate = useNavigate();
+  const cookies = new Cookies();
+  const token = cookies.get("jwt_authorization");
+
+  const logged = () => {
+    navigate("/shop/dashboard");
+  };
+
+  const unlog = () => {
+    navigate("/shop/shop_information");
+  };
+
+  useEffect(() => {
+    if (token) {
+      logged();
+    } else {
+      unlog();
+    }
+  }, []);
+
   return (
     <>
-      <div className="container">
-        <ShopSidebar />
-      </div>
+      <div className="bg-gray-100 h-screen p-8"></div>
     </>
   );
-}
+};
 
 export default Shop;
