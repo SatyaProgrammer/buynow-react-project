@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { formatPrice } from "../utils/helpers";
 import { FaSearch } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const Product = ({ images, name, price, pid }) => {
   const image = images.images[0];

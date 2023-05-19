@@ -25,13 +25,13 @@ const SingleProductPage = () => {
   } = useProductsContext();
 
   useEffect(() => {
-    fetchSingleProduct(`${url}${id}`);
+    fetchSingleProduct(`http://api.localhost/products/${id}`);
   }, [id]);
 
   useEffect(() => {
     if (error) {
       setTimeout(() => {
-        history.push("/");
+        history("/");
       }, 3000);
     }
   }, [error]);
@@ -48,7 +48,7 @@ const SingleProductPage = () => {
     name,
     price,
     description,
-    stock,
+    availability,
     stars,
     reviews,
     id: sku,
@@ -65,7 +65,6 @@ const SingleProductPage = () => {
         </Link>
         <div className="product-center">
           <ProductImages images={images} />
-          {console.log(images)}
           <section>
             <h2>{name}</h2>
             <Stars stars={stars} reviews={reviews} />
@@ -73,7 +72,7 @@ const SingleProductPage = () => {
             <p className="desc">{description}</p>
             <p className="info">
               <span>Available : </span>
-              {stock > 0 ? "In stock" : "out of stock"}
+              {availability > 0 ? "In stock" : "out of stock"}
             </p>
             <p className="info">
               <span>SKU : </span>
@@ -84,7 +83,7 @@ const SingleProductPage = () => {
               {company}
             </p>
             <hr />
-            {stock > 0 && <AddToCart product={product} />}
+            {availability > 0 && <AddToCart product={product} />}
           </section>
         </div>
       </div>
