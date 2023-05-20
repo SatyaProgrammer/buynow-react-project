@@ -20,8 +20,7 @@ import Order from "./pages/Shop/Order/Order";
 import Customer from "./pages/Shop/Customer/Customer";
 import AddProduct from "./pages/Shop/AddProduct/AddProduct";
 import ProductDetail from "./pages/Shop/ProductDetail/ProductDetail";
-import PrivateRoutes from "./utils/PrivateRoutes";
-import ShopInfo from "./pages/Shop/ShopInfo/ShopInfo";
+import {PrivateRoutes} from "./utils/ManageRoute"
 
 const MainLayout = () => {
   return (
@@ -86,6 +85,8 @@ const MainLayout = () => {
               </>
             }
           />
+
+          <Route path="/shop" element={<Shop />} />
         </Route>
 
         <Route path="/" element={<Home />} />
@@ -93,8 +94,6 @@ const MainLayout = () => {
         <Route path="/cart" element={<Cart />} />
         <Route path="/products" element={<Products />} />
         <Route path="/products/:id" element={<SingleProduct />} />
-        <Route path="/shop" element={<Shop />}/>
-        <Route path="/shop/shop_information" element={<ShopInfo />} />
 
         <Route path="*" element={<Error />} />
       </Routes>

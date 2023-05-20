@@ -176,8 +176,8 @@ const AddProduct = () => {
       });
       window.scrollTo(0, 0);
     } catch (err) {
-      console.log(err);
       if (err?.response.data.error_code == "BX0001") {
+        cookies.remove("jwt_authorization")
         navigate("/login");
       }
       dispatch({
