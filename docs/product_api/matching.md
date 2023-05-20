@@ -65,6 +65,8 @@ Any of the following query parameters can be used to filter the results.
 
 Search by `customization` is not supported.
 
+Use `limit=-1` to get all products.
+
 Matching keys:
 
 - `m<criteria>`: Match the criteria loosely, equivalent to `LIKE '%<criteria>%'`
