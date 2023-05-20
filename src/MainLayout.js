@@ -20,9 +20,10 @@ import Order from "./pages/Shop/Order/Order";
 import Customer from "./pages/Shop/Customer/Customer";
 import AddProduct from "./pages/Shop/AddProduct/AddProduct";
 import ProductDetail from "./pages/Shop/ProductDetail/ProductDetail";
-import {PrivateRoutes} from "./utils/ManageRoute"
+import { PrivateRoutes } from "./utils/ManageRoute";
 
 const MainLayout = () => {
+  console.log("worowor");
   return (
     <React.Fragment>
       <Navbar />
