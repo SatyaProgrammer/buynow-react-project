@@ -72,10 +72,6 @@ const AddProduct = () => {
   };
 
   useEffect(() => {
-    dispatch({
-      type: ACTION_TYPES.ADD_CUSTOMIZATION,
-      payload: { type: "", value: [""] },
-    });
     dispatch({ type: ACTION_TYPES.ADD_IMAGE, payload: "" });
   }, []);
 
@@ -177,7 +173,7 @@ const AddProduct = () => {
       window.scrollTo(0, 0);
     } catch (err) {
       if (err?.response.data.error_code == "BX0001") {
-        cookies.remove("jwt_authorization")
+        cookies.remove("jwt_authorization");
         navigate("/login");
       }
       dispatch({
@@ -315,51 +311,20 @@ const AddProduct = () => {
                 <div className="text-xl font-semibold text-cldark">
                   Customization
                 </div>
+                {console.log(state.customization)}
                 {state.customization?.map((custom, i) => (
                   <div key={i} className="flex flex-col gap-1">
                     {/* <div className="text-cldark text-sm font-semibold">Type</div> */}
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
+                    <div className="grid grid-cols-6 gap-3">
+                      <div className="col-span-2">
                         <div className="flex gap-2 items-center">
                           <div className="flex items-center border rounded-lg  border-gray-300 focus-within:outline focus-within:outline-1 w-full">
-                            <input
-                              type="text"
-                              placeholder="Color"
-                              required
-                              onFocus={() =>
-                                dispatch({
-                                  type: ACTION_TYPES.SET_SUCCESS,
-                                  payload: "",
-                                })
-                              }
-                              onChange={(e) => handleChangeCustom(e, i)}
-                              value={state.customization[i]["type"]}
-                              name="customTitle"
-                              className="focus:outline-none w-full p-3 rounded-lg  text-cldark"
-                            />
-                            <div
-                              onClick={handleAddCustom}
-                              className="p-2 hover:scale-110 transition-full duration-300"
-                            >
-                              <div className="w-4 h-4">
-                                <IconPlus fill="#222" />
-                              </div>
-                            </div>
+                            <div className="w-full p-3 rounded-lg  text-cldark">{custom.type}</div>
                           </div>
-                          {state.customization.length > 1 ? (
-                            <div
-                              onClick={() => handleRemoveCustom(i)}
-                              className="w-5 h-5 hover:scale-110 transition-all duration-300"
-                            >
-                              <IconBin fill="#222" />
-                            </div>
-                          ) : (
-                            ""
-                          )}
                         </div>
                       </div>
 
-                      <div className="flex flex-col gap-3">
+                      <div className="flex flex-col gap-3 col-span-4">
                         {/* {Object.entries(state.customization[i]).filter(([key, _]) => key !== "title").map((t,k) => ( */}
                         {state.customization[i]["value"].map((t, k) => (
                           <div key={k}>
@@ -368,7 +333,7 @@ const AddProduct = () => {
                                 <div className="flex items-center border rounded-lg w-full  border-gray-300 focus-within:outline focus-within:outline-1">
                                   <input
                                     type="text"
-                                    placeholder="Blue"
+                                    placeholder=""
                                     required
                                     onFocus={() =>
                                       dispatch({

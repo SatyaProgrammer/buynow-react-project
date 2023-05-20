@@ -27,7 +27,10 @@ export const INITIAL_STATE = {
 
   price: "",
 
-  constomization: [],
+  customization: [
+    { type: "Color", value: [""] },
+    { type: "Size", value: [""] },
+  ],
 
   availability: 1,
 
