@@ -108,6 +108,9 @@ const Login = () => {
                 <Link to={"/signup"}>Sign up</Link>
               </span>
             </div>
+            <Link to={"/"} className="text-sm underline">
+              Home page
+            </Link>
           </div>
         </form>
       </div>
