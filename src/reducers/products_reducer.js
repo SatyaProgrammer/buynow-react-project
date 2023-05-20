@@ -23,12 +23,9 @@ const products_reducer = (state, action) => {
   }
 
   if (action.type === GET_PRODUCTS_SUCCESS) {
-    const featured_products = action.payload.filter(
-      (product) => product.soldAmount > 3
+    const featured_products = [...action.payload].sort(
+      (a, b) => a.price - b.price
     );
-    if (!featured_products) {
-      featured_products = action.payload;
-    }
     return {
       ...state,
       products_loading: false,
