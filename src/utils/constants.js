@@ -1,25 +1,25 @@
 import React from "react";
 import { GiCompass, GiDiamondHard, GiStabbedNote } from "react-icons/gi";
 export const links = [
+  // {
+  //   id: 1,
+  //   text: "home",
+  //   url: "/",
+  // },
   {
     id: 1,
-    text: "home",
+    text: "shop",
     url: "/",
   },
   {
     id: 2,
-    text: "about",
-    url: "/about",
+    text: "sell",
+    url: "/shop",
   },
   {
     id: 3,
-    text: "products",
-    url: "/products",
-  },
-  {
-    id: 4,
-    text: "shop",
-    url: "/shop",
+    text: "about",
+    url: "/about",
   },
 ];
 

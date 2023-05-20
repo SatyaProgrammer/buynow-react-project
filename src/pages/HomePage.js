@@ -6,8 +6,8 @@ const HomePage = () => {
     <main>
       <Hero />
       <FeaturedProducts />
-      <Services />
-      <Contact />
+      {/* <Services /> */}
+      {/* <Contact /> */}
     </main>
   );
 };

@@ -90,11 +90,13 @@ const MainLayout = () => {
           <Route path="/shop" element={<Shop />} />
         </Route>
 
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Products />} />
         <Route path="/about" element={<About />} />
         <Route path="/cart" element={<Cart />} />
-        <Route path="/products" element={<Products />} />
+        {/* <Route path="/products" element={<Products />} /> */}
         <Route path="/products/:id" element={<SingleProduct />} />
+        <Route path="/shop" element={<Shop />} />
+        <Route path="/shop/shop_information" element={<ShopInfo />} />
 
         <Route path="*" element={<Error />} />
       </Routes>
