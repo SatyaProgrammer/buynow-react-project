@@ -13,7 +13,12 @@ def get_orders(uid):
         db_conn = Global.db_conn
         
         cursor = db_conn.cursor(prepared=True, dictionary=True)
-        cursor.execute("SELECT * FROM orders WHERE userId = ?", (uid,))
+        cursor.execute("""SELECT o.trackingNumber, p.pid, p.name,
+p.images, o.customization, o.quantity, o.cost
+FROM orders as o
+INNER JOIN products as p
+ON o.productId = p.id
+WHERE userId = ?""", (uid,))
         orders = cursor.fetchall()
         cursor.close()
 
@@ -46,33 +51,36 @@ def create_order(uid):
                 "error": "Something went wrong."
             }, 500, {"Content-Type": "application/json"}
         
+        id_pairs = []
+        
         for order in orders:
             cursor = db_conn.cursor(prepared=True)
             pid = order["pid"]
             
-            cursor.execute("SELECT stock FROM products WHERE id = ?", (pid,))
-            stock = cursor.fetchone()[0]
+            cursor.execute("SELECT id, availability FROM products WHERE pid = ?", (pid,))
+            iid, stock = cursor.fetchone()
+            
             
             if stock < order["quantity"]:
                 return {
                     "error_code": "BX0102",
                     "error": "Insufficient stock."
                 }, 400, {"Content-Type": "application/json"}
-                
-        for order in orders:
+
+            id_pairs.append((iid, pid, order["quantity"]))
+
+        for i_id, i_pid, i_quantity in orders:
             cursor = db_conn.cursor(prepared=True)
-            pid = order["pid"]
-            quantity  = order["quantity"]
             
-            cursor.execute("UPDATE products SET stock = stock - ? WHERE id = ?", (quantity, pid))
+            cursor.execute("UPDATE products SET stock = stock - ? WHERE id = ?", (i_quantity, i_id))
                         
             cursor = db_conn.cursor(prepared=True)
-            cursor.execute("SELECT price FROM products WHERE id = ?", (pid,))
+            cursor.execute("SELECT price FROM products WHERE id = ?", (i_id,))
             price = cursor.fetchone()[0]
             
             cursor = db_conn.cursor(prepared=True)
-            cost = price * order["quantity"]
-            cursor.execute("INSERT INTO orders (trackingNumber, productId, quantity, cost), VALUES (?, ?, ?, ?)", (tracking_id, pid, quantity, cost))
+            cost = price * i_quantity
+            cursor.execute("INSERT INTO orders (trackingNumber, productId, quantity, cost), VALUES (?, ?, ?, ?)", (tracking_id, i_id, i_quantity, cost))
         
         db_conn.commit()
         
