@@ -6,6 +6,7 @@ import styled from "styled-components";
 
 const ProductList = () => {
   const { filtered_products: products, grid_view } = useFilterContext();
+
   if (products.length < 1) {
     return (
       <Wrapper>

@@ -19,8 +19,8 @@ const initialState = {
   sort: "price-lowest",
   filters: {
     text: "",
-    company: "all",
-    category: "all",
+    ownerName: "all",
+    catName: "all",
     color: "all",
     min_price: 0,
     max_price: 0,
@@ -60,7 +60,7 @@ export const FilterProvider = ({ children }) => {
   const updateFilters = (e) => {
     let name = e.target.name;
     let value = e.target.value;
-    if (name === "category") {
+    if (name === "catName") {
       value = e.target.textContent;
     }
     if (name === "color") {

@@ -53,7 +53,7 @@ const filter_reducer = (state, action) => {
   }
   if (action.type === FILTER_PRODUCTS) {
     const { all_products } = state;
-    const { text, category, company, color, price, shipping } = state.filters;
+    const { text, catName, ownerName, color, price, shipping } = state.filters;
     let tempProducts = [...all_products];
     // Filtering
     // Text
@@ -63,21 +63,21 @@ const filter_reducer = (state, action) => {
       });
     }
     // Category
-    if (category !== "all") {
+    if (catName !== "all") {
       tempProducts = tempProducts.filter(
-        (product) => product.category === category
+        (product) => product.catName === catName
       );
     }
     // Company
-    if (company !== "all") {
+    if (ownerName !== "all") {
       tempProducts = tempProducts.filter(
-        (product) => product.company === company
+        (product) => product.ownerName === ownerName
       );
     }
     // Colors
     if (color !== "all") {
       tempProducts = tempProducts.filter((product) => {
-        return product.colors.find((c) => c === color);
+        return product.customization.color.find((c) => c === color);
       });
     }
     // Price
@@ -100,8 +100,8 @@ const filter_reducer = (state, action) => {
       filters: {
         ...state.filters,
         text: "",
-        company: "all",
-        category: "all",
+        ownerName: "all",
+        catName: "all",
         color: "all",
         price: state.filters.max_price,
         shipping: false,
