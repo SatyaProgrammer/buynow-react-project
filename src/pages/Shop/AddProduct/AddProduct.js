@@ -165,7 +165,7 @@ const AddProduct = () => {
           { type: "Size", value: [""] },
         ],
       });
-      dispatch({ type: ACTION_TYPES.SET_AVAILABILITY, payload: 1 });
+      dispatch({ type: ACTION_TYPES.SET_AVAILABILITY, payload: 0 });
       dispatch({ type: ACTION_TYPES.SET_DELIVERYOPTION, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_IMAGE, payload: [""] });
       dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: [""] });

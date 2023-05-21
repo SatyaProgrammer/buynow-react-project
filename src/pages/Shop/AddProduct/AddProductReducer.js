@@ -83,6 +83,7 @@ export const addProductReducer = (state, action) => {
     case ACTION_TYPES.SET_CUSTOMIZATION:
       return {
         ...state,
+        customization: action.payload,
         customElements: action.payload,
       };
     case ACTION_TYPES.SET_AVAILABILITY:
