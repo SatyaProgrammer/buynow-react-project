@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 const AddProduct = () => {
   const [state, dispatch] = useReducer(addProductReducer, INITIAL_STATE);
   const nameRef = useRef();
-  const imageRef = useRef()
+  const imageRef = useRef();
   const cookies = new Cookies();
   const navigate = useNavigate();
 
@@ -158,13 +158,7 @@ const AddProduct = () => {
       dispatch({ type: ACTION_TYPES.SET_DESCRIPTION, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_CATEGORY, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_PRICE, payload: "" });
-      dispatch({
-        type: ACTION_TYPES.SET_CUSTOMIZATION,
-        payload: [
-          { type: "Color", value: [""] },
-          { type: "Size", value: [""] },
-        ],
-      });
+      dispatch({ type: ACTION_TYPES.RESET_CUSTOMIZATION });
       dispatch({ type: ACTION_TYPES.SET_AVAILABILITY, payload: 0 });
       dispatch({ type: ACTION_TYPES.SET_DELIVERYOPTION, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_IMAGE, payload: [""] });
