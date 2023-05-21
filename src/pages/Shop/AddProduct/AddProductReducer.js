@@ -32,6 +32,8 @@ export const INITIAL_STATE = {
     { type: "Size", value: [""] },
   ],
 
+  cholder: ["red", "small"],
+
   availability: 1,
 
   deliveryOption: "",
