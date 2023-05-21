@@ -37,7 +37,7 @@ const Dashboard = () => {
   const handleFetch = async () => {
     dispatch({ type: ACTION_TYPES.FETCH_START });
     const response = await axios
-      .get("http://api.localhost/dashboard/customers")
+      .get("http://api.localhost/dashboard/orders_count")
       .catch((err) => {
         console.log(err?.response);
       });
