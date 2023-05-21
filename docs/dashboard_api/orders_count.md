@@ -1,8 +1,8 @@
-# BuyNow API: Get Orders
+# BuyNow API: Get Orders Count
 
 | Key | Value |
 | --- | --- |
-| Endpoint | `api.localhost/trackings` |
+| Endpoint | `api.localhost/dashboard/orders_count` |
 | Method | `GET` |
 | Auth | `Yes` |
 
@@ -19,11 +19,7 @@
 
 ```ts
 {
-    trackings: {
-        id: number,
-        status: string,
-        userId: number,
-    }[]
+    count: number
 }
 ```
 

@@ -1,9 +1,9 @@
-# BuyNow API: Get Orders
+# BuyNow API: Create Orders
 
 | Key | Value |
 | --- | --- |
 | Endpoint | `api.localhost/trackings` |
-| Method | `GET` |
+| Method | `POST` |
 | Auth | `Yes` |
 
 ## Headers
@@ -13,17 +13,24 @@
 | Content-Type | `application/json` |
 | Authorization | `Basic <token>` |
 
-## Response
-
-200:
+## Request
 
 ```ts
 {
-    trackings: {
-        id: number,
-        status: string,
-        userId: number,
+    orders: {
+        pid: string,
+        quantity: number,
     }[]
+}
+```
+
+## Response
+
+201:
+
+```ts
+{
+    "message": string,
 }
 ```
 

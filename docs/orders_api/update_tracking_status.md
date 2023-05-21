@@ -1,9 +1,9 @@
-# BuyNow API: Get Orders
+# BuyNow API: Update Tracking Status
 
 | Key | Value |
 | --- | --- |
-| Endpoint | `api.localhost/trackings` |
-| Method | `GET` |
+| Endpoint | `api.localhost/trackings/<tracking_number>` |
+| Method | `POST` |
 | Auth | `Yes` |
 
 ## Headers
@@ -13,17 +13,21 @@
 | Content-Type | `application/json` |
 | Authorization | `Basic <token>` |
 
+## Request
+
+```ts
+{
+    status: string,
+}
+```
+
 ## Response
 
 200:
 
 ```ts
 {
-    trackings: {
-        id: number,
-        status: string,
-        userId: number,
-    }[]
+    "message": string,
 }
 ```
 
@@ -35,3 +39,7 @@
     "error": string,
 }
 ```
+
+## Note
+
+This endpoint can only be accessed by admins.
