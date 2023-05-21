@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 const AddProduct = () => {
   const [state, dispatch] = useReducer(addProductReducer, INITIAL_STATE);
   const nameRef = useRef();
+  const imageRef = useRef()
   const cookies = new Cookies();
   const navigate = useNavigate();
 
@@ -23,17 +24,17 @@ const AddProduct = () => {
     });
   };
 
-  const handleChangeCustom = (onChangeValue, i) => {
-    let inputData = state.customization;
-    inputData[i]["type"] = onChangeValue.target.value;
-    dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
-  };
+  // const handleChangeCustom = (onChangeValue, i) => {
+  //   let inputData = state.customization;
+  //   inputData[i]["type"] = onChangeValue.target.value;
+  //   dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
+  // };
 
-  const handleRemoveCustom = (i) => {
-    let inputData = state.customization;
-    inputData.splice(i, 1);
-    dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
-  };
+  // const handleRemoveCustom = (i) => {
+  //   let inputData = state.customization;
+  //   inputData.splice(i, 1);
+  //   dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
+  // };
 
   const handleAddSubCustom = (i) => {
     let inputData = state.customization;
@@ -72,10 +73,6 @@ const AddProduct = () => {
   };
 
   useEffect(() => {
-    dispatch({
-      type: ACTION_TYPES.ADD_CUSTOMIZATION,
-      payload: { type: "", value: [""] },
-    });
     dispatch({ type: ACTION_TYPES.ADD_IMAGE, payload: "" });
   }, []);
 
@@ -156,7 +153,6 @@ const AddProduct = () => {
           },
         }
       );
-      console.log(response);
       dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: true });
       dispatch({ type: ACTION_TYPES.SET_NAME, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_DESCRIPTION, payload: "" });
@@ -176,8 +172,8 @@ const AddProduct = () => {
       });
       window.scrollTo(0, 0);
     } catch (err) {
-      console.log(err);
       if (err?.response.data.error_code == "BX0001") {
+        cookies.remove("jwt_authorization");
         navigate("/login");
       }
       dispatch({
@@ -313,53 +309,23 @@ const AddProduct = () => {
 
               <div className="flex flex-col gap-2">
                 <div className="text-xl font-semibold text-cldark">
-                  Customization
+                  Color & Size
                 </div>
                 {state.customization?.map((custom, i) => (
                   <div key={i} className="flex flex-col gap-1">
                     {/* <div className="text-cldark text-sm font-semibold">Type</div> */}
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
+                    <div className="grid grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-3">
+                      <div className="col-span-2 md:col-span-1">
                         <div className="flex gap-2 items-center">
-                          <div className="flex items-center border rounded-lg  border-gray-300 focus-within:outline focus-within:outline-1 w-full">
-                            <input
-                              type="text"
-                              placeholder="Color"
-                              required
-                              onFocus={() =>
-                                dispatch({
-                                  type: ACTION_TYPES.SET_SUCCESS,
-                                  payload: "",
-                                })
-                              }
-                              onChange={(e) => handleChangeCustom(e, i)}
-                              value={state.customization[i]["type"]}
-                              name="customTitle"
-                              className="focus:outline-none w-full p-3 rounded-lg  text-cldark"
-                            />
-                            <div
-                              onClick={handleAddCustom}
-                              className="p-2 hover:scale-110 transition-full duration-300"
-                            >
-                              <div className="w-4 h-4">
-                                <IconPlus fill="#222" />
-                              </div>
+                          <div className="flex items-center  border rounded-lg  border-gray-300 focus-within:outline focus-within:outline-1 w-full">
+                            <div className="w-full p-3 rounded-lg  text-cldark text-center">
+                              {custom.type}
                             </div>
                           </div>
-                          {state.customization.length > 1 ? (
-                            <div
-                              onClick={() => handleRemoveCustom(i)}
-                              className="w-5 h-5 hover:scale-110 transition-all duration-300"
-                            >
-                              <IconBin fill="#222" />
-                            </div>
-                          ) : (
-                            ""
-                          )}
                         </div>
                       </div>
 
-                      <div className="flex flex-col gap-3">
+                      <div className="flex flex-col gap-3 col-span-4 md:col-span-5 lg:col-span-7 xl:col-span-9">
                         {/* {Object.entries(state.customization[i]).filter(([key, _]) => key !== "title").map((t,k) => ( */}
                         {state.customization[i]["value"].map((t, k) => (
                           <div key={k}>
@@ -368,7 +334,7 @@ const AddProduct = () => {
                                 <div className="flex items-center border rounded-lg w-full  border-gray-300 focus-within:outline focus-within:outline-1">
                                   <input
                                     type="text"
-                                    placeholder="Blue"
+                                    placeholder={state.cholder[i]}
                                     required
                                     onFocus={() =>
                                       dispatch({
@@ -387,7 +353,7 @@ const AddProduct = () => {
                                     onClick={() => handleAddSubCustom(i)}
                                     className="p-2 hover:scale-110 transition-full duration-300"
                                   >
-                                    <div className="w-4 h-4">
+                                    <div className="w-4 h-4 cursor-pointer">
                                       <IconPlus fill="#222" />
                                     </div>
                                   </div>
@@ -395,7 +361,7 @@ const AddProduct = () => {
                                 {state.customization[i]["value"].length > 1 ? (
                                   <div
                                     onClick={() => handleRemoveSubCustom(i, k)}
-                                    className="w-5 h-5 hover:scale-110 duration-300 transition-all"
+                                    className="w-5 h-5 hover:scale-110 duration-300 transition-all cursor-pointer"
                                   >
                                     <IconBin fill="#222" />
                                   </div>
@@ -427,15 +393,15 @@ const AddProduct = () => {
                       dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: "" })
                     }
                     onChange={(e) => {
+                      let input = e.target.value
                       dispatch({
                         type: ACTION_TYPES.SET_AVAILABILITY,
-                        payload: e.target.value,
+                        payload: input,
                       });
-                      console.log(state.availability);
                     }}
                   >
-                    <option value={0}>Available</option>
-                    <option value={1}>Unavailable</option>
+                    <option value={(1)}>Available</option>
+                    <option value={(0)}>Unavailable</option>
                   </select>
                 </div>
               </div>
@@ -478,16 +444,15 @@ const AddProduct = () => {
                     )}
                     <div className="flex w-full border rounded-md items-center">
                       <label
-                        htmlFor="image"
-                        className="w-full cursor-pointer p-3 hover:bg-gray-300"
+                        htmlFor={idx}
+                        className="w-full cursor-pointer p-3 hover:bg-gray-200"
                       >
-                        {/* Select image */}
                         <input
                           type="file"
-                          // required
                           accept="image/png, image/jpg, image/gif, image/jpeg"
                           name="image"
-                          id="image"
+                          ref={imageRef}
+                          id={idx}
                           onFocus={() =>
                             dispatch({
                               type: ACTION_TYPES.SET_SUCCESS,
@@ -498,14 +463,15 @@ const AddProduct = () => {
                             handleChangeImage(e.target.files[0], idx);
                             e.target.value = null;
                           }}
-                          className=""
+                          className="hidden"
                         />
+                        Select image
                       </label>
                       <div
                         onClick={() => handleAddImage()}
                         className="p-2 hover:scale-110 transition-full duration-300"
                       >
-                        <div className="w-4 h-4">
+                        <div className="w-4 h-4 cursor-pointer">
                           <IconPlus fill="#222" />
                         </div>
                       </div>
@@ -513,7 +479,7 @@ const AddProduct = () => {
                     {state.image.length > 1 ? (
                       <div
                         onClick={() => handleRemoveImage(idx)}
-                        className="w-5 h-5 hover:scale-110 duration-300 transition-all"
+                        className="w-5 h-5 hover:scale-110 duration-300 transition-all cursor-pointer"
                       >
                         <IconBin fill="#222" />
                       </div>
@@ -527,7 +493,7 @@ const AddProduct = () => {
                             payload: inputData,
                           });
                         }}
-                        className="w-5 h-5 hover:scale-110 duration-300 transition-all"
+                        className="w-5 h-5 hover:scale-110 duration-300 transition-all cursor-pointer"
                       >
                         <IconBin fill="#222" />
                       </div>

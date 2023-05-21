@@ -100,11 +100,13 @@ const Signup = () => {
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-4">
                 {state.success ? (
-                  <div className="p-3 px-2 flex gap-1 items-center bg-green-50 text-clgreen font-semibold rounded-lg border-2 border-green-200">
-                    <div className="w-4 h-4">
-                      <IconCheck fill="#25bb32" />
+                  <div className="p-3 px-2 grid gap-1 grid-cols-12 bg-green-50 text-clgreen font-semibold rounded-lg border-2 border-green-200">
+                    <div className=" col-span-1 grid justify-center pt-1">
+                      <div className="w-4 h-4">
+                        <IconCheck fill="#25bb32" />
+                      </div>
                     </div>
-                    <div>{state.success}</div>
+                    <div className="col-span-11">{state.success}, verify your account with gmail</div>
                   </div>
                 ) : (
                   ""
@@ -123,13 +125,17 @@ const Signup = () => {
                   <label
                     htmlFor="username"
                     className={
-                      !state.validUsername && state.username
+                      !state.validUsername &&
+                      state.username &&
+                      !state.usernameFocus
                         ? "text-cldanger font-semibold"
                         : "text-cldark font-semibold"
                     }
                   >
                     <div className="flex items-center gap-1">
-                      {!state.validUsername && state.username ? (
+                      {!state.validUsername &&
+                      state.username &&
+                      !state.usernameFocus ? (
                         <div className="h-4 w-4">
                           <IconAlert fill="#bb2525" />
                         </div>
@@ -167,7 +173,9 @@ const Signup = () => {
                       })
                     }
                     className={
-                      !state.validUsername && state.username
+                      !state.validUsername &&
+                      state.username &&
+                      !state.usernameFocus
                         ? "border border-cldanger w-full p-3 rounded-lg outline-cldanger caret-cldark text-cldanger focus:outline focus:outline-1 focus:border-none"
                         : "border border-gray-300 w-full p-3 rounded-lg outline-cldark caret-cldark text-cldark focus:outline focus:outline-1 focus-border-none"
                     }
@@ -194,13 +202,13 @@ const Signup = () => {
                   <label
                     htmlFor="email"
                     className={
-                      !state.validEmail && state.email
+                      !state.validEmail && state.email && !state.emailFocus
                         ? "text-cldanger font-semibold"
                         : "text-cldark font-semibold"
                     }
                   >
                     <div className="flex items-center gap-1">
-                      {!state.validEmail && state.email ? (
+                      {!state.validEmail && state.email && !state.emailFocus ? (
                         <div className="h-4 w-4">
                           <IconAlert fill="#bb2525" />
                         </div>
@@ -237,7 +245,7 @@ const Signup = () => {
                       })
                     }
                     className={
-                      !state.validEmail && state.email
+                      !state.validEmail && state.email && !state.emailFocus
                         ? "border border-cldanger w-full p-3 rounded-lg outline-cldanger caret-cldark text-cldanger focus:outline focus:outline-1 focus:border-none"
                         : "border border-gray-300 w-full p-3 rounded-lg outline-cldark caret-cldark text-cldark focus:outline focus:outline-1 focus-border-none"
                     }
@@ -258,13 +266,17 @@ const Signup = () => {
                   <label
                     htmlFor="password"
                     className={
-                      !state.validPassword && state.password
+                      !state.validPassword &&
+                      state.password &&
+                      !state.passwordFocus
                         ? "text-cldanger font-semibold"
                         : "text-cldark font-semibold"
                     }
                   >
                     <div className="flex items-center gap-1">
-                      {!state.validPassword && state.password ? (
+                      {!state.validPassword &&
+                      state.password &&
+                      !state.passwordFocus ? (
                         <div className="h-4 w-4">
                           <IconAlert fill="#bb2525" />
                         </div>
@@ -301,7 +313,9 @@ const Signup = () => {
                       })
                     }
                     className={
-                      !state.validPassword && state.password
+                      !state.validPassword &&
+                      state.password &&
+                      !state.passwordFocus
                         ? "border border-cldanger w-full p-3 rounded-lg outline-cldanger caret-cldark text-cldanger focus:outline focus:outline-1 focus:border-none"
                         : "border border-gray-300 w-full p-3 rounded-lg outline-cldark caret-cldark text-cldark focus:outline focus:outline-1 focus-border-none"
                     }
@@ -328,13 +342,17 @@ const Signup = () => {
                   <label
                     htmlFor="confirmPassword"
                     className={
-                      !state.validConfirmPassword && state.confirmPassword
+                      !state.validConfirmPassword &&
+                      state.confirmPassword &&
+                      !state.confirmPasswordFocus
                         ? "text-cldanger font-semibold"
                         : "text-cldark font-semibold"
                     }
                   >
                     <div className="flex items-center gap-1">
-                      {!state.validConfirmPassword && state.confirmPassword ? (
+                      {!state.validConfirmPassword &&
+                      state.confirmPassword &&
+                      !state.confirmPasswordFocus ? (
                         <div className="h-4 w-4">
                           <IconAlert fill="#bb2525" />
                         </div>
@@ -371,7 +389,9 @@ const Signup = () => {
                       })
                     }
                     className={
-                      !state.validConfirmPassword && state.confirmPassword
+                      !state.validConfirmPassword &&
+                      state.confirmPassword &&
+                      !state.confirmPasswordFocus
                         ? "border border-cldanger w-full p-3 rounded-lg outline-cldanger caret-cldark text-cldanger focus:outline focus:outline-1 focus:border-none"
                         : "border border-gray-300 w-full p-3 rounded-lg outline-cldark caret-cldark text-cldark focus:outline focus:outline-1 focus-border-none"
                     }

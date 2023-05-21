@@ -15,7 +15,7 @@ const CartButtons = () => {
 
   const logout = () => {
     cookies.remove("jwt_authorization");
-    navigate("/");
+    navigate("/login");
   };
 
   const login = () => {

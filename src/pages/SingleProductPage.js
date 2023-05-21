@@ -1,6 +1,5 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useProductsContext } from "../context/products_context";
-import { single_product_url as url } from "../utils/constants";
 import { useEffect } from "react";
 import {
   Loading,
@@ -49,11 +48,11 @@ const SingleProductPage = () => {
     price,
     description,
     availability,
-    stars,
-    reviews,
-    id: sku,
-    company,
+    rating,
     images,
+    deliveryOption,
+    owner,
+    category,
   } = product;
 
   return (
@@ -67,7 +66,7 @@ const SingleProductPage = () => {
           <ProductImages images={images} />
           <section>
             <h2>{name}</h2>
-            <Stars stars={stars} reviews={reviews} />
+            <Stars stars={rating} reviews={deliveryOption} />
             <h5 className="price">{formatPrice(price)}</h5>
             <p className="desc">{description}</p>
             <p className="info">
@@ -75,12 +74,12 @@ const SingleProductPage = () => {
               {availability > 0 ? "In stock" : "out of stock"}
             </p>
             <p className="info">
-              <span>SKU : </span>
-              {sku}
+              <span>Category : </span>
+              {category}
             </p>
             <p className="info">
-              <span>Brand : </span>
-              {company}
+              <span>Vendor : </span>
+              {owner}
             </p>
             <hr />
             {availability > 0 && <AddToCart product={product} />}

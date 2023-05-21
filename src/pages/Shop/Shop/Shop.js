@@ -12,17 +12,9 @@ const Shop = () => {
   const logged = () => {
     navigate("/shop/dashboard");
   };
-
-  const unlog = () => {
-    navigate("/shop/shop_information");
-  };
-
+  
   useEffect(() => {
-    if (token) {
-      logged();
-    } else {
-      unlog();
-    }
+    logged();
   }, []);
 
   return (

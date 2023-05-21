@@ -40,7 +40,10 @@ export const ProductsProvider = ({ children }) => {
     dispatch({ type: GET_PRODUCTS_BEGIN });
     try {
       const response = await axios.get(
-        "http://api.localhost/products/matching?limit=-1"
+        "http://api.localhost/products/matching?limit=-1",
+        {
+          headers: { "Content-Type": "application/json" },
+        }
       );
       const products = response.data;
       dispatch({ type: GET_PRODUCTS_SUCCESS, payload: products });
@@ -52,8 +55,11 @@ export const ProductsProvider = ({ children }) => {
   const fetchSingleProduct = async (url) => {
     dispatch({ type: GET_SINGLE_PRODUCT_BEGIN });
     try {
-      const response = await axios.get(url);
+      const response = await axios.get(url, {
+        headers: { "Content-Type": "application/json" },
+      });
       const singleProduct = response.data;
+      console.log(singleProduct);
       dispatch({ type: GET_SINGLE_PRODUCT_SUCCESS, payload: singleProduct });
     } catch (error) {
       dispatch({ type: GET_SINGLE_PRODUCT_ERROR });
