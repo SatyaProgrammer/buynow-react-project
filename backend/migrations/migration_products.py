@@ -61,7 +61,7 @@ def seed() -> list[dict]:
             "deliveryOption": "Meetup",
         },
         {
-            "pid": "rec5NBwZ5zCD9nfF0",
+            "pid": "0t-BUg9eswbMIxxk2-PvuXEzeSe7VJP80U132JkuLF0",
             "name": "albany sectional",
             "images": '{"images": ["https://placehold.co/600x400", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681750874/react-comfy-store-products/product-3_znpiqa.jpg", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681750929/react-comfy-store-products/product-4_ebl6q1.jpg"]}',
             "catId": "3",
@@ -74,7 +74,7 @@ def seed() -> list[dict]:
             "deliveryOption": "Meetup",
         },
         {
-            "pid": "recd1jIVIEChmiwhe",
+            "pid": "5VtiUAmHGNNoyvxX2ki44Uk9S87uq9fR9TOedseW6FQ",
             "name": "armchair",
             "images": '{"images": ["https://placehold.co/600x400", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681751026/react-comfy-store-products/product-5_n184nu.jpg", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681752461/react-comfy-store-products/product-6_rhaxfo.jpg" ]}',
             "catId": "4",
@@ -87,7 +87,7 @@ def seed() -> list[dict]:
             "deliveryOption": "Meetup",
         },
         {
-            "pid": "recNZ0koOqEmilmoz",
+            "pid": "Oe3rEp2-8lHuW7LcVwlp0-ZgCgDa32bG9ZiPfxrdP6M",
             "name": "entertainment center",
             "images": '{"images": ["https://placehold.co/600x400", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681751026/react-comfy-store-products/product-5_n184nu.jpg", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681752461/react-comfy-store-products/product-6_rhaxfo.jpg"]}',
             "catId": "5",
@@ -100,7 +100,7 @@ def seed() -> list[dict]:
             "deliveryOption": "Meetup",
         },
         {
-            "pid": "recrfxv3EwpvJwvjq",
+            "pid": "3eIUZ2DpEqhjofCCuxAr3m86uLZC0P8S30U1pT9fkVg",
             "name": "high-back bench",
             "images": '{"images": ["https://placehold.co/600x400", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681751026/react-comfy-store-products/product-5_n184nu.jpg", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681752461/react-comfy-store-products/product-6_rhaxfo.jpg", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681753280/react-comfy-store-products/prod-7_ta21yy.jpg"]}',
             "catId": "6",
@@ -113,7 +113,7 @@ def seed() -> list[dict]:
             "deliveryOption": "Meetup",
         },
         {
-            "pid": "recoW8ecgjtKx2Sj2",
+            "pid": "x-0_jP22txO5H71RapBXx_allThjot6YGgiQ6HlirBE",
             "name": "leather chair",
             "images": '{"images": ["https://placehold.co/600x400", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681751026/react-comfy-store-products/product-5_n184nu.jpg", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681752461/react-comfy-store-products/product-6_rhaxfo.jpg", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681753280/react-comfy-store-products/prod-7_ta21yy.jpg"]}',
             "catId": "1",
@@ -126,7 +126,7 @@ def seed() -> list[dict]:
             "deliveryOption": "Meetup",
         },
         {
-            "pid": "recEOA6qtDag1hRbU",
+            "pid": "6XRoFVxWrz2t_2B6wcINfh6x7AJtcYKCjFS8-_pUv2E",
             "name": "leather sofa",
             "images": '{"images": ["https://placehold.co/600x400", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681751026/react-comfy-store-products/product-5_n184nu.jpg", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681752461/react-comfy-store-products/product-6_rhaxfo.jpg", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681753280/react-comfy-store-products/prod-7_ta21yy.jpg"]}',
             "catId": "2",
@@ -139,7 +139,7 @@ def seed() -> list[dict]:
             "deliveryOption": "Meetup",
         },
         {
-            "pid": "recoAJYUCuEKxcPSr",
+            "pid": "SwFgIUBo8x-z0fFB1T4QMDu-ioWd1DpTjmy1zYuMdMA",
             "name": "modern bookshelf",
             "images": '{"images": ["https://placehold.co/600x400", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681751026/react-comfy-store-products/product-5_n184nu.jpg", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681752461/react-comfy-store-products/product-6_rhaxfo.jpg", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681753280/react-comfy-store-products/prod-7_ta21yy.jpg"]}',
             "catId": "3",
@@ -152,7 +152,7 @@ def seed() -> list[dict]:
             "deliveryOption": "Meetup",
         },
         {
-            "pid": "recQ0fMd8T0Vk211E",
+            "pid": "M6M_NZSuazW0vI-qb2rqj-DeQXEuGR04gSo-sLDDcEw",
             "name": "modern poster",
             "images": '{"images": ["https://placehold.co/600x400", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681751026/react-comfy-store-products/product-5_n184nu.jpg", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681752461/react-comfy-store-products/product-6_rhaxfo.jpg", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681753280/react-comfy-store-products/prod-7_ta21yy.jpg"]}',
             "catId": "4",
