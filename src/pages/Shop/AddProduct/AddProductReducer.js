@@ -15,9 +15,12 @@ export const ACTION_TYPES = {
   SET_IMAGE_URL: "SET_IMAGE_URL",
   SET_ERROR: "SET_ERROR",
   SET_SUCCESS: "SET_SUCCESS",
+  SET_DURING_SUBMIT: "SET_DURING_SUBMIT",
 };
 
 export const INITIAL_STATE = {
+  duringSubmit: false,
+
   name: "",
   nameFocus: false,
 
@@ -129,6 +132,11 @@ export const addProductReducer = (state, action) => {
         ...state,
         success: action.payload,
       };
+    case ACTION_TYPES.SET_DURING_SUBMIT:
+      return {
+        ...state,
+        duringSubmit: action.payload
+      }
 
     default:
       return state;

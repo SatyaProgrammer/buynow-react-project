@@ -9,6 +9,7 @@ import { IconPlus, IconBin, IconAlert, IconCheck } from "../utils/Icons";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import { useNavigate } from "react-router-dom";
+import { Loading } from "../../../components";
 
 const AddProduct = () => {
   const [state, dispatch] = useReducer(addProductReducer, INITIAL_STATE);
@@ -91,6 +92,8 @@ const AddProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    dispatch({ type: ACTION_TYPES.SET_DURING_SUBMIT, payload: true });
+    console.log(state.duringSubmit);
     const preset_key = "c003351q";
     const cloud_name = "dlplvjf9l";
     const token = cookies.get("jwt_authorization");
@@ -162,11 +165,12 @@ const AddProduct = () => {
       dispatch({ type: ACTION_TYPES.SET_AVAILABILITY, payload: 0 });
       dispatch({ type: ACTION_TYPES.SET_DELIVERYOPTION, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_IMAGE, payload: [""] });
-      dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: [""] });
+      dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: [] });
       dispatch({
         type: ACTION_TYPES.SET_SUCCESS,
         payload: "Product listed for sale",
       });
+      dispatch({ type: ACTION_TYPES.SET_DURING_SUBMIT, payload: false });
       window.scrollTo(0, 0);
     } catch (err) {
       if (err?.response.data.error_code == "BX0001") {
@@ -177,6 +181,7 @@ const AddProduct = () => {
         type: ACTION_TYPES.SET_ERROR,
         payload: err?.response.data.error,
       });
+      dispatch({ type: ACTION_TYPES.SET_DURING_SUBMIT, payload: false });
       window.scrollTo(0, 0);
     }
   };
@@ -465,14 +470,18 @@ const AddProduct = () => {
                         />
                         Select image
                       </label>
-                      <div
-                        onClick={() => handleAddImage()}
-                        className="p-2 hover:scale-110 transition-full duration-300"
-                      >
-                        <div className="w-4 h-4 cursor-pointer">
-                          <IconPlus fill="#222" />
+                      {state.image.length < 5 ? (
+                        <div
+                          onClick={() => handleAddImage()}
+                          className="p-2 hover:scale-110 transition-full duration-300"
+                        >
+                          <div className="w-4 h-4 cursor-pointer">
+                            <IconPlus fill="#222" />
+                          </div>
                         </div>
-                      </div>
+                      ) : (
+                        ""
+                      )}
                     </div>
                     {state.image.length > 1 ? (
                       <div
@@ -501,7 +510,11 @@ const AddProduct = () => {
                   </div>
                 ))}
               </div>
-              <button className="btn">Submit</button>
+              {state.duringSubmit ? (
+                <div className="btn text-center">Submitting</div>
+              ) : (
+                <button className="btn">Submit</button>
+              )}
             </div>
           </div>
         </form>
