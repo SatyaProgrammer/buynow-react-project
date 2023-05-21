@@ -119,7 +119,22 @@ def migrate_database(db_conn: msc.MySQLConnection) -> None:
         return
     
     console.print("[green]Migrated database.[/green]")
-    
+
+def flush_database(db_conn: msc.MySQLConnection) -> None:
+    try:
+        # drop the entire database
+        cursor = db_conn.cursor(prepared=True)
+        cursor.execute("DROP DATABASE IF EXISTS " + os.getenv('DB_NAME'))
+        cursor.execute("CREATE DATABASE " + os.getenv('DB_NAME'))
+        cursor.close()
+        db_conn.commit()
+        
+        console.print("[green]Flushed database.[/green]")
+    except Exception as e:
+        console.print("[red]Failed to flush database.[/red]")
+        console.print_exception()
+        return
+
 def main() -> None:
     if not os.path.exists(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "migrations")):
         os.mkdir(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "migrations"))
@@ -127,7 +142,7 @@ def main() -> None:
     ap = ArgumentParser(description="Python database migrator.")
     ap.add_argument('-n', '--new', action='store', help='create a new migration file')
     ap.add_argument('-r', '--rollback', action='store_true', help='drop the database')
-    
+    ap.add_argument('-f', '--flush', action='store_true', help='recreate the database')
     args = vars(ap.parse_args())
     
     try:
@@ -145,6 +160,10 @@ def main() -> None:
         
     if args['new']:
         create_migration_file(args.get('new').lower())
+        return
+    
+    if args['flush']:
+        flush_database(db_conn)
         return
     
     if args['rollback']:

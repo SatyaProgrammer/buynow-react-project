@@ -1,8 +1,8 @@
-# BuyNow API: Add Product
+# BuyNow API: Delete Product
 
 | Key | Value |
 | --- | --- |
-| Endpoint | `api.localhost/products/add` |
+| Endpoint | `api.localhost/products/delete` |
 | Method | `POST` |
 | Auth | `Yes` |
 
@@ -17,24 +17,13 @@
 
 ```ts
 {
-    "name": string,
-    "images": {
-        "images": string[]
-    },
-    "category": string,
-    "price": number,
-    "customization": {
-        [string]: string[]
-    },
-    "description": string,
-    "availability": number,
-    "deliveryOption": string,
+    "pid": string,
 }
 ```
 
 ## Response
 
-201:
+200:
 
 ```ts
 {
