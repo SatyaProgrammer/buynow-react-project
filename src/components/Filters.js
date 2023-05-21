@@ -21,8 +21,6 @@ const Filters = () => {
     all_products,
   } = useFilterContext();
 
-  console.log(all_products);
-
   const categories = getUniqueValues(all_products, "catName");
   const companies = getUniqueValues(all_products, "ownerName");
   const colors = getUniqueValues(all_products, "customization");
@@ -129,7 +127,7 @@ const Filters = () => {
               name="price"
               onChange={updateFilters}
               min={min_price}
-              max={max_price}
+              max={max_price + 1}
               value={price}
             />
           </div>

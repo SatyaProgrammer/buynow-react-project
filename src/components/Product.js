@@ -6,11 +6,10 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 const Product = ({ images, name, price, pid }) => {
-  const image = images.images[0];
   return (
     <Wrapper>
       <div className="container p-0">
-        <img src={image} alt={name} className="" />
+        <img src={images[0]} alt={name} className="" />
         <Link to={`/products/${pid}`} className="link">
           <FaSearch />
         </Link>

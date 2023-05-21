@@ -9,6 +9,7 @@ import {
 const cart_reducer = (state, action) => {
   if (action.type === ADD_TO_CART) {
     const { id, color, amount, product } = action.payload;
+    console.log(product);
     const tempItem = state.cart.find((i) => i.id === id + color);
     if (tempItem) {
       const tempCart = state.cart.map((cartItem) => {
@@ -29,7 +30,7 @@ const cart_reducer = (state, action) => {
         name: product.name,
         color,
         amount,
-        image: product.images[0].url,
+        image: product.images,
         price: product.price,
         max: product.stock,
       };
