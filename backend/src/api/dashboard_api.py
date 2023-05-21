@@ -51,14 +51,15 @@ WHERE p.owner = ?;"""
             "error": "Something went wrong."
         }, 500, {"Content-Type": "application/json"}
         
-@dashboard_api.get('/dashboard/unique_customers')
+@dashboard_api.get('/dashboard/customers')
 @limiter.limit("2/second")
 @token_required
-def get_unique_customers(uid):
+def get_customers(uid):
     try:
+        # get total and unique customers
         db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)
-        query = """SELECT COUNT(DISTINCT o.userId) as count
+        query = """SELECT COUNT(*) as total_customers, COUNT(DISTINCT userId) as unique_customers
 FROM orders as o
 INNER JOIN products as p
 ON o.productId = p.id
@@ -66,7 +67,7 @@ WHERE p.owner = ?;"""
         cursor.execute(query, (uid,))
         result = cursor.fetchone()
         cursor.close()
-        return {"count": result["count"]}, 200, {"Content-Type": "application/json"}
+        return {"total_customers": result["total_customers"], "unique_customers": result["unique_customers"]}, 200, {"Content-Type": "application/json"}
     except Exception as e:
         Global.console.print_exception()
         return {

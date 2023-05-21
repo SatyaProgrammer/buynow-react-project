@@ -5,36 +5,32 @@ from backend.src.middleware.rate_limiter import limiter
 
 orders_api = Blueprint("orders_api", __name__)
 
-@orders_api.get("/orders")
+@orders_api.get("/trackings")
 @token_required
 @limiter.limit("10/minute")
-def get_orders(uid):
+def get_trackings(uid):
     try:
         db_conn = Global.db_conn
         
         cursor = db_conn.cursor(prepared=True, dictionary=True)
-        cursor.execute("""SELECT o.trackingNumber, p.pid, p.name,
-p.images, o.customization, o.quantity, o.cost
-FROM orders as o
-INNER JOIN products as p
-ON o.productId = p.id
-WHERE userId = ?""", (uid,))
-        orders = cursor.fetchall()
+        cursor.execute("SELECT id, status, userId FROM trackings WHERE userId = ?", (uid,))
+        trackings = cursor.fetchall()
         cursor.close()
-
+        
         return {
-            "orders": orders
+            "trackings": trackings
         }, 200, {"Content-Type": "application/json"}
     except Exception as e:
+        Global.console.print_exception()
         return {
             "error_code": "BX0000",
             "error": "Something went wrong."
         }, 500, {"Content-Type": "application/json"}
-        
-@orders_api.post("/orders")
+
+@orders_api.post("/trackings")
 @token_required
 @limiter.limit("10/minute")
-def create_order(uid):
+def create_tracking(uid):
     try:
         db_conn = Global.db_conn
         order_data = request.get_json()
@@ -94,7 +90,7 @@ def create_order(uid):
         }, 500, {"Content-Type": "application/json"}
         
 
-@orders_api.get("/orders/<tracking_number>")
+@orders_api.get("/tracings/<tracking_number>")
 @token_required
 @limiter.limit("10/minute")
 def get_order(uid, tracking_number):
@@ -102,7 +98,7 @@ def get_order(uid, tracking_number):
         db_conn = Global.db_conn
         
         cursor = db_conn.cursor(prepared=True, dictionary=True)
-        cursor.execute("SELECT * FROM trackings WHERE id = ?", (tracking_number,))
+        cursor.execute("SELECT userId FROM trackings WHERE id = ?", (tracking_number,))
         tracking = cursor.fetchone()
         cursor.close()
         
@@ -112,33 +108,59 @@ def get_order(uid, tracking_number):
                 "error": "Order not found."
             }, 404, {"Content-Type": "application/json"}
             
-        if tracking["userId"] != uid:
+        # Only the buyer can view the entire tracking list
+        # Seller can only view the orders that are related to his/her products
+        
+        if tracking["userId"] == uid:        
+            cursor = db_conn.cursor(prepared=True, dictionary=True)
+            cursor.execute("""SELECT o.trackingNumber, p.pid, p.name,
+p.images, o.customization, o.quantity, o.cost
+FROM orders as o
+INNER JOIN products as p
+ON o.productId = p.id
+WHERE trackingNumber = ?""", (tracking_number,))
+
+            orders = cursor.fetchall()
+            cursor.close()
+            
+            if orders is None:
+                return {
+                    "error_code": "BX0101",
+                    "error": "Order not found."
+                }, 404, {"Content-Type": "application/json"}
+            
             return {
-                "error_code": "BX0103",
-                "error": "You are not allowed to view this order."
-            }, 403, {"Content-Type": "application/json"}
-        
-        cursor = db_conn.cursor(prepared=True, dictionary=True)
-        cursor.execute("SELECT * FROM orders WHERE trackingNumber = ?", (tracking_number,))
-        orders = cursor.fetchall()
-        cursor.close()
-        
-        if orders is None:
+                "orders": orders
+            }, 200, {"Content-Type": "application/json"}
+        else:
+            cursor = db_conn.cursor(prepared=True, dictionary=True)
+            cursor.execute("""SELECT o.trackingNumber, p.pid, p.name,
+p.images, o.customization, o.quantity, o.cost
+FROM orders as o
+INNER JOIN products as p
+ON o.productId = p.id
+WHERE trackingNumber = ? AND p.owner = ?""", (tracking_number, uid))
+            
+            orders = cursor.fetchall()
+            cursor.close()
+            
+            if orders is None:
+                return {
+                    "error_code": "BX0101",
+                    "error": "Order not found."
+                }, 404, {"Content-Type": "application/json"}
+                
             return {
-                "error_code": "BX0101",
-                "error": "Order not found."
-            }, 404, {"Content-Type": "application/json"}
-        
-        return {
-            "orders": orders
-        }, 200, {"Content-Type": "application/json"}
+                "orders": orders
+            }, 200, {"Content-Type": "application/json"}
+    
     except Exception as e:
         return {
             "error_code": "BX0000",
             "error": "Something went wrong."
         }, 500, {"Content-Type": "application/json"}
 
-@orders_api.post("/orders/<tracking_number>")
+@orders_api.post("/trackings/<tracking_number>")
 @token_required
 @limiter.limit("10/minute")
 def update_order_status(uid, tracking_number):
@@ -158,11 +180,17 @@ def update_order_status(uid, tracking_number):
                 "error": "Order not found."
             }, 404, {"Content-Type": "application/json"}
             
-        if tracking["userId"] != uid:
+        # Only the admin can update the order status
+        cursor = db_conn.cursor(prepared=True, dictionary=True)
+        cursor.execute("SELECT admin FROM users WHERE id = ?", (uid,))
+        user = cursor.fetchone()
+        cursor.close()
+        
+        if user is None or user["admin"] == 0:
             return {
                 "error_code": "BX0103",
-                "error": "You are not allowed to update this order."
-            }, 403, {"Content-Type": "application/json"}
+                "error": "Unauthorized."
+            }, 401, {"Content-Type": "application/json"}
         
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         cursor.execute("UPDATE trackings SET status = ? WHERE id = ?", (status, tracking_number))

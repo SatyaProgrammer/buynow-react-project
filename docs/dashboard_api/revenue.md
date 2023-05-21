@@ -1,8 +1,8 @@
-# BuyNow API: Get Orders
+# BuyNow API: Revenue
 
 | Key | Value |
 | --- | --- |
-| Endpoint | `api.localhost/trackings` |
+| Endpoint | `api.localhost/dashboard/revenue` |
 | Method | `GET` |
 | Auth | `Yes` |
 
@@ -19,11 +19,7 @@
 
 ```ts
 {
-    trackings: {
-        id: number,
-        status: string,
-        userId: number,
-    }[]
+    revenue: number
 }
 ```
 
