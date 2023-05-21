@@ -160,7 +160,10 @@ const AddProduct = () => {
       dispatch({ type: ACTION_TYPES.SET_PRICE, payload: "" });
       dispatch({
         type: ACTION_TYPES.SET_CUSTOMIZATION,
-        payload: [],
+        payload: [
+          { type: "Color", value: [""] },
+          { type: "Size", value: [""] },
+        ],
       });
       dispatch({ type: ACTION_TYPES.SET_AVAILABILITY, payload: 1 });
       dispatch({ type: ACTION_TYPES.SET_DELIVERYOPTION, payload: "" });
@@ -382,27 +385,28 @@ const AddProduct = () => {
             <div className="bg-white p-4 shadow-lg rounded-md flex flex-col gap-4">
               <div className="flex flex-col gap-2">
                 <div className="text-xl font-semibold text-cldark">
-                  Availability
+                  Quantity
                 </div>
                 <div>
-                  <select
+                  <input
                     id="availability"
+                    type="number"
                     name="availability"
+                    placeholder="Product quantity"
+                    pattern="[0-9]*"
+                    required
                     className="border border-gray-300 w-full p-3 rounded-lg text-cldark focus:outline focus:outline-1"
                     onFocus={() =>
                       dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: "" })
                     }
                     onChange={(e) => {
-                      let input = e.target.value
+                      let input = e.target.value;
                       dispatch({
                         type: ACTION_TYPES.SET_AVAILABILITY,
                         payload: input,
                       });
                     }}
-                  >
-                    <option value={(1)}>Available</option>
-                    <option value={(0)}>Unavailable</option>
-                  </select>
+                  />
                 </div>
               </div>
               <div className="flex flex-col gap-2">
