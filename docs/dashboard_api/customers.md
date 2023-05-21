@@ -2,7 +2,7 @@
 
 | Key | Value |
 | --- | --- |
-| Endpoint | `api.localhost/dashboard/customers_count` |
+| Endpoint | `api.localhost/dashboard/customers` |
 | Method | `GET` |
 | Auth | `Yes` |
 
