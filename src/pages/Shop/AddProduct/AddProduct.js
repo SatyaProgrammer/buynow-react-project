@@ -511,7 +511,7 @@ const AddProduct = () => {
                 ))}
               </div>
               {state.duringSubmit ? (
-                <div className="btn text-center">Submitting</div>
+                <div className="btn text-center">Submitting...</div>
               ) : (
                 <button className="btn">Submit</button>
               )}
