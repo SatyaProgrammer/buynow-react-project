@@ -19,7 +19,7 @@ To: {email}
 Subject: BuyNow Account Verification
 
 Dear {user}, thank you for registering an account with BuyNow. Please click the link below to verify your account.
-{os.getenv("FRONTEND_URL")}/verify?token={token}
+{os.getenv("REACT_APP_FRONTEND_URL")}/verify?token={token}
 
 Important note: If you did not remember registering an account with BuyNow, please ignore this email. Do not click the link above.
 The link above will expire in 6 hours.
@@ -57,7 +57,7 @@ To: {email}
 Subject: BuyNow Password Reset
 
 Dear user, you have requested to reset your password. Please click the link below to reset your password.
-{os.getenv("FRONTEND_URL")}/reset?token={token}
+{os.getenv("REACT_APP_FRONTEND_URL")}/reset?token={token}
 
 The link above will expire in 1 hour.
 
