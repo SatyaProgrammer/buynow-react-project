@@ -37,7 +37,7 @@ def seed() -> list[dict]:
         {
             "pid": "McuxrwGHJqnlyD-QrsyzpS_YoEnS3VxWic7GPLAm-wM",
             "name": "TRAXXAS 1/10 4X4 Monster Truck",
-            "images": '{"images": ["https://placehold.co/600x400"]}',
+            "images": ["https://placehold.co/600x400"],
             "catId": "1",
             "owner": "1",
             "price": "1000.00",
@@ -50,7 +50,10 @@ def seed() -> list[dict]:
         {
             "pid": "KZv-fzSI5JTgMKiv2L6KpT5-dzsgXoDHAZFRpzfRGfc",
             "name": "accent chair",
-            "images": '{"images": ["https://placehold.co/600x400", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681749482/react-comfy-store-products/iuYyO9RP_o_upinxq.jpg"]}',
+            "images": [
+                "https://placehold.co/600x400",
+                "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681749482/react-comfy-store-products/iuYyO9RP_o_upinxq.jpg",
+            ],
             "catId": "2",
             "owner": "2",
             "price": "25999",
@@ -63,7 +66,11 @@ def seed() -> list[dict]:
         {
             "pid": "0t-BUg9eswbMIxxk2-PvuXEzeSe7VJP80U132JkuLF0",
             "name": "albany sectional",
-            "images": '{"images": ["https://placehold.co/600x400", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681750874/react-comfy-store-products/product-3_znpiqa.jpg", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681750929/react-comfy-store-products/product-4_ebl6q1.jpg"]}',
+            "images": [
+                "https://placehold.co/600x400",
+                "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681750874/react-comfy-store-products/product-3_znpiqa.jpg",
+                "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681750929/react-comfy-store-products/product-4_ebl6q1.jpg",
+            ],
             "catId": "3",
             "owner": "1",
             "price": "109999",

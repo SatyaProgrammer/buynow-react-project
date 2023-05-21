@@ -9,6 +9,7 @@ def up():
     table.int("id").primary_key().auto_increment()
     table.foreign_key("trackingNumber", "trackings", "id")
     table.foreign_key("productId", "products", "id")
+    table.json("customization").default("'{}'")
     table.int("quantity")
     table.decimal("cost", precision=2)
     table.timestamp("createdAt").default("CURRENT_TIMESTAMP")

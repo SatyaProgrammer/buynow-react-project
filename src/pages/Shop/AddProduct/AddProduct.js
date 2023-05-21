@@ -9,11 +9,12 @@ import { IconPlus, IconBin, IconAlert, IconCheck } from "../utils/Icons";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import { useNavigate } from "react-router-dom";
+import { Loading } from "../../../components";
 
 const AddProduct = () => {
   const [state, dispatch] = useReducer(addProductReducer, INITIAL_STATE);
   const nameRef = useRef();
-  const imageRef = useRef()
+  const imageRef = useRef();
   const cookies = new Cookies();
   const navigate = useNavigate();
 
@@ -91,6 +92,8 @@ const AddProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    dispatch({ type: ACTION_TYPES.SET_DURING_SUBMIT, payload: true });
+    console.log(state.duringSubmit);
     const preset_key = "c003351q";
     const cloud_name = "dlplvjf9l";
     const token = cookies.get("jwt_authorization");
@@ -158,18 +161,16 @@ const AddProduct = () => {
       dispatch({ type: ACTION_TYPES.SET_DESCRIPTION, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_CATEGORY, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_PRICE, payload: "" });
-      dispatch({
-        type: ACTION_TYPES.SET_CUSTOMIZATION,
-        payload: [],
-      });
-      dispatch({ type: ACTION_TYPES.SET_AVAILABILITY, payload: 1 });
+      dispatch({ type: ACTION_TYPES.RESET_CUSTOMIZATION });
+      dispatch({ type: ACTION_TYPES.SET_AVAILABILITY, payload: 0 });
       dispatch({ type: ACTION_TYPES.SET_DELIVERYOPTION, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_IMAGE, payload: [""] });
-      dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: [""] });
+      dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: [] });
       dispatch({
         type: ACTION_TYPES.SET_SUCCESS,
         payload: "Product listed for sale",
       });
+      dispatch({ type: ACTION_TYPES.SET_DURING_SUBMIT, payload: false });
       window.scrollTo(0, 0);
     } catch (err) {
       if (err?.response.data.error_code == "BX0001") {
@@ -180,6 +181,7 @@ const AddProduct = () => {
         type: ACTION_TYPES.SET_ERROR,
         payload: err?.response.data.error,
       });
+      dispatch({ type: ACTION_TYPES.SET_DURING_SUBMIT, payload: false });
       window.scrollTo(0, 0);
     }
   };
@@ -382,27 +384,28 @@ const AddProduct = () => {
             <div className="bg-white p-4 shadow-lg rounded-md flex flex-col gap-4">
               <div className="flex flex-col gap-2">
                 <div className="text-xl font-semibold text-cldark">
-                  Availability
+                  Quantity
                 </div>
                 <div>
-                  <select
+                  <input
                     id="availability"
+                    type="number"
                     name="availability"
+                    placeholder="Product quantity"
+                    pattern="[0-9]*"
+                    required
                     className="border border-gray-300 w-full p-3 rounded-lg text-cldark focus:outline focus:outline-1"
                     onFocus={() =>
                       dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: "" })
                     }
                     onChange={(e) => {
-                      let input = e.target.value
+                      let input = e.target.value;
                       dispatch({
                         type: ACTION_TYPES.SET_AVAILABILITY,
                         payload: input,
                       });
                     }}
-                  >
-                    <option value={(1)}>Available</option>
-                    <option value={(0)}>Unavailable</option>
-                  </select>
+                  />
                 </div>
               </div>
               <div className="flex flex-col gap-2">
@@ -467,14 +470,18 @@ const AddProduct = () => {
                         />
                         Select image
                       </label>
-                      <div
-                        onClick={() => handleAddImage()}
-                        className="p-2 hover:scale-110 transition-full duration-300"
-                      >
-                        <div className="w-4 h-4 cursor-pointer">
-                          <IconPlus fill="#222" />
+                      {state.image.length < 5 ? (
+                        <div
+                          onClick={() => handleAddImage()}
+                          className="p-2 hover:scale-110 transition-full duration-300"
+                        >
+                          <div className="w-4 h-4 cursor-pointer">
+                            <IconPlus fill="#222" />
+                          </div>
                         </div>
-                      </div>
+                      ) : (
+                        ""
+                      )}
                     </div>
                     {state.image.length > 1 ? (
                       <div
@@ -503,7 +510,11 @@ const AddProduct = () => {
                   </div>
                 ))}
               </div>
-              <button className="btn">Submit</button>
+              {state.duringSubmit ? (
+                <div className="btn text-center">Submitting...</div>
+              ) : (
+                <button className="btn">Submit</button>
+              )}
             </div>
           </div>
         </form>

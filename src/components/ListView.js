@@ -7,10 +7,9 @@ const ListView = ({ products }) => {
     <Wrapper>
       {products.map((product) => {
         const { pid, images, name, price, description } = product;
-        const image = images.images[0];
         return (
           <article key={pid}>
-            <img src={image} alt={name} />
+            <img src={images[0]} alt={name} />
             <div>
               <h4>{name}</h4>
               <h5 className="price">{formatPrice(price)}</h5>

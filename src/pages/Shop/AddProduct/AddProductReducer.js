@@ -7,6 +7,7 @@ export const ACTION_TYPES = {
   SET_PRICE: "SET_PRICE",
   ADD_CUSTOMIZATION: "ADD_CUSTOMIZATION",
   SET_CUSTOMIZATION: "SET_CUSTOMIZATION",
+  RESET_CUSTOMIZATION: "RESET_CUSTOMIZATION",
   SET_AVAILABILITY: "SET_AVAILABILITY",
   SET_DELIVERYOPTION: "SET_DELIVERYOPTION",
   ADD_IMAGE: "ADD_IMAGE",
@@ -14,9 +15,12 @@ export const ACTION_TYPES = {
   SET_IMAGE_URL: "SET_IMAGE_URL",
   SET_ERROR: "SET_ERROR",
   SET_SUCCESS: "SET_SUCCESS",
+  SET_DURING_SUBMIT: "SET_DURING_SUBMIT",
 };
 
 export const INITIAL_STATE = {
+  duringSubmit: false,
+
   name: "",
   nameFocus: false,
 
@@ -85,6 +89,14 @@ export const addProductReducer = (state, action) => {
         ...state,
         customElements: action.payload,
       };
+    case ACTION_TYPES.RESET_CUSTOMIZATION:
+      return {
+        ...state,
+        customization: [
+          { type: "Color", value: [""] },
+          { type: "Size", value: [""] },
+        ]
+      };
     case ACTION_TYPES.SET_AVAILABILITY:
       return {
         ...state,
@@ -120,6 +132,11 @@ export const addProductReducer = (state, action) => {
         ...state,
         success: action.payload,
       };
+    case ACTION_TYPES.SET_DURING_SUBMIT:
+      return {
+        ...state,
+        duringSubmit: action.payload
+      }
 
     default:
       return state;

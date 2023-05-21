@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./Dashboard.css";
 import { LineChart, PieChart } from "../../../components/Chart";
 import { useState } from "react";
@@ -10,6 +10,9 @@ import {
   IconCreditCard,
 } from "../utils/Icons";
 import { Link } from "react-router-dom";
+import { dashboardReducer, INITIAL_STATE, ACTION_TYPES } from "./DashboardReducer";
+import { useReducer } from "react";
+import axios from "axios";
 
 const Dashboard = () => {
   const [userData, setUserData] = useState({
@@ -29,6 +32,23 @@ const Dashboard = () => {
     ],
   });
 
+  const [state, dispatch] = useReducer(dashboardReducer, INITIAL_STATE);
+
+  const handleFetch = async () => {
+    dispatch({ type: ACTION_TYPES.FETCH_START });
+    const response = await axios
+      .get("http://api.localhost/dashboard/customers")
+      .catch((err) => {
+        console.log(err?.response);
+      });
+    if (response && response.data) {
+      dispatch({ type: ACTION_TYPES.FETCH_SUCCESS, payload: response.data });
+    }
+  };
+
+  useEffect(() => {
+    handleFetch()
+  }, [])
   return (
     <>
       <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">

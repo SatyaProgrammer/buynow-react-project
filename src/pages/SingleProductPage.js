@@ -55,11 +55,13 @@ const SingleProductPage = () => {
     category,
   } = product;
 
+  console.log(images);
+
   return (
     <Wrapper>
       <PageHero title={name} product={product} />
       <div className="section section-center">
-        <Link to="/products" className="btn">
+        <Link to="/" className="btn">
           back to products
         </Link>
         <div className="product-center">

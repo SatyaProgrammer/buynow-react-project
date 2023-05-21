@@ -1,8 +1,8 @@
-# BuyNow API: Add Product
+# BuyNow API: Update Product
 
 | Key | Value |
 | --- | --- |
-| Endpoint | `api.localhost/products/add` |
+| Endpoint | `api.localhost/products/update` |
 | Method | `POST` |
 | Auth | `Yes` |
 
@@ -17,6 +17,7 @@
 
 ```ts
 {
+    "pid": string,
     "name": string,
     "images": {
         "images": string[]
@@ -29,24 +30,5 @@
     "description": string,
     "availability": number,
     "deliveryOption": string,
-}
-```
-
-## Response
-
-201:
-
-```ts
-{
-    "pid": string,
-}
-```
-
-4xx/5xx:
-
-```ts
-{   
-    "error_code": string, // "BXxxxx"
-    "error": string,
 }
 ```
