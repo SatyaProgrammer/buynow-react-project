@@ -295,7 +295,7 @@ class Table:
 
             values = []
             for d in self.seeds:
-                vals = ", ".join(map(lambda x: str(x), [f"'{d.get(k)}'" if type(d.get(k)) is str else d.get(k) for k in sorted_keys]))
+                vals = ", ".join(map(lambda x: str(x), [f"'{d.get(k)}'" if type(d.get(k)) is str else f"'{str(d.get(k))}'" for k in sorted_keys]))
                 vals = vals.replace("None", "NULL")
                 values.append("(" + vals + ")")
 
