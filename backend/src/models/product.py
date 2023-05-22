@@ -10,6 +10,7 @@ class Product(Model):
     def fetch_matching(cls, __taking: list[str], __cond: dict[str, str], offset: int = 0, limit: int = 25, sort_newest: bool = False) -> list[dict[str]]:
         taking = list(__taking)
         db_conn = Global.db_conn
+        cond, args = Product.criteria_to_arguments(__cond)
         
         if len(taking) == 0:
             sb = f"""SELECT p.id, p.pid, p.name, p.images, c.name as catName,
@@ -17,7 +18,7 @@ u.username as ownerName, p.price, p.customization, p.rating, p.availability, p.s
 p.deliveryOption, p.description, p.createdAt FROM products AS p
 INNER JOIN categories AS c ON p.catId = c.id
 INNER JOIN users as u ON p.owner = u.id
-WHERE {" AND ".join([f"{'c' if k == 'catName' else 'u' if k == 'username' else 'p'}.{Product.__canonical_name(k)} {Product.__tsl(__cond[k][0])}" for k in __cond.keys()])}
+WHERE {cond}
 {"ORDER BY p.createdAt DESC" if sort_newest else ""}
 {"LIMIT %s OFFSET %s" if limit != -1 else ""}"""
         else:
