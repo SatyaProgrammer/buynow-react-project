@@ -63,7 +63,7 @@ def get_customers(uid):
 FROM trackings as t
 LEFT JOIN orders as o ON t.id = o.trackingNumber
 LEFT JOIN products as p ON o.productId = p.id
-WHERE p.owner = 1;"""
+WHERE p.owner = ?;"""
         
         cursor.execute(query, (uid,))
         result = cursor.fetchone()
