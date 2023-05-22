@@ -11,6 +11,7 @@ const FeaturedProducts = () => {
     products_error: error,
     featured_products: featured,
   } = useProductsContext();
+  console.log(featured);
   if (loading) {
     return <Loading />;
   }
@@ -24,7 +25,7 @@ const FeaturedProducts = () => {
         <div className="underline"></div>
       </div>
       <div className="section-center featured">
-        {featured.slice(0, 3).map((product) => {
+        {featured.slice(-3).map((product) => {
           return <Product key={product.id} {...product} />;
         })}
       </div>

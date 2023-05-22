@@ -15,7 +15,7 @@ export const ACTION_TYPES = {
   SET_CONFIRM_PASSWORD_FOCUS: "SET_CONFIRM_PASSWORD_FOCUS",
   SET_VALID_CONFIRM_PASSWORD: "SET_VALID_CONFIRM_PASSWORD",
 
-  SET_ERROR_MSG: "SET_ERROR_MSG",
+  SET_ERROR: "SET_ERROR",
   SET_SUCCESS: "SET_SUCCESS",
 };
 
@@ -37,7 +37,7 @@ export const INITIAL_STATE = {
   confirmPasswordFocus: false,
 
   errorMsg: "",
-  success: false,
+  success: "",
 };
 
 export const signupReducer = (state, action) => {
@@ -102,7 +102,7 @@ export const signupReducer = (state, action) => {
         ...state,
         validConfirmPassword: action.payload,
       };
-    case ACTION_TYPES.SET_ERROR_MSG:
+    case ACTION_TYPES.SET_ERROR:
       return {
         ...state,
         errorMsg: action.payload,

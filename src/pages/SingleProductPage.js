@@ -1,6 +1,5 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useProductsContext } from "../context/products_context";
-import { single_product_url as url } from "../utils/constants";
 import { useEffect } from "react";
 import {
   Loading,
@@ -25,13 +24,13 @@ const SingleProductPage = () => {
   } = useProductsContext();
 
   useEffect(() => {
-    fetchSingleProduct(`${url}${id}`);
+    fetchSingleProduct(`http://api.localhost/products/${id}`);
   }, [id]);
 
   useEffect(() => {
     if (error) {
       setTimeout(() => {
-        history.push("/");
+        history("/");
       }, 3000);
     }
   }, [error]);
@@ -48,43 +47,44 @@ const SingleProductPage = () => {
     name,
     price,
     description,
-    stock,
-    stars,
-    reviews,
-    id: sku,
-    company,
+    availability,
+    rating,
     images,
+    deliveryOption,
+    owner,
+    category,
   } = product;
+
+  console.log(images);
 
   return (
     <Wrapper>
       <PageHero title={name} product={product} />
       <div className="section section-center">
-        <Link to="/products" className="btn">
+        <Link to="/" className="btn">
           back to products
         </Link>
         <div className="product-center">
           <ProductImages images={images} />
-          {console.log(images)}
           <section>
             <h2>{name}</h2>
-            <Stars stars={stars} reviews={reviews} />
+            <Stars stars={rating} reviews={deliveryOption} />
             <h5 className="price">{formatPrice(price)}</h5>
             <p className="desc">{description}</p>
             <p className="info">
               <span>Available : </span>
-              {stock > 0 ? "In stock" : "out of stock"}
+              {availability > 0 ? "In stock" : "out of stock"}
             </p>
             <p className="info">
-              <span>SKU : </span>
-              {sku}
+              <span>Category : </span>
+              {category}
             </p>
             <p className="info">
-              <span>Brand : </span>
-              {company}
+              <span>Vendor : </span>
+              {owner}
             </p>
             <hr />
-            {stock > 0 && <AddToCart product={product} />}
+            {availability > 0 && <AddToCart product={product} />}
           </section>
         </div>
       </div>

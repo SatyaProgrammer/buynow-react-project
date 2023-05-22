@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { IconAlert } from "./Shop/utils/Icons";
 import axios from "axios";
 import Cookies from "universal-cookie";
 
@@ -44,28 +45,33 @@ const Login = () => {
       setPwd("");
       navigate(from, { replace: true });
     } catch (error) {
-      if (!error?.response) {
-        setErrMsg("No Server Response");
-      } else if (error.response?.status === 400) {
-        setErrMsg("Missing Username or Password");
-      } else if (error.response?.status === 401) {
-        setErrMsg("Unauthorized");
-      } else {
-        setErrMsg("Login Failed");
-      }
+      setErrMsg(error?.response.data.error)
     }
   };
 
   return (
     <div className="h-screen bg-gray-100 grid place-items-center">
-      <div className="w-80 bg-primary4 text-white shadow-lg flex flex-col gap-8">
-        <div className="text-2xl font-semibold border-gray-100 mt-8 px-8">
+      <div className="w-96 bg-white text-primary4 rounded-md shadow-lg flex flex-col gap-8">
+        <div className="text-2xl font-semibold underline border-gray-100 mt-8 px-8">
           Sign In
         </div>
         <form onSubmit={handleSubmit}>
           <div className="px-8 pb-8">
             <div className="flex flex-col gap-6">
+              {errMsg ? (
+                <div className="p-3 px-2 flex gap-1 items-center bg-red-50 text-cldanger font-semibold rounded-lg border-2 border-red-200">
+                  <div className="w-4 h-4">
+                    <IconAlert fill="#bb2525" />
+                  </div>
+                  <div>{errMsg}</div>
+                </div>
+              ) : (
+                ""
+              )}
               <div className="flex flex-col gap-2">
+                <label htmlFor="username" className="text-cldark font-semibold">
+                  Username
+                </label>
                 <input
                   type="text"
                   id="username"
@@ -75,10 +81,13 @@ const Login = () => {
                   value={user}
                   required
                   placeholder="Username"
-                  className="border-b border-gray-300 w-full py-2 placeholder-white bg-primary4 outline-none text-white caret-white focus:outline focus:outline-1"
+                  className="border border-gray-300 w-full p-3 rounded-lg outline-cldark caret-cldark text-cldark focus:outline focus:outline-1 focus-border-none"
                 />
               </div>
               <div className="flex flex-col gap-2">
+                <label htmlFor="password" className="text-cldark font-semibold">
+                  Password
+                </label>
                 <input
                   type="password"
                   id="password"
@@ -86,19 +95,22 @@ const Login = () => {
                   value={pwd}
                   required
                   placeholder="Password"
-                  className="border-b border-gray-300 w-full py-2 placeholder-white bg-primary4 outline-none text-white caret-white focus:outline focus:outline-1"
+                  className="border border-gray-300 w-full p-3 rounded-lg outline-cldark caret-cldark text-cldark focus:outline focus:outline-1 focus-border-none"
                 />
               </div>
-              <button className="w-full bg-white text-primary4 font-semibold py-2 text-center border-2 border-white hover:bg-primary4 hover:text-white transition-all duration-300">
+              <button className="w-full bg-primary4 text-white font-semibold py-2 text-center border border-primary4 hover:bg-white hover:text-primary4 rounded-md transition-all duration-300">
                 Sign In
               </button>
             </div>
             <div className="mt-2">
-              <span className="text-sm">Need an account?</span>
-              <span className="text-sm underline ml-2">
+              <span className="text-sm text-cldark">Need an account?</span>
+              <span className="text-sm underline ml-2 font-semibold">
                 <Link to={"/signup"}>Sign up</Link>
               </span>
             </div>
+            <Link to={"/"} className="text-sm underline">
+              Home page
+            </Link>
           </div>
         </form>
       </div>
