@@ -56,7 +56,7 @@ const Dashboard = () => {
         console.log(err?.response);
         if (err?.response.data.error_code == "BX0001") {
           cookies.remove("jwt_authorization");
-          navigate("/login");
+          navigate("/shop/dashboard");
         }
       });
     if (response && response.data) {

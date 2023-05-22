@@ -186,8 +186,9 @@ const AddProduct = () => {
     } catch (err) {
       if (err?.response.data.error_code == "BX0001") {
         cookies.remove("jwt_authorization");
-        navigate("/login", { replace: true });
+        navigate("/shop/add_product", { replace: true });
       }
+      dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: [] });
       dispatch({
         type: ACTION_TYPES.SET_ERROR,
         payload: err?.response.data.error,
