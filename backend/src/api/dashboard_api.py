@@ -56,25 +56,30 @@ WHERE p.owner = ?;"""
 @token_required
 def get_customers(uid):
     try:
-        # get total and unique customers
+        # get total customers
         db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)
-        query = """SELECT COUNT(*) as total_customers, COUNT(DISTINCT userId) as unique_customers
-FROM orders as o
-INNER JOIN products as p
-ON o.productId = p.id
-WHERE p.owner = ?;"""
+        query = """SELECT COUNT(*) as total_count, COUNT(DISTINCT t.userId) as unique_count
+FROM trackings as t
+LEFT JOIN orders as o ON t.id = o.trackingNumber
+LEFT JOIN products as p ON o.productId = p.id
+WHERE p.owner = 1;"""
+        
         cursor.execute(query, (uid,))
         result = cursor.fetchone()
         cursor.close()
-        return {"total_customers": result["total_customers"], "unique_customers": result["unique_customers"]}, 200, {"Content-Type": "application/json"}
+        
+        return {
+            "total_customers": result["total_count"],
+            "unique_customers": result["unique_count"]
+        }, 200, {"Content-Type": "application/json"}
     except Exception as e:
         Global.console.print_exception()
         return {
             "error_code": "BX0000",
             "error": "Something went wrong."
         }, 500, {"Content-Type": "application/json"}
-        
+                
 @dashboard_api.get('/dashboard/recent_orders')
 @limiter.limit("2/second")
 @token_required

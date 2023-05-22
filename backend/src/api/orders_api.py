@@ -40,6 +40,7 @@ def create_tracking(uid):
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         cursor.execute("INSERT INTO trackings (status, userId) VALUES ('pending', ?)", (uid,))
         tracking_id = cursor.lastrowid
+        print(f"tracking id = {tracking_id}")
         
         if tracking_id is None:
             return {
@@ -50,12 +51,13 @@ def create_tracking(uid):
         id_pairs = []
         
         for order in orders:
-            cursor = db_conn.cursor(prepared=True)
+            cursor = db_conn.cursor(prepared=True, dictionary=True)
             pid = order["pid"]
             
             cursor.execute("SELECT id, availability FROM products WHERE pid = ?", (pid,))
-            iid, stock = cursor.fetchone()
-            
+            item = cursor.fetchone()
+            iid = item["id"]
+            stock = item["availability"]
             
             if stock < order["quantity"]:
                 return {
@@ -63,12 +65,15 @@ def create_tracking(uid):
                     "error": "Insufficient stock."
                 }, 400, {"Content-Type": "application/json"}
 
-            id_pairs.append((iid, pid, order["quantity"]))
+            id_pairs.append((iid, order["quantity"]))
+            print(f"iid = {iid}, quantity = {order['quantity']}")
 
-        for i_id, i_pid, i_quantity in orders:
+        for item in id_pairs:
+            i_id, i_quantity = item
+            print(f"{i_id=}, {i_quantity=}")
             cursor = db_conn.cursor(prepared=True)
             
-            cursor.execute("UPDATE products SET stock = stock - ? WHERE id = ?", (i_quantity, i_id))
+            cursor.execute("UPDATE products SET availability = availability - ? WHERE id = ?", (i_quantity, i_id))
                         
             cursor = db_conn.cursor(prepared=True)
             cursor.execute("SELECT price FROM products WHERE id = ?", (i_id,))
@@ -76,7 +81,7 @@ def create_tracking(uid):
             
             cursor = db_conn.cursor(prepared=True)
             cost = price * i_quantity
-            cursor.execute("INSERT INTO orders (trackingNumber, productId, quantity, cost), VALUES (?, ?, ?, ?)", (tracking_id, i_id, i_quantity, cost))
+            cursor.execute("INSERT INTO orders (trackingNumber, productId, quantity, cost) VALUES (?, ?, ?, ?)", (tracking_id, i_id, i_quantity, cost))
         
         db_conn.commit()
         
@@ -84,6 +89,7 @@ def create_tracking(uid):
             "message": "Order created."
         }, 201, {"Content-Type": "application/json"}
     except Exception as e:
+        Global.console.print_exception()
         return {
             "error_code": "BX0000",
             "error": "Something went wrong."
