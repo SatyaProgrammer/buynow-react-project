@@ -312,3 +312,22 @@ def delete_product(uid):
             "error_code": "BX0000",
             "error": "Something went wrong."
         }, 500, {"Content-Type": "application/json"}
+
+@prod_api.get("/products/me")
+@limiter.limit("10 per minute")
+@token_required
+def get_my_products(uid):
+    try:
+        user_id = uid
+        
+        res = Product.fetch_matching([], {"owner": f"={user_id}"})
+        
+        return {
+            "products": res
+        }, 200, {"Content-Type": "application/json"}
+    except Exception as e:
+        Global.console.print_exception()
+        return {
+            "error_code": "BX0000",
+            "error": "Something went wrong."
+        }, 500, {"Content-Type": "application/json"}
