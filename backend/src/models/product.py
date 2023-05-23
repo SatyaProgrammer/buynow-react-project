@@ -32,7 +32,7 @@ WHERE {cond}
             sb += criteria
             if sort_newest: sb += " ORDER BY p.createdAt DESC"
             if limit != -1: sb += " LIMIT %s OFFSET %s"
-            
+
         print(sb)
         
         cursor = db_conn.cursor(prepared=True)
@@ -240,7 +240,7 @@ WHERE p.pid = %s"""
             s = c[k][0]
             if s == "r":
                 sb.append(f"{Product.__canonical_name(k)} BETWEEN %s AND %s")
-                r1, r2 = c[k][1].split("-")
+                r1, r2 = c[k][1:].split("-")
                 args.append(r1)
                 args.append(r2)
             elif s == "m":
