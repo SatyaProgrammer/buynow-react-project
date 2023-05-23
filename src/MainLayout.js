@@ -19,6 +19,7 @@ import Order from "./pages/Shop/Order/Order";
 import Customer from "./pages/Shop/Customer/Customer";
 import AddProduct from "./pages/Shop/AddProduct/AddProduct";
 import ProductDetail from "./pages/Shop/ProductDetail/ProductDetail";
+import History from "./pages/HistoryPage";
 import { PrivateRoutes } from "./utils/ManageRoute";
 
 const MainLayout = () => {
@@ -81,6 +82,15 @@ const MainLayout = () => {
               <>
                 <ShopSidebar />
                 <ProductDetail />
+              </>
+            }
+          />
+
+          <Route
+            path="/history"
+            element={
+              <>
+                <History />
               </>
             }
           />

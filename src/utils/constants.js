@@ -21,6 +21,11 @@ export const links = [
     text: "about",
     url: "/about",
   },
+  {
+    id: 4,
+    text: "history",
+    url: "/history",
+  },
 ];
 
 export const services = [

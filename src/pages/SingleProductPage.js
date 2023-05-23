@@ -55,8 +55,6 @@ const SingleProductPage = () => {
     category,
   } = product;
 
-  console.log(images);
-
   return (
     <Wrapper>
       <PageHero title={name} product={product} />

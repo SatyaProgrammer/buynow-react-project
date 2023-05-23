@@ -1,25 +1,19 @@
-import React from "react";
+import { PageHero } from "../components";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import HistoryContent from "../components/HistoryContent";
 
-const PageHero = ({ title, product }) => {
+const History = () => {
   return (
-    <Wrapper>
-      <div className="section-center">
-        <h3>
-          <Link to="/">Products</Link>
-          {/* {product && <Link to="/products">/ Products</Link>} */}
-          {title && `/ ${title}`}
-        </h3>
-      </div>
-    </Wrapper>
+    <main>
+      <PageHero title="order history" />
+      <Wrapper className="page">
+        <HistoryContent />
+      </Wrapper>
+    </main>
   );
 };
 
 const Wrapper = styled.section`
-  h3 {
-    font-weight: bold;
-  }
   h1,
   h2,
   h3,
@@ -29,6 +23,7 @@ const Wrapper = styled.section`
     text-transform: capitalize;
     line-height: 1.25;
     margin-bottom: 0.75rem;
+    font-weight: bold;
   }
   h1 {
     font-size: 2.5rem;
@@ -75,22 +70,26 @@ const Wrapper = styled.section`
       line-height: 1;
     }
   }
-  /*  global classes */
-  background: var(--clr-primary-10);
-  width: 100%;
-  min-height: 20vh;
-  display: flex;
-  align-items: center;
-
-  color: var(--clr-primary-1);
-  a {
-    color: var(--clr-primary-3);
-    padding: 0.5rem;
-    transition: var(--transition);
+  .link-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
   }
-  a:hover {
-    color: var(--clr-primary-1);
+  .link-btn {
+    background: transparent;
+    border-color: transparent;
+    text-transform: capitalize;
+    padding: 0.25rem 0.5rem;
+    background: var(--clr-primary-5);
+    color: var(--clr-white);
+    border-radius: var(--radius);
+    letter-spacing: var(--spacing);
+    font-weight: 400;
+    cursor: pointer;
+  }
+  .clear-btn {
+    background: var(--clr-black);
   }
 `;
 
-export default PageHero;
+export default History;

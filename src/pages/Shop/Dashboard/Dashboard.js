@@ -44,8 +44,12 @@ const Dashboard = () => {
 
   const handleFetch = async () => {
     dispatch({ type: ACTION_TYPES.FETCH_START });
+    let data = {};
     const token = cookies.get("jwt_authorization");
-    const response = await axios
+    const current_user = cookies.get("current_user");
+
+    // CUSTOMERS
+    const customers_response = await axios
       .get("http://api.localhost/dashboard/customers", {
         headers: {
           "Content-Type": "application/json",
@@ -53,14 +57,65 @@ const Dashboard = () => {
         },
       })
       .catch((err) => {
-        console.log(err?.response);
         if (err?.response.data.error_code == "BX0001") {
           cookies.remove("jwt_authorization");
           navigate("/shop/dashboard");
         }
       });
-    if (response && response.data) {
-      dispatch({ type: ACTION_TYPES.FETCH_SUCCESS, payload: response.data });
+    if (customers_response && customers_response.data) {
+      data["customers"] = customers_response.data;
+      dispatch({
+        type: ACTION_TYPES.SET_CUSTOMER_DATA,
+        payload: customers_response.data,
+      });
+      dispatch({
+        type: ACTION_TYPES.SET_SUCCESS,
+        payload: data,
+      });
+    }
+
+    // ORDER COUNTS
+    const order_counts_response = await axios
+      .get("http://api.localhost/dashboard/orders_count", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Basic ${token}`,
+        },
+      })
+      .catch((err) => {
+        if (err?.response.data.error_code == "BX0001") {
+          cookies.remove("jwt_authorization");
+          navigate("/shop/dashboard");
+        }
+      });
+    if (order_counts_response && order_counts_response.data) {
+      data["order_counts"] = order_counts_response.data;
+      dispatch({
+        type: ACTION_TYPES.SET_SUCCESS,
+        payload: data,
+      });
+    }
+
+    // REVENUE
+    const revenue_response = await axios
+      .get("http://api.localhost/dashboard/revenue", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Basic ${token}`,
+        },
+      })
+      .catch((err) => {
+        if (err?.response.data.error_code == "BX0001") {
+          cookies.remove("jwt_authorization");
+          navigate("/shop/dashboard");
+        }
+      });
+    if (revenue_response && revenue_response.data) {
+      data["revenue"] = revenue_response.data;
+      dispatch({
+        type: ACTION_TYPES.SET_SUCCESS,
+        payload: data,
+      });
     }
   };
 
@@ -80,7 +135,9 @@ const Dashboard = () => {
               </div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-cldark">150</div>
+              <div className="text-4xl font-bold text-cldark">
+                {state.post.order_counts?.count}
+              </div>
             </div>
             <Link to="/shop/order">
               <div>
@@ -98,7 +155,9 @@ const Dashboard = () => {
               </div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-cldark">$1500</div>
+              <div className="text-4xl font-bold text-cldark">
+                ${state.post.revenue?.revenue}
+              </div>
             </div>
             <div>
               <div className="text-md text-primary4 font-bold">
@@ -114,7 +173,10 @@ const Dashboard = () => {
               </div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-cldark">94</div>
+              <div className="text-4xl font-bold text-cldark">
+                {/* {state.customer_data.total_customers} */}
+                {state.post.customers?.total_customers}
+              </div>
             </div>
             <Link to="/shop/customer">
               <div>
@@ -142,14 +204,14 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 xl:grid-cols-3 gap-4">
+        {/* <div className="grid grid-cols-1 lg:grid-cols-5 xl:grid-cols-3 gap-4">
           <div className="lg:col-span-3 xl:col-span-2 shadow-md bg-white hover:shadow-none transition-full duration-300 h-96">
             <LineChart chartData={userData} />
           </div>
           <div className="lg:col-span-2 xl:col-span-1 shadow-md bg-white hover:shadow-none transition-full duration-300 h-96 flex justify-center items-center p-0 xl:p-2">
             <PieChart chartData={userData} />
           </div>
-        </div>
+        </div> */}
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
           <div className="shadow-md bg-white p-2">
