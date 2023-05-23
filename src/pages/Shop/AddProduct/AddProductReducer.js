@@ -38,7 +38,7 @@ export const INITIAL_STATE = {
 
   cholder: ["red", "small"],
 
-  availability: 1,
+  availability: 0,
 
   deliveryOption: "",
 

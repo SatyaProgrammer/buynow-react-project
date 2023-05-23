@@ -8,7 +8,6 @@ const ProductImages = ({ images = [] }) => {
       <img src={main} alt="main image" className="main" />
       <div className="gallery">
         {images.map((image, index) => {
-          console.log(image);
           return (
             <img
               src={image}

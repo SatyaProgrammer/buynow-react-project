@@ -10,9 +10,15 @@ import {
   IconCreditCard,
 } from "../utils/Icons";
 import { Link } from "react-router-dom";
-import { dashboardReducer, INITIAL_STATE, ACTION_TYPES } from "./DashboardReducer";
+import {
+  dashboardReducer,
+  INITIAL_STATE,
+  ACTION_TYPES,
+} from "./DashboardReducer";
 import { useReducer } from "react";
 import axios from "axios";
+import Cookies from "universal-cookie";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [userData, setUserData] = useState({
@@ -33,13 +39,25 @@ const Dashboard = () => {
   });
 
   const [state, dispatch] = useReducer(dashboardReducer, INITIAL_STATE);
+  const cookies = new Cookies();
+  const navigate = new useNavigate();
 
   const handleFetch = async () => {
     dispatch({ type: ACTION_TYPES.FETCH_START });
+    const token = cookies.get("jwt_authorization");
     const response = await axios
-      .get("http://api.localhost/dashboard/customers")
+      .get("http://api.localhost/dashboard/customers", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Basic ${token}`,
+        },
+      })
       .catch((err) => {
         console.log(err?.response);
+        if (err?.response.data.error_code == "BX0001") {
+          cookies.remove("jwt_authorization");
+          navigate("/shop/dashboard");
+        }
       });
     if (response && response.data) {
       dispatch({ type: ACTION_TYPES.FETCH_SUCCESS, payload: response.data });
@@ -47,8 +65,8 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    handleFetch()
-  }, [])
+    handleFetch();
+  }, []);
   return (
     <>
       <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">

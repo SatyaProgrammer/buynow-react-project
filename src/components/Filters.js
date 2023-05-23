@@ -28,7 +28,7 @@ const Filters = () => {
   return (
     <Wrapper>
       <div className="content">
-        <form onSubmit={(e) => e.preventDefault()}>
+        <form onSubmit={(e) => e.preventDefault()} autoComplete="false">
           {/* search input */}
           <div className="form-control">
             <input
@@ -38,6 +38,7 @@ const Filters = () => {
               className="search-input"
               value={text}
               onChange={updateFilters}
+              autoComplete="false"
             />
           </div>
           {/* end search input */}
@@ -81,7 +82,7 @@ const Filters = () => {
           </div>
           {/* end of companies */}
           {/* colors */}
-          <div className="form-control">
+          {/* <div className="form-control">
             <h5>colors</h5>
             <div className="colors">
               {colors.map((c, index) => {
@@ -116,7 +117,7 @@ const Filters = () => {
                 );
               })}
             </div>
-          </div>
+          </div> */}
           {/* end of colors */}
           {/* price */}
           <div className="form-control">
