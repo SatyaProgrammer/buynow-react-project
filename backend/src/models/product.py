@@ -19,7 +19,6 @@ class Product(Model):
         taking = list(__taking)
         db_conn = Global.db_conn
         cond, args = Product.criteria_to_arguments(__cond)
-
         if len(taking) == 0:
             sb = f"""SELECT p.id, p.pid, p.name, p.images, c.name as catName,
 u.username as ownerName, p.price, p.customization, p.rating, p.availability, p.soldAmount,
