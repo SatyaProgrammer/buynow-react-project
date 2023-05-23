@@ -8,7 +8,7 @@ import {
 import { IconPlus, IconBin, IconAlert, IconCheck } from "../utils/Icons";
 import axios from "axios";
 import Cookies from "universal-cookie";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate, useLocation } from "react-router-dom";
 import { Loading } from "../../../components";
 
 const AddProduct = () => {
@@ -16,6 +16,7 @@ const AddProduct = () => {
   const nameRef = useRef();
   const imageRef = useRef();
   const cookies = new Cookies();
+  const location = useLocation();
   const navigate = useNavigate();
 
   const handleAddCustom = () => {
@@ -74,7 +75,9 @@ const AddProduct = () => {
   };
 
   useEffect(() => {
-    dispatch({ type: ACTION_TYPES.ADD_IMAGE, payload: "" });
+    if (state.image.length <= 0) {
+      dispatch({ type: ACTION_TYPES.ADD_IMAGE, payload: "" });
+    }
   }, []);
 
   useEffect(() => {
@@ -88,12 +91,22 @@ const AddProduct = () => {
     state.availability,
     state.deliveryOption,
     state.image,
+    state.image[0],
   ]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch({ type: ACTION_TYPES.SET_DURING_SUBMIT, payload: true });
-    console.log(state.duringSubmit);
+    if (state.image.length <= 1 && !state.image[0]) {
+      dispatch({
+        type: ACTION_TYPES.SET_ERROR,
+        payload: "A minimum of one image is required.",
+      });
+      dispatch({ type: ACTION_TYPES.SET_DURING_SUBMIT, payload: false });
+      window.scrollTo(0, 0);
+      return;
+    }
+
     const preset_key = "c003351q";
     const cloud_name = "dlplvjf9l";
     const token = cookies.get("jwt_authorization");
@@ -130,8 +143,6 @@ const AddProduct = () => {
             );
         }
       }
-    } else {
-      console.log("Token expired");
     }
 
     let data = JSON.stringify({
@@ -175,8 +186,9 @@ const AddProduct = () => {
     } catch (err) {
       if (err?.response.data.error_code == "BX0001") {
         cookies.remove("jwt_authorization");
-        navigate("/login");
+        navigate("/shop/add_product", { replace: true });
       }
+      dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: [] });
       dispatch({
         type: ACTION_TYPES.SET_ERROR,
         payload: err?.response.data.error,
@@ -392,7 +404,7 @@ const AddProduct = () => {
                     type="number"
                     name="availability"
                     placeholder="Product quantity"
-                    pattern="[0-9]*"
+                    value={state.availability}
                     required
                     className="border border-gray-300 w-full p-3 rounded-lg text-cldark focus:outline focus:outline-1"
                     onFocus={() =>
@@ -511,9 +523,9 @@ const AddProduct = () => {
                 ))}
               </div>
               {state.duringSubmit ? (
-                <div className="btn text-center">Submitting</div>
+                <div className="btn text-center">Submitting...</div>
               ) : (
-                <button className="btn">Submit</button>
+                <button className="btn outline-none">Submit</button>
               )}
             </div>
           </div>
