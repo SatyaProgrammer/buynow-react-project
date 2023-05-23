@@ -1,5 +1,6 @@
 import React, { useEffect, useContext, useReducer } from "react";
 import reducer from "../reducers/filter_reducer";
+import axios from "axios";
 import {
   LOAD_PRODUCTS,
   SET_GRIDVIEW,
@@ -11,6 +12,7 @@ import {
   CLEAR_FILTERS,
 } from "../actions";
 import { useProductsContext } from "./products_context";
+import { logRoles } from "@testing-library/react";
 
 const initialState = {
   filtered_products: [],
@@ -47,19 +49,34 @@ export const FilterProvider = ({ children }) => {
     dispatch({ type: SET_LISTVIEW });
   };
 
-  useEffect(() => {
-    dispatch({ type: FILTER_PRODUCTS });
-    dispatch({ type: SORT_PRODUCTS });
-  }, [products, state.sort, state.filters]);
+  // useEffect(() => {
+  //   // dispatch({ type: FILTER_PRODUCTS });
+  //   dispatch({ type: SORT_PRODUCTS });
+  // }, [products, state.sort, state.filters]);
 
   const updateSort = (e) => {
     const value = e.target.value;
     dispatch({ type: UPDATE_SORT, payload: value });
   };
 
+  useEffect(() => {
+    if (state.filters.text) {
+      const searchProducts = async () => {
+        const response = await fetch(
+          `http://api.localhost/products/matching?name=m${state.filters.text}`
+        );
+        return await response.json();
+      };
+      searchProducts().then((result) => {
+        dispatch({ type: "SEARCH_PRODUCTS", payload: { result } });
+      });
+    }
+  }, [products, state.filters.text]);
+
   const updateFilters = (e) => {
     let name = e.target.name;
     let value = e.target.value;
+
     if (name === "catName") {
       value = e.target.textContent;
     }
@@ -68,9 +85,6 @@ export const FilterProvider = ({ children }) => {
     }
     if (name === "price") {
       value = Number(value);
-    }
-    if (name === "shipping") {
-      value = e.target.checked;
     }
     dispatch({ type: UPDATE_FILTERS, payload: { name, value } });
   };

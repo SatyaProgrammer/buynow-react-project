@@ -9,6 +9,11 @@ import { useProductsContext } from "../context/products_context";
 
 const Navbar = () => {
   const { openSidebar } = useProductsContext();
+  const refreshPage = () => {
+    setTimeout(() => {
+      window.location.reload(false);
+    }, 500);
+  };
   return (
     <NavContainer>
       <div className="nav-center">
@@ -25,14 +30,26 @@ const Navbar = () => {
             const { id, text, url } = link;
             return (
               <li key={id}>
-                <NavLink
-                  to={url}
-                  className={({ isActive }) =>
-                    isActive ? "border-b-2 border-primary4" : ""
-                  }
-                >
-                  {text}
-                </NavLink>
+                {id == 1 ? (
+                  <NavLink
+                    to={url}
+                    className={({ isActive }) =>
+                      isActive ? "border-b-2 border-primary4" : ""
+                    }
+                    onClick={refreshPage}
+                  >
+                    {text}
+                  </NavLink>
+                ) : (
+                  <NavLink
+                    to={url}
+                    className={({ isActive }) =>
+                      isActive ? "border-b-2 border-primary4" : ""
+                    }
+                  >
+                    {text}
+                  </NavLink>
+                )}
               </li>
             );
           })}

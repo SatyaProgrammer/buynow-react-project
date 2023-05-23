@@ -28,7 +28,7 @@ const Filters = () => {
   return (
     <Wrapper>
       <div className="content">
-        <form onSubmit={(e) => e.preventDefault()}>
+        <form onSubmit={(e) => e.preventDefault()} autoComplete="false">
           {/* search input */}
           <div className="form-control">
             <input
@@ -38,6 +38,7 @@ const Filters = () => {
               className="search-input"
               value={text}
               onChange={updateFilters}
+              autoComplete="false"
             />
           </div>
           {/* end search input */}
