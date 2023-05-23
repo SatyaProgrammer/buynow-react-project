@@ -82,7 +82,7 @@ const Filters = () => {
           </div>
           {/* end of companies */}
           {/* colors */}
-          <div className="form-control">
+          {/* <div className="form-control">
             <h5>colors</h5>
             <div className="colors">
               {colors.map((c, index) => {
@@ -117,7 +117,7 @@ const Filters = () => {
                 );
               })}
             </div>
-          </div>
+          </div> */}
           {/* end of colors */}
           {/* price */}
           <div className="form-control">

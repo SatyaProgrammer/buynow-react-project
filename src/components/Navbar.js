@@ -36,7 +36,7 @@ const Navbar = () => {
                     className={({ isActive }) =>
                       isActive ? "border-b-2 border-primary4" : ""
                     }
-                    onClick={refreshPage}
+                    // onClick={refreshPage}
                   >
                     {text}
                   </NavLink>

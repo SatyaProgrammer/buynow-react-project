@@ -144,9 +144,40 @@ const filter_reducer = (state, action) => {
   if (action.type === "SEARCH_PRODUCTS") {
     const { all_products } = state;
     let tempProducts = [...all_products];
-    let data = action.payload;
-    tempProducts = data.result;
-    console.log(tempProducts);
+    if (action.payload) {
+      console.log(action.payload.result.length);
+      let data = action.payload;
+      tempProducts = data.result;
+    }
+    return { ...state, filtered_products: tempProducts };
+  }
+
+  if (action.type === "FILTER_BY_CATEGORY") {
+    const { all_products } = state;
+    let tempProducts = [...all_products];
+    if (action.payload) {
+      console.log(action.payload.result.length);
+      let data = action.payload;
+      tempProducts = data.result;
+    }
+    return { ...state, filtered_products: tempProducts };
+  }
+
+  if (action.type === "FILTER_VENDOR") {
+    const { all_products } = state;
+    let tempProducts = [...all_products];
+    if (action.payload) {
+      console.log(action.payload.result.length);
+      let data = action.payload;
+      tempProducts = data.result;
+    }
+    return { ...state, filtered_products: tempProducts };
+  }
+
+  if (action.type === "FILTER_PRICE") {
+    const { all_products } = state;
+    let tempProducts = [...all_products];
+    console.log(state.filters.price);
     return { ...state, filtered_products: tempProducts };
   }
 
