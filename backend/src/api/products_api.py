@@ -184,7 +184,7 @@ def update_product(uid):
                 "error": "Invalid product id."
             }, 400, {"Content-Type": "application/json"}
         
-        if not Product.attest_exists(pid):
+        if Product.attest_nonexistent(pid):
             return {
                 "error_code": "BX1206",
                 "error": "Product doesn't exist."
@@ -280,7 +280,7 @@ def delete_product(uid):
                 "error": "Invalid product id."
             }, 400, {"Content-Type": "application/json"}
         
-        if not Product.attest_exists(pid):
+        if Product.attest_nonexistent(pid):
             return {
                 "error_code": "BX1206",
                 "error": "Product doesn't exist."
