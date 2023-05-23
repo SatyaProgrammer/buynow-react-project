@@ -43,7 +43,7 @@ WHERE p.owner = ?;"""
         cursor.execute(query, (uid,))
         result = cursor.fetchone()
         cursor.close()
-        return {"revenue": result["revenue"]}, 200, {"Content-Type": "application/json"}
+        return {"revenue": result["revenue"] if result["revenue"] is not None else 0}, 200, {"Content-Type": "application/json"}
     except Exception as e:
         Global.console.print_exception()
         return {
