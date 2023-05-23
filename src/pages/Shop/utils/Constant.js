@@ -41,10 +41,9 @@ export const SidebarItems = [
 export const ProductTableHeader = [
     'Product',
     'Category',
-    'Added date',
     'Price',
-    'Quantity',
-    'Status',
+    'Qauntity',
+    'Delivery Option',
     'Action'
 ]
 
