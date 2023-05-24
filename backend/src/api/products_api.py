@@ -287,8 +287,8 @@ def delete_product(uid):
             }, 400, {"Content-Type": "application/json"}
         
         product = Product.pid(pid)
-        name = User.id(user_id)
-        if product["ownerName"] != name:
+        user = User.id(user_id)
+        if product["ownerName"] != user["username"]:
             return {
                 "error_code": "BX1207",
                 "error": "You don't own this product."
