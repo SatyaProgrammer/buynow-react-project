@@ -128,23 +128,23 @@ export const FilterProvider = ({ children }) => {
     dispatch({ type: "FILTER_VENDOR" });
   }, [products, state.filters.ownerName]);
 
-  useEffect(() => {
-    if (isFinite(state.filters.price)) {
-      const filterPrice = async () => {
-        const response = await fetch(
-          `http://api.localhost/products/matching?price=r${0}-${
-            state.filters.price
-          }`
-        );
-        return await response.json();
-      };
+  // useEffect(() => {
+  //   if (isFinite(state.filters.price)) {
+  //     const filterPrice = async () => {
+  //       const response = await fetch(
+  //         `http://api.localhost/products/matching?price=r${0}-${
+  //           state.filters.price
+  //         }`
+  //       );
+  //       return await response.json();
+  //     };
 
-      filterPrice().then((result) => {
-        console.log(result);
-        dispatch({ type: "FILTER_PRICE", payload: { result } });
-      });
-    }
-  }, [products, state.filters.price]);
+  //     filterPrice().then((result) => {
+  //       console.log(result);
+  //       dispatch({ type: "FILTER_PRICE", payload: { result } });
+  //     });
+  //   }
+  // }, [products, state.filters.price]);
 
   const clearFilters = () => {
     dispatch({ type: CLEAR_FILTERS });

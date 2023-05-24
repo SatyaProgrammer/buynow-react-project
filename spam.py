@@ -1,3 +1,4 @@
+import asyncio
 from backend.src.lib.db import create_connection
 from dotenv import load_dotenv
 from requests import Session, Request
@@ -27,14 +28,22 @@ WHERE p.owner = ?;"""
         "unique_customers": result["unique_count"]
     }, 200, {"Content-Type": "application/json"}
 
-def main():
+async def main():
     data = Session().post("http://api.localhost/auth/login", json={
         "username": "reimu",
         "password": "hakurei"
     })
     token = data.json()["token"]
     
-    categories = Session().get("http://api.localhost/categories")
+    async def dumb_function():
+        return Session().get("http://api.localhost/products/matching?limit=-1")
+    async with asyncio.TaskGroup() as tg:
+        v = [None] * 100
+        for i in range(100):
+            v[i] = tg.create_task(dumb_function())
+        print("done")
+    
+    categories = Session().get("http://api.localhost/products/matching?limit=-1")
     print(categories.json())
     # my_products = Session().get("http://api.localhost/products/me", headers={
     #     "Authorization": f"Basic {token}"
@@ -42,4 +51,4 @@ def main():
     # print(my_products.json())
         
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
