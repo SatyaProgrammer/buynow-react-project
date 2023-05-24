@@ -222,7 +222,20 @@ WHERE p.pid = %s"""
         except Exception as e:
             Global.console.print_exception()
             return Result.Err(str(e))
-
+        
+    @staticmethod
+    def delete(pid: str) -> Result[tuple, str]:
+        try:
+            db_conn = Global.db_conn
+            cursor = db_conn.cursor(prepared=True)
+            cursor.execute("DELETE FROM products WHERE pid = %s", (pid,))
+            db_conn.commit()
+            cursor.close()
+            return Result.Ok(())
+        except Exception as e:
+            Global.console.print_exception()
+            return Result.Err(str(e))
+    
     @staticmethod
     def attest_nonexistent(pid: str) -> bool:
         db_conn = Global.db_conn
