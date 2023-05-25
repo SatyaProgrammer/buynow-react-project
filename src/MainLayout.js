@@ -21,6 +21,7 @@ import AddProduct from "./pages/Shop/AddProduct/AddProduct";
 import ProductDetail from "./pages/Shop/ProductDetail/ProductDetail";
 import History from "./pages/HistoryPage";
 import { PrivateRoutes } from "./utils/ManageRoute";
+import EditProduct from "./pages/Shop/EditProduct/EditProduct";
 
 const MainLayout = () => {
   return (
@@ -73,6 +74,15 @@ const MainLayout = () => {
               <>
                 <ShopSidebar />
                 <AddProduct />
+              </>
+            }
+          />
+          <Route
+            path="/shop/product/edit_product/:id"
+            element={
+              <>
+                <ShopSidebar />
+                <EditProduct />
               </>
             }
           />

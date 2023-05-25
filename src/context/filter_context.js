@@ -424,6 +424,76 @@ export const FilterProvider = ({ children }) => {
     dispatch({ type: UPDATE_FILTERS, payload: { name, value } });
   };
 
+  useEffect(() => {
+    if (state.filters.text) {
+      const searchProducts = async () => {
+        const response = await fetch(
+          `http://api.localhost/products/matching?name=m${state.filters.text}`
+        );
+        return await response.json();
+      };
+      searchProducts().then((result) => {
+        dispatch({ type: "SEARCH_PRODUCTS", payload: { result } });
+      });
+    }
+    dispatch({ type: "SEARCH_PRODUCTS" });
+  }, [products, state.filters.text]);
+
+  useEffect(() => {
+    if (state.filters.catName === "all") {
+      dispatch({ type: "FILTER_BY_CATEGORY" });
+    } else if (state.filters.catName !== "all") {
+      const filterCategory = async () => {
+        const response = await fetch(
+          `http://api.localhost/products/matching?catName=m${state.filters.catName}`
+        );
+        return await response.json();
+      };
+      filterCategory().then((result) => {
+        dispatch({ type: "FILTER_BY_CATEGORY", payload: { result } });
+      });
+    }
+    dispatch({ type: "FILTER_BY_CATEGORY" });
+  }, [products, state.filters.catName]);
+
+  useEffect(() => {
+    if (state.filters.ownerName === "all") {
+      dispatch({ type: "FILTER_VENDOR" });
+    } else if (state.filters.ownerName !== "all") {
+      if (state.filters.ownerName) {
+        const filterVendor = async () => {
+          const response = await fetch(
+            `http://api.localhost/products/matching?ownerName=m${state.filters.ownerName}`
+          );
+          return await response.json();
+        };
+        filterVendor().then((result) => {
+          console.log(result);
+          dispatch({ type: "FILTER_VENDOR", payload: { result } });
+        });
+      }
+    }
+    dispatch({ type: "FILTER_VENDOR" });
+  }, [products, state.filters.ownerName]);
+
+  // useEffect(() => {
+  //   if (isFinite(state.filters.price)) {
+  //     const filterPrice = async () => {
+  //       const response = await fetch(
+  //         `http://api.localhost/products/matching?price=r${0}-${
+  //           state.filters.price
+  //         }`
+  //       );
+  //       return await response.json();
+  //     };
+
+  //     filterPrice().then((result) => {
+  //       console.log(result);
+  //       dispatch({ type: "FILTER_PRICE", payload: { result } });
+  //     });
+  //   }
+  // }, [products, state.filters.price]);
+
   const clearFilters = () => {
     dispatch({ type: CLEAR_FILTERS });
   };

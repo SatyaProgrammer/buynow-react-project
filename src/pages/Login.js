@@ -41,11 +41,12 @@ const Login = () => {
       });
       // Set Cookies
       cookies.set("jwt_authorization", response.data.token);
+      cookies.set("current_user", user);
       setUser("");
       setPwd("");
       navigate(from, { replace: true });
     } catch (error) {
-      setErrMsg(error?.response.data.error)
+      setErrMsg(error?.response.data.error);
     }
   };
 

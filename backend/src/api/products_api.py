@@ -184,14 +184,15 @@ def update_product(uid):
                 "error": "Invalid product id."
             }, 400, {"Content-Type": "application/json"}
         
-        if not Product.attest_exists(pid):
+        if Product.attest_nonexistent(pid):
             return {
                 "error_code": "BX1206",
                 "error": "Product doesn't exist."
             }, 400, {"Content-Type": "application/json"}
         
         product = Product.pid(pid)
-        if product["owner"] != user_id:
+        user = User.id(user_id)
+        if product["ownerName"] != user["username"]:
             return {
                 "error_code": "BX1207",
                 "error": "You don't own this product."
@@ -215,7 +216,7 @@ def update_product(uid):
         availability = request_data["availability"]
         deliveryOption = request_data["deliveryOption"]
         
-        if not validate_json(images) or not validate_json(customization):
+        if not validate_json(json.dumps(images)) or not validate_json(json.dumps(customization)):
             return {
                 "error_code": "BX1203",
                 "error": "Invalid JSON."
@@ -231,10 +232,10 @@ def update_product(uid):
         
         res = Product.update(pid, {
             "name": name,
-            "images": images,
+            "images": json.dumps(images),
             "catId": cat_id,
             "price": price,
-            "customization": customization,
+            "customization": json.dumps(customization),
             "description": description,
             "availability": availability,
             "deliveryOption": deliveryOption
@@ -280,14 +281,15 @@ def delete_product(uid):
                 "error": "Invalid product id."
             }, 400, {"Content-Type": "application/json"}
         
-        if not Product.attest_exists(pid):
+        if Product.attest_nonexistent(pid):
             return {
                 "error_code": "BX1206",
                 "error": "Product doesn't exist."
             }, 400, {"Content-Type": "application/json"}
         
         product = Product.pid(pid)
-        if product["owner"] != user_id:
+        user = User.id(user_id)
+        if product["ownerName"] != user["username"]:
             return {
                 "error_code": "BX1207",
                 "error": "You don't own this product."
