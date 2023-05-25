@@ -33,6 +33,13 @@
         "cost": number,
     }[]
 }
+{
+    "tracking": {
+        "id": string,
+        "status": string,
+        "userId": number
+    }
+}
 ```
 
 4xx/5xx:

@@ -1,59 +1,55 @@
 import React from "react";
 import { useReducer, useEffect, useRef } from "react";
 import {
-  addProductReducer,
+  editProductReducer,
   INITIAL_STATE,
   ACTION_TYPES,
-} from "./AddProductReducer";
+} from "./EditProductReducer";
 import { IconPlus, IconBin, IconAlert, IconCheck } from "../utils/Icons";
 import axios from "axios";
 import Cookies from "universal-cookie";
-import { useNavigate, Navigate, useLocation } from "react-router-dom";
+import {
+  useNavigate,
+  Navigate,
+  useLocation,
+  useParams,
+  Link,
+} from "react-router-dom";
 
-
-const AddProduct = () => {
-  const [state, dispatch] = useReducer(addProductReducer, INITIAL_STATE);
+const EditProduct = () => {
+  const [state, dispatch] = useReducer(editProductReducer, INITIAL_STATE);
   const nameRef = useRef();
   const imageRef = useRef();
   const cookies = new Cookies();
   const location = useLocation();
   const navigate = useNavigate();
-
-  const handleAddCustom = () => {
-    dispatch({
-      type: ACTION_TYPES.ADD_CUSTOMIZATION,
-      payload: { type: "", value: [""] },
-    });
-  };
-
-  // const handleChangeCustom = (onChangeValue, i) => {
-  //   let inputData = state.customization;
-  //   inputData[i]["type"] = onChangeValue.target.value;
-  //   dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
-  // };
-
-  // const handleRemoveCustom = (i) => {
-  //   let inputData = state.customization;
-  //   inputData.splice(i, 1);
-  //   dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
-  // };
+  const pid = useParams().id;
 
   const handleAddSubCustom = (i) => {
     let inputData = state.customization;
     inputData[i]["value"].push("");
-    dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
+    dispatch({
+      type: ACTION_TYPES.SET_CUSTOMIZATION,
+      payload: [inputData],
+    });
   };
 
   const handleChangeSubCustom = (onChangeValue, i, k) => {
     let inputData = state.customization;
     inputData[i]["value"][k] = onChangeValue.target.value;
-    dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
+    dispatch({
+      type: ACTION_TYPES.SET_CUSTOMIZATION,
+      payload: [inputData],
+    });
   };
 
   const handleRemoveSubCustom = (i, k) => {
     let inputData = state.customization;
     inputData[i]["value"].splice(k, 1);
-    dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
+    dispatch({
+      type: ACTION_TYPES.SET_CUSTOMIZATION,
+      payload: [inputData],
+    });
   };
 
   const handleAddImage = () => {
@@ -66,6 +62,9 @@ const AddProduct = () => {
     let inputData = state.image;
     inputData[i] = file;
     dispatch({ type: ACTION_TYPES.SET_IMAGE, payload: inputData });
+    let isFileData = state.isFile;
+    isFileData[i] = true;
+    dispatch({ type: ACTION_TYPES.SET_IS_FILE, payload: isFileData });
   };
 
   const handleRemoveImage = (i) => {
@@ -74,25 +73,66 @@ const AddProduct = () => {
     dispatch({ type: ACTION_TYPES.SET_IMAGE, payload: inputData });
   };
 
-  useEffect(() => {
-    if (state.image.length <= 0) {
-      dispatch({ type: ACTION_TYPES.ADD_IMAGE, payload: "" });
+  const imageCheck = (images) => {
+    let inputData = [];
+    images.map((image) => {
+      if (typeof image == "string") {
+        inputData.push(false);
+      } else inputData.push(true);
+    });
+    dispatch({ type: ACTION_TYPES.SET_IS_FILE, payload: inputData });
+  };
+
+  // console.log(state.name);
+  // console.log(state.description);
+  // console.log(state.category);
+  // console.log(state.price);
+  // console.log(state.customization);
+  // console.log(state.availability);
+  // console.log(state.deliveryOption);
+  // console.log(state.image);
+  // console.log(state.imageUrl);
+
+  const handleFetch = async () => {
+    try {
+      const response = await axios.get(`http://api.localhost/products/${pid}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      dispatch({ type: ACTION_TYPES.SET_NAME, payload: response.data.name });
+      dispatch({
+        type: ACTION_TYPES.SET_DESCRIPTION,
+        payload: response.data.description,
+      });
+      dispatch({
+        type: ACTION_TYPES.SET_CATEGORY,
+        payload: response.data.category,
+      });
+      dispatch({ type: ACTION_TYPES.SET_PRICE, payload: response.data.price });
+      dispatch({
+        type: ACTION_TYPES.SETTING_CUSTOMIZATION,
+        payload: response.data.customization,
+      });
+      dispatch({
+        type: ACTION_TYPES.SET_AVAILABILITY,
+        payload: response.data.availability,
+      });
+      dispatch({
+        type: ACTION_TYPES.SET_DELIVERYOPTION,
+        payload: response.data.deliveryOption,
+      });
+      dispatch({ type: ACTION_TYPES.SET_IMAGE, payload: response.data.images });
+      imageCheck(response.data.images);
+    } catch (err) {
+      console.log(err);
     }
-  }, []);
+  };
 
   useEffect(() => {
-    dispatch({ type: ACTION_TYPES.SET_ERROR, payload: "" });
-  }, [
-    state.name,
-    state.description,
-    state.category,
-    state.price,
-    state.customization,
-    state.availability,
-    state.deliveryOption,
-    state.image,
-    state.image[0],
-  ]);
+    handleFetch();
+    dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: [] });
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -112,40 +152,57 @@ const AddProduct = () => {
     const token = cookies.get("jwt_authorization");
 
     if (token) {
+      console.log(state.imageUrl);
+      console.log("statee");
       for (let i = 0; i < state.image.length; i++) {
         if (state.image[i] != "") {
-          const file = state.image[i];
-          const formData = new FormData();
-          formData.append("file", file);
-          formData.append("upload_preset", preset_key);
-          await axios
-            .post(
-              `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
-              formData
-            )
-            .then((res) => {
-              let inputData = state.imageUrl;
-              inputData.push(res.data.secure_url);
-              dispatch({
-                type: ACTION_TYPES.SET_IMAGE_URL,
-                payload: inputData,
-              });
-              dispatch({
-                type: ACTION_TYPES.SET_IMAGE_URL,
-                payload: [""],
-              });
-            })
-            .catch((err) =>
-              dispatch({
-                type: ACTION_TYPES.SET_ERROR,
-                payload: "Image upload fail",
+          if (typeof state.image[i] != "string") {
+            console.log("uncloude");
+            console.log(state.image[i]);
+            console.log("uncloude");
+            const file = state.image[i];
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("upload_preset", preset_key);
+            await axios
+              .post(
+                `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
+                formData
+              )
+              .then((res) => {
+                let inputData = state.imageUrl;
+                inputData.push(res.data.secure_url);
+                dispatch({
+                  type: ACTION_TYPES.SET_IMAGE_URL,
+                  payload: inputData,
+                });
+                dispatch({
+                  type: ACTION_TYPES.SET_IMAGE_URL,
+                  payload: [""],
+                });
               })
-            );
+              .catch((err) => {
+                console.log(err);
+                dispatch({
+                  type: ACTION_TYPES.SET_ERROR,
+                  payload: "Image upload fail",
+                });
+              });
+          }
+          if (typeof state.image[i] == "string") {
+            let inputData = state.imageUrl;
+            inputData.push(state.image[i]);
+            console.log(inputData);
+            dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: inputData });
+
+            console.log(state.imageUrl);
+          }
         }
       }
     }
 
     let data = JSON.stringify({
+      pid: pid,
       name: state.name,
       images: state.imageUrl,
       category: state.category,
@@ -156,9 +213,12 @@ const AddProduct = () => {
       deliveryOption: state.deliveryOption,
     });
 
+    console.log("data");
+    console.log(data);
+
     try {
       const response = await axios.post(
-        "http://api.localhost/products/add",
+        "http://api.localhost/products/update",
         data,
         {
           headers: {
@@ -202,7 +262,7 @@ const AddProduct = () => {
     <>
       <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
         <p className="text-cldark text-4xl font-bold my-4 text-medium">
-          Add Product
+          Edit Product
         </p>
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col gap-4">
@@ -229,6 +289,9 @@ const AddProduct = () => {
               ""
             )}
             <div className="bg-white p-4 shadow-lg rounded-md flex flex-col gap-4">
+              <Link to={"/shop/product"} className="btn w-fit">
+                Back
+              </Link>
               <div className="flex flex-col gap-2">
                 <div className="text-xl font-semibold text-cldark">
                   Product Name
@@ -325,71 +388,76 @@ const AddProduct = () => {
                 <div className="text-xl font-semibold text-cldark">
                   Color & Size
                 </div>
-                {state.customization?.map((custom, i) => (
-                  <div key={i} className="flex flex-col gap-1">
-                    {/* <div className="text-cldark text-sm font-semibold">Type</div> */}
-                    <div className="grid grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-3">
-                      <div className="col-span-2 md:col-span-1">
-                        <div className="flex gap-2 items-center">
-                          <div className="flex items-center  border rounded-lg  border-gray-300 focus-within:outline focus-within:outline-1 w-full">
-                            <div className="w-full p-3 rounded-lg  text-cldark text-center">
-                              {custom.type}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col gap-3 col-span-4 md:col-span-5 lg:col-span-7 xl:col-span-9">
-                        {/* {Object.entries(state.customization[i]).filter(([key, _]) => key !== "title").map((t,k) => ( */}
-                        {state.customization[i]["value"].map((t, k) => (
-                          <div key={k}>
-                            <div>
-                              <div className="flex gap-2 items-center">
-                                <div className="flex items-center border rounded-lg w-full  border-gray-300 focus-within:outline focus-within:outline-1">
-                                  <input
-                                    type="text"
-                                    placeholder={state.cholder[i]}
-                                    required
-                                    onFocus={() =>
-                                      dispatch({
-                                        type: ACTION_TYPES.SET_SUCCESS,
-                                        payload: "",
-                                      })
-                                    }
-                                    onChange={(e) =>
-                                      handleChangeSubCustom(e, i, k)
-                                    }
-                                    value={state.customization[i]["value"][k]}
-                                    name="subCustom"
-                                    className="focus:outline-none w-full p-3 rounded-lg text-cldark"
-                                  />
-                                  <div
-                                    onClick={() => handleAddSubCustom(i)}
-                                    className="p-2 hover:scale-110 transition-full duration-300"
-                                  >
-                                    <div className="w-4 h-4 cursor-pointer">
-                                      <IconPlus fill="#222" />
-                                    </div>
-                                  </div>
+                {state.customization
+                  ? state.customization.map((custom, i) => (
+                      <div key={i} className="flex flex-col gap-1">
+                        <div className="grid grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-3">
+                          <div className="col-span-2 md:col-span-1">
+                            <div className="flex gap-2 items-center">
+                              <div className="flex items-center  border rounded-lg  border-gray-300 focus-within:outline focus-within:outline-1 w-full">
+                                <div className="w-full p-3 rounded-lg  text-cldark text-center">
+                                  {custom.type}
                                 </div>
-                                {state.customization[i]["value"].length > 1 ? (
-                                  <div
-                                    onClick={() => handleRemoveSubCustom(i, k)}
-                                    className="w-5 h-5 hover:scale-110 duration-300 transition-all cursor-pointer"
-                                  >
-                                    <IconBin fill="#222" />
-                                  </div>
-                                ) : (
-                                  ""
-                                )}
                               </div>
                             </div>
                           </div>
-                        ))}
+
+                          <div className="flex flex-col gap-3 col-span-4 md:col-span-5 lg:col-span-7 xl:col-span-9">
+                            {state.customization[i]["value"].map((t, k) => (
+                              <div key={k}>
+                                <div>
+                                  <div className="flex gap-2 items-center">
+                                    <div className="flex items-center border rounded-lg w-full  border-gray-300 focus-within:outline focus-within:outline-1">
+                                      <input
+                                        type="text"
+                                        placeholder={state.cholder[i]}
+                                        required
+                                        onFocus={() =>
+                                          dispatch({
+                                            type: ACTION_TYPES.SET_SUCCESS,
+                                            payload: "",
+                                          })
+                                        }
+                                        onChange={(e) =>
+                                          handleChangeSubCustom(e, i, k)
+                                        }
+                                        value={
+                                          state.customization[i]["value"][k]
+                                        }
+                                        name="subCustom"
+                                        className="focus:outline-none w-full p-3 rounded-lg text-cldark"
+                                      />
+                                      <div
+                                        onClick={() => handleAddSubCustom(i)}
+                                        className="p-2 hover:scale-110 transition-full duration-300"
+                                      >
+                                        <div className="w-4 h-4 cursor-pointer">
+                                          <IconPlus fill="#222" />
+                                        </div>
+                                      </div>
+                                    </div>
+                                    {state.customization[i]["value"].length >
+                                    1 ? (
+                                      <div
+                                        onClick={() =>
+                                          handleRemoveSubCustom(i, k)
+                                        }
+                                        className="w-5 h-5 hover:scale-110 duration-300 transition-all cursor-pointer"
+                                      >
+                                        <IconBin fill="#222" />
+                                      </div>
+                                    ) : (
+                                      ""
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                ))}
+                    ))
+                  : ""}
               </div>
             </div>
 
@@ -447,13 +515,23 @@ const AddProduct = () => {
                 {state.image.map((image, idx) => (
                   <div key={idx} className="flex items-center gap-2">
                     {state.image[idx] ? (
-                      <div className="w-16 h-10">
-                        <img
-                          alt="not found"
-                          src={URL.createObjectURL(state.image[idx])}
-                          className="w-full h-full rounded-md object-cover shadow-md"
-                        />
-                      </div>
+                      state.isFile[idx] ? (
+                        <div className="w-16 h-10">
+                          <img
+                            alt="not found"
+                            src={URL.createObjectURL(state.image[idx])}
+                            className="w-full h-full rounded-md object-cover shadow-md"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-16 h-10">
+                          <img
+                            alt="not found"
+                            src={image}
+                            className="w-full h-full rounded-md object-cover shadow-md"
+                          />
+                        </div>
+                      )
                     ) : (
                       ""
                     )}
@@ -535,4 +613,4 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default EditProduct;
