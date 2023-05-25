@@ -216,7 +216,7 @@ def update_product(uid):
         availability = request_data["availability"]
         deliveryOption = request_data["deliveryOption"]
         
-        if not validate_json(images) or not validate_json(customization):
+        if not validate_json(json.dumps(images)) or not validate_json(json.dumps(customization)):
             return {
                 "error_code": "BX1203",
                 "error": "Invalid JSON."
