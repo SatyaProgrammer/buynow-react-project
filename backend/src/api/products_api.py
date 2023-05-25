@@ -232,10 +232,10 @@ def update_product(uid):
         
         res = Product.update(pid, {
             "name": name,
-            "images": images,
+            "images": json.dumps(images),
             "catId": cat_id,
             "price": price,
-            "customization": customization,
+            "customization": json.dumps(customization),
             "description": description,
             "availability": availability,
             "deliveryOption": deliveryOption
