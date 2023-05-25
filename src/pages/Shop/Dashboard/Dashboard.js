@@ -117,6 +117,28 @@ const Dashboard = () => {
         payload: data,
       });
     }
+
+    // RECENT ORDER
+    const recent_order_response = await axios
+      .get("http://api.localhost/dashboard/recent_orders", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Basic ${token}`,
+        },
+      })
+      .catch((err) => {
+        if (err?.response.data.error_code == "BX0001") {
+          cookies.remove("jwt_authorization");
+          navigate("/shop/dashboard");
+        }
+      });
+    if (recent_order_response && recent_order_response.data) {
+      data["recent_order"] = recent_order_response.data;
+      dispatch({
+        type: ACTION_TYPES.SET_SUCCESS,
+        payload: data,
+      });
+    }
   };
 
   useEffect(() => {
@@ -203,9 +225,9 @@ const Dashboard = () => {
               <div className="text-cldark text-2xl font-semibold">
                 Recent Orders
               </div>
-              <div className="btn">
+              <Link to="/shop/order" className="btn">
                 View more
-              </div>
+              </Link>
             </div>
             <div className="overflow-x-auto table-wrapper h-80 px-2 pb-2">
               <table className="w-full text-left border-separate border-spacing-0">
@@ -229,83 +251,19 @@ const Dashboard = () => {
                   </tr>
                 </thead>
                 <tbody className="">
-                  <tr>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                  </tr>
-                  <tr>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                  </tr>
-                  <tr>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                  </tr>
-                  <tr>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                  </tr>
-                  <tr>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                  </tr>
-                  <tr>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                  </tr>
-                  <tr>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                  </tr>
-                  <tr>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                  </tr>
-                  <tr>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                  </tr>
-                  <tr>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                  </tr>
-                  <tr>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                    <td className="text-cldark p-2">001</td>
-                  </tr>
+                  {/* {state.post.recent_order ? "df" : "fd"} */}
+
+                  {state.post.recent_order ? (
+                    "No order"
+                  ) : (
+                    <tr>
+                      <td className="text-cldark p-2">001</td>
+                      <td className="text-cldark p-2">001</td>
+                      <td className="text-cldark p-2">001</td>
+                      <td className="text-cldark p-2">001</td>
+                      <td className="text-cldark p-2">001</td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
