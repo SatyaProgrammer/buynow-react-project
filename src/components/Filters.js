@@ -19,6 +19,7 @@ const Filters = () => {
     updateFilters,
     clearFilters,
     all_products,
+    startFilters,
   } = useFilterContext();
 
   const categories = getUniqueValues(all_products, "catName");
@@ -128,8 +129,9 @@ const Filters = () => {
               name="price"
               onChange={updateFilters}
               min={min_price}
-              max={max_price + 1}
+              max={max_price}
               value={price}
+              step="0.01"
             />
           </div>
           {/* end of price */}
@@ -148,7 +150,15 @@ const Filters = () => {
         </form>
         <button type="button" className="clear-btn" onClick={clearFilters}>
           {" "}
-          clear filters
+          clear filter
+        </button>
+        <button
+          type="button"
+          className="clear-btn"
+          style={{ background: "hsl(22, 28%, 37%)" }}
+          onClick={startFilters}
+        >
+          Filter Product
         </button>
       </div>
     </Wrapper>
