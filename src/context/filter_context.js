@@ -24,7 +24,6 @@ const initialState = {
     text: "",
     ownerName: "all",
     catName: "all",
-    color: "all",
     min_price: 0,
     max_price: 0,
     price: 0,
@@ -400,7 +399,8 @@ export const FilterProvider = ({ children }) => {
         dispatch({ type: FILTER_PRODUCTS });
       }
     }
-  }, [products, state.filters, state.filter]);
+    dispatch({ type: SORT_PRODUCTS });
+  }, [products, state.sort, state.filters, state.filter]);
 
   const updateSort = (e) => {
     const value = e.target.value;
