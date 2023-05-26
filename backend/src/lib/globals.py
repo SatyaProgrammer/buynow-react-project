@@ -1,3 +1,4 @@
+import mysql.connector as msc
 from mysql.connector import MySQLConnection
 from rich.console import Console
 from backend.src.lib.refdict import RefreshingDict

@@ -1,8 +1,8 @@
-# BuyNow API: Getting orders associated with a tracking number
+# BuyNow API: Get My Orders
 
 | Key | Value |
 | --- | --- |
-| Endpoint | `api.localhost/trackings/<tracking_number>` |
+| Endpoint | `api.localhost/trackings/me` |
 | Method | `GET` |
 | Auth | `Yes` |
 
@@ -11,7 +11,6 @@
 | Key | Value |
 | --- | --- |
 | Content-Type | `application/json` |
-| Authorization | `Basic <token>` |
 
 ## Response
 

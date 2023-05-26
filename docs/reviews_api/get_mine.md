@@ -1,8 +1,8 @@
-# BuyNow API: Get Trackings
+# BuyNow API: Get My Review
 
 | Key | Value |
 | --- | --- |
-| Endpoint | `api.localhost/trackings` |
+| Endpoint | `api.localhost/reviews/<pid>/me` |
 | Method | `GET` |
 | Auth | `Yes` |
 
@@ -11,7 +11,6 @@
 | Key | Value |
 | --- | --- |
 | Content-Type | `application/json` |
-| Authorization | `Basic <token>` |
 
 ## Response
 
@@ -19,11 +18,9 @@
 
 ```ts
 {
-    trackings: {
-        id: number,
-        status: string,
-        userId: number,
-    }[]
+    id: number,
+    rating: number,
+    comment: string,
 }
 ```
 

@@ -1,9 +1,9 @@
-# BuyNow API: Get Trackings
+# BuyNow API: Delete Review
 
 | Key | Value |
 | --- | --- |
-| Endpoint | `api.localhost/trackings` |
-| Method | `GET` |
+| Endpoint | `api.localhost/reviews/<pid>` |
+| Method | `DELETE` |
 | Auth | `Yes` |
 
 ## Headers
@@ -11,7 +11,6 @@
 | Key | Value |
 | --- | --- |
 | Content-Type | `application/json` |
-| Authorization | `Basic <token>` |
 
 ## Response
 
@@ -19,11 +18,7 @@
 
 ```ts
 {
-    trackings: {
-        id: number,
-        status: string,
-        userId: number,
-    }[]
+    "message": string,
 }
 ```
 

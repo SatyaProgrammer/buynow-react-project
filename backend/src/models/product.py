@@ -236,6 +236,17 @@ WHERE p.pid = %s"""
         return result[0] == 0
     
     @staticmethod
+    def attest_reviewed(pid: str, uid: str | int) -> bool:
+        uid = int(uid)
+        db_conn = Global.db_conn
+        cursor = db_conn.cursor(prepared=True)
+        cursor.execute("SELECT COUNT(*) FROM reviews WHERE pid = %s AND authorId = %s", (pid, uid))
+        result = cursor.fetchone()
+        cursor.close()
+        
+        return result[0] != 0
+
+    @staticmethod
     def __canonical_name(k: str) -> str:
         if k == "catName":
             return "c.name"
