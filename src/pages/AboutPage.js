@@ -11,14 +11,15 @@ const AboutPage = () => {
         <img src={aboutImg} alt="nice desk" />
         <article>
           <div className="title">
-            <h2>our story</h2>
+            <h2>sell now - buy now</h2>
             <div className="underline"></div>
           </div>
           <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Maiores
-            nihil dolor quo quae eos est pariatur asperiores aspernatur culpa
-            impedit! Inventore deleniti ea aliquid quidem reiciendis rem
-            voluptate possimus quae?
+            Welcome to our website! We are a small business that was founded in
+            2023 with a mission to provide a place for Cambodians to buy and
+            sell products online. We are passionate about our work, and we are
+            committed to providing our customers with the best possible
+            experience.
           </p>
         </article>
       </Wrapper>
