@@ -1,3 +1,4 @@
+import os
 from dotenv import load_dotenv
 from flask import Flask, abort, Blueprint
 from flask_cors import CORS
@@ -17,7 +18,10 @@ load_dotenv(dotenv_path=".env.local")
 
 app = Flask(__name__, subdomain_matching=True)
 CORS(app)
-app.config['SERVER_NAME'] = "localhost"
+app.config['SERVER_NAME'] = os.getenv("SERVER_NAME")
+if app.config['SERVER_NAME'] == None:
+    raise Exception("FATAL: No SERVER_NAME defined")
+
 app.wsgi_app = ProxyFix(
     app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
 )
@@ -27,7 +31,7 @@ __db_conn = create_connection()
 if __db_conn.is_ok():
     db_conn = __db_conn.unwrap()
 else:
-    raise Exception("Cannot create a database connection")
+    raise Exception("FATAL: Cannot create a database connection")
 
 Global.db_conn = db_conn
 Global.console = Console()
@@ -70,7 +74,7 @@ def handle_stupid_error(e):
     }, 500, {"Content-Type": "application/json"}
 
 def main() -> None:
-    app.run()
+    app.run(host='0.0.0.0')
     pass
 
 if __name__ == '__main__':
