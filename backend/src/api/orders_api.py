@@ -13,7 +13,7 @@ def get_trackings(uid):
         db_conn = Global.db_conn
         
         cursor = db_conn.cursor(prepared=True, dictionary=True)
-        cursor.execute("SELECT id, status, userId FROM trackings WHERE userId = ?", (uid,))
+        cursor.execute("SELECT id, status FROM trackings WHERE userId = ?", (uid,))
         trackings = cursor.fetchall()
         cursor.close()
         
@@ -96,7 +96,7 @@ def create_tracking(uid):
         }, 500, {"Content-Type": "application/json"}
         
 
-@orders_api.get("/tracings/<tracking_number>")
+@orders_api.get("/trackings/<tracking_number>")
 @token_required
 @limiter.limit("10/minute")
 def get_order(uid, tracking_number):
@@ -207,6 +207,41 @@ def update_order_status(uid, tracking_number):
         return {
             "message": "Order status updated."
         }, 200, {"Content-Type": "application/json"}
+    except Exception as e:
+        return {
+            "error_code": "BX0000",
+            "error": "Something went wrong."
+        }, 500, {"Content-Type": "application/json"}
+        
+@orders_api.get("/trackings/vendor")
+@limiter.limit("10/minute")
+@token_required
+# get all orders that are related to the vendor's products
+def get_orders_from_vendor(uid):
+    try:
+        db_conn = Global.db_conn
+        
+        cursor = db_conn.cursor(prepared=True, dictionary=True)
+        cursor.execute("""\
+SELECT o.trackingNumber, p.pid, p.name, p.images, o.customization, o.quantity, o.cost
+FROM orders as o
+INNER JOIN products as p
+ON o.productId = p.id
+WHERE p.owner = ?""", (uid,))
+        
+        orders = cursor.fetchall()
+        cursor.close()
+        
+        if orders is None:
+            return {
+                "error_code": "BX0101",
+                "error": "Order not found."
+            }, 404, {"Content-Type": "application/json"}
+            
+        return {
+            "orders": orders
+        }, 200, {"Content-Type": "application/json"}
+        
     except Exception as e:
         return {
             "error_code": "BX0000",

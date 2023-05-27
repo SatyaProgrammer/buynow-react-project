@@ -8,7 +8,8 @@ from backend.src.api.auth_api import auth_api
 from backend.src.api.customization_api import cust_api
 from backend.src.api.orders_api import orders_api
 from backend.src.api.dashboard_api import dashboard_api
-from backend.src.lib.db import create_connection
+from backend.src.api.reviews_api import reviews_api
+from backend.src.lib.db import create_connection, msc
 from backend.src.lib import Global
 from backend.src.middleware.rate_limiter import limiter
 
@@ -43,6 +44,30 @@ app.register_blueprint(auth_api, subdomain="api")
 app.register_blueprint(cust_api, subdomain="api")
 app.register_blueprint(orders_api, subdomain="api")
 app.register_blueprint(dashboard_api, subdomain="api")
+app.register_blueprint(reviews_api, subdomain="api")
+
+@app.errorhandler(Exception)
+def handle_all_errors(e):
+    Global.console.print_exception()
+    return {
+        "error_code": "BX0001",
+        "error": "Something went wrong."
+    }, 500, {"Content-Type": "application/json"}
+
+@app.errorhandler(msc.errors.OperationalError)
+def handle_stupid_error(e):
+    # probably need to reconnect to the database
+    __db_conn = create_connection()
+    if __db_conn.is_ok():
+        db_conn = __db_conn.unwrap()
+    else:
+        raise Exception("Cannot create a database connection")
+    
+    Global.db_conn = db_conn
+    return {
+        "error_code": "BX0002",
+        "error": "The database does not like whatever you are doing. One at a time please."
+    }, 500, {"Content-Type": "application/json"}
 
 def main() -> None:
     app.run()
