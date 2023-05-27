@@ -46,9 +46,16 @@ app.register_blueprint(orders_api, subdomain="api")
 app.register_blueprint(dashboard_api, subdomain="api")
 app.register_blueprint(reviews_api, subdomain="api")
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return {
+        "error_code": "BX0000",
+        "error": "The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again."
+    }, 404, {"Content-Type": "application/json"}
+
 @app.errorhandler(Exception)
 def handle_all_errors(e):
-    Global.console.print_exception()
+    Global.console.print(e.original_error)
     return {
         "error_code": "BX0001",
         "error": "Something went wrong."
