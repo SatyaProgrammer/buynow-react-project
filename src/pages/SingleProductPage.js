@@ -82,7 +82,13 @@ const SingleProductPage = () => {
               {owner}
             </p>
             <hr />
-            {availability > 0 && <AddToCart product={product} />}
+            {availability > 0 ? (
+              <AddToCart product={product} />
+            ) : (
+              <h2 style={{ marginTop: "2rem", color: "hsl(22, 28%, 45%)" }}>
+                Out of Stock
+              </h2>
+            )}
           </section>
         </div>
       </div>
