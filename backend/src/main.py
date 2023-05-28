@@ -80,6 +80,21 @@ def handle_stupid_error(e):
         "error": "The database does not like whatever you are doing. One at a time please."
     }, 500, {"Content-Type": "application/json"}
 
+@app.errorhandler(msc.errors.InterfaceError)
+def handle_another_stupid_error(e):
+    # probably need to reconnect to the database
+    __db_conn = create_connection()
+    if __db_conn.is_ok():
+        db_conn = __db_conn.unwrap()
+    else:
+        raise Exception("Cannot create a database connection")
+    
+    Global.db_conn = db_conn
+    return {
+        "error_code": "BX0003",
+        "error": "The database does not like whatever you are doing. One at a time please."
+    }, 500, {"Content-Type": "application/json"}
+
 def main() -> None:
     app.run(host='0.0.0.0')
     pass

@@ -31,6 +31,8 @@ const ProductDetail = () => {
     handleFetch();
   }, []);
 
+  console.log(state.post.image);
+
   return (
     <>
       {state.loading ? (
