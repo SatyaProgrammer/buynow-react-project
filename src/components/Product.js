@@ -3,13 +3,12 @@ import styled from "styled-components";
 import { formatPrice } from "../utils/helpers";
 import { FaSearch } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import axios from "axios";
 
 const Product = ({ images, name, price, pid }) => {
   return (
     <Wrapper>
       <div className="container p-0">
-        <img src={images.image[0]} alt={name} className="" />
+        <img src={images.images[0]} alt={name} className="" />
         <Link to={`/products/${pid}`} className="link">
           <FaSearch />
         </Link>

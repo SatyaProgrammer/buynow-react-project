@@ -1,3 +1,4 @@
+import os
 from dotenv import load_dotenv
 from flask import Flask, abort, Blueprint
 from flask_cors import CORS
@@ -17,7 +18,10 @@ load_dotenv(dotenv_path=".env.local")
 
 app = Flask(__name__, subdomain_matching=True)
 CORS(app)
-app.config["SERVER_NAME"] = "localhost"
+app.config["SERVER_NAME"] = os.getenv("SERVER_NAME")
+if app.config["SERVER_NAME"] == None:
+    raise Exception("FATAL: No SERVER_NAME defined")
+
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 limiter.init_app(app)
 
@@ -25,7 +29,7 @@ __db_conn = create_connection()
 if __db_conn.is_ok():
     db_conn = __db_conn.unwrap()
 else:
-    raise Exception("Cannot create a database connection")
+    raise Exception("FATAL: Cannot create a database connection")
 
 Global.db_conn = db_conn
 Global.console = Console()
@@ -47,9 +51,21 @@ app.register_blueprint(dashboard_api, subdomain="api")
 app.register_blueprint(reviews_api, subdomain="api")
 
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return (
+        {
+            "error_code": "BX0000",
+            "error": "The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.",
+        },
+        404,
+        {"Content-Type": "application/json"},
+    )
+
+
 @app.errorhandler(Exception)
 def handle_all_errors(e):
-    Global.console.print(e.original_exception)
+    Global.console.print(e.original_error)
     return (
         {"error_code": "BX0001", "error": "Something went wrong."},
         500,
@@ -78,7 +94,7 @@ def handle_stupid_error(e):
 
 
 def main() -> None:
-    app.run()
+    app.run(host="0.0.0.0")
     pass
 
 
