@@ -27,7 +27,7 @@ const CartTotals = () => {
       if (result.isConfirmed) {
         orderProducts();
         clearCart();
-        navigate("/");
+        navigate("/history");
         // Swal.fire("Deleted!", "Your file has been deleted.", "success");
       }
     });
@@ -55,7 +55,7 @@ const CartTotals = () => {
     } catch (error) {
       if (error?.response.data.error_code == "BX0001") {
         cookies.remove("jwt_authorization");
-        navigate("/shop/add_product", { replace: true });
+        navigate("/shop/login", { replace: true });
       }
     }
   };

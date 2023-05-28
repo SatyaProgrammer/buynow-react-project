@@ -22,6 +22,7 @@ import ProductDetail from "./pages/Shop/ProductDetail/ProductDetail";
 import History from "./pages/HistoryPage";
 import { PrivateRoutes } from "./utils/ManageRoute";
 import EditProduct from "./pages/Shop/EditProduct/EditProduct";
+import OrderDetails from "./pages/OrderDetails";
 
 const MainLayout = () => {
   return (
@@ -101,6 +102,15 @@ const MainLayout = () => {
             element={
               <>
                 <History />
+              </>
+            }
+          />
+
+          <Route
+            path="/history/:id"
+            element={
+              <>
+                <OrderDetails />
               </>
             }
           />

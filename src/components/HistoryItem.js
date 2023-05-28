@@ -1,53 +1,29 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
-import { formatPrice } from "../utils/helpers";
-import AmountButtons from "./AmountButtons";
 import { FaInfo } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
 import reducer from "../reducers/detail_reducer";
-import axios from "axios";
-import Cookies from "universal-cookie";
-import { useCartContext } from "../context/cart_context";
-import { useReducer } from "react";
-import { logDOM } from "@testing-library/react";
-
-const initialState = {};
+import { Link } from "react-router-dom";
 
 const CartItem = ({ id, status }) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const navigate = useNavigate();
-  const cookies = new Cookies();
-  const token = cookies.get("jwt_authorization");
-  const getTracking = async (id) => {
-    try {
-      const response = await axios.get(`http://api.localhost/trackings/${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Basic ${token}`,
-        },
-      });
-      const data = response.data.trackings;
-      console.log(data);
-      dispatch({ type: "TRACKING", payload: { data } });
-    } catch (error) {
-      if (error?.response?.data?.error_code == "BX0001") {
-        cookies.remove("jwt_authorization");
-        navigate("/login", { replace: true });
-      }
-    }
-  };
   return (
     <Wrapper>
       <h5>{id}</h5>
       <h5 className="price">{status}</h5>
-      <button
+      <Link
+        to={`/history/${id}`}
+        className="remove-btn"
+        style={{ background: "hsl(22, 28%, 45%)" }}
+      >
+        <FaInfo />
+      </Link>
+      {/* <button
         type="button"
         className="remove-btn"
         style={{ background: "hsl(22, 28%, 45%)" }}
         onClick={() => getTracking(id)}
       >
         <FaInfo />
-      </button>
+      </button> */}
     </Wrapper>
   );
 };

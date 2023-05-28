@@ -39,7 +39,9 @@ const HistoryContent = () => {
     }
   };
   useEffect(() => {
-    getTrackings();
+    setTimeout(() => {
+      getTrackings();
+    }, "500");
   }, []);
   console.log(state.trackings);
   return (
@@ -48,23 +50,6 @@ const HistoryContent = () => {
       {state.trackings.map((tracking) => {
         return <HistoryItem key={tracking.id} {...tracking} {...state} />;
       })}
-      {/* {cart.map((item) => {
-        return <CartItem key={item.id} {...item} />;
-      })}
-      <hr />
-      <div className="link-container">
-        <Link to="/" className="link-btn">
-          continue shopping
-        </Link>
-        <button
-          type="button"
-          className="link-btn clear-btn"
-          onClick={clearCart}
-        >
-          clear shopping cart
-        </button>
-      </div>
-      <CartTotals /> */}
     </Wrapper>
   );
 };

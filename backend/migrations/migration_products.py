@@ -37,7 +37,7 @@ def seed() -> list[dict]:
         {
             "pid": "McuxrwGHJqnlyD-QrsyzpS_YoEnS3VxWic7GPLAm-wM",
             "name": "TRAXXAS 1/10 4X4 Monster Truck",
-            "images": ["https://placehold.co/600x400"],
+            "images": '{"image": ["https://placehold.co/600x400", "https://placehold.co/600x400", "https://placehold.co/600x400", "https://placehold.co/600x400"]}',
             "catId": "1",
             "owner": "1",
             "price": "1000.00",
@@ -50,10 +50,7 @@ def seed() -> list[dict]:
         {
             "pid": "KZv-fzSI5JTgMKiv2L6KpT5-dzsgXoDHAZFRpzfRGfc",
             "name": "accent chair",
-            "images": [
-                "https://placehold.co/600x400",
-                "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681749482/react-comfy-store-products/iuYyO9RP_o_upinxq.jpg",
-            ],
+            "images": '{"image": ["https://placehold.co/600x400", "https://placehold.co/600x400", "https://placehold.co/600x400", "https://placehold.co/600x400"]}',
             "catId": "2",
             "owner": "2",
             "price": "25999",
@@ -66,11 +63,7 @@ def seed() -> list[dict]:
         {
             "pid": "0t-BUg9eswbMIxxk2-PvuXEzeSe7VJP80U132JkuLF0",
             "name": "albany sectional",
-            "images": [
-                "https://placehold.co/600x400",
-                "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681750874/react-comfy-store-products/product-3_znpiqa.jpg",
-                "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681750929/react-comfy-store-products/product-4_ebl6q1.jpg",
-            ],
+            "images": '{"image": ["https://placehold.co/600x400", "https://placehold.co/600x400", "https://placehold.co/600x400", "https://placehold.co/600x400"]}',
             "catId": "3",
             "owner": "1",
             "price": "109999",
@@ -83,7 +76,7 @@ def seed() -> list[dict]:
         {
             "pid": "5VtiUAmHGNNoyvxX2ki44Uk9S87uq9fR9TOedseW6FQ",
             "name": "armchair",
-            "images": '{"images": ["https://placehold.co/600x400", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681751026/react-comfy-store-products/product-5_n184nu.jpg", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681752461/react-comfy-store-products/product-6_rhaxfo.jpg" ]}',
+            "images": '{"image": ["https://placehold.co/600x400", "https://placehold.co/600x400", "https://placehold.co/600x400" ]}',
             "catId": "4",
             "owner": "1",
             "price": "42999",
@@ -96,7 +89,7 @@ def seed() -> list[dict]:
         {
             "pid": "Oe3rEp2-8lHuW7LcVwlp0-ZgCgDa32bG9ZiPfxrdP6M",
             "name": "entertainment center",
-            "images": '{"images": ["https://placehold.co/600x400", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681751026/react-comfy-store-products/product-5_n184nu.jpg", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681752461/react-comfy-store-products/product-6_rhaxfo.jpg"]}',
+            "images": '{"image": ["https://placehold.co/600x400", "https://placehold.co/600x400", "https://placehold.co/600x400"]}',
             "catId": "5",
             "owner": "1",
             "price": "8000.00",
@@ -109,7 +102,7 @@ def seed() -> list[dict]:
         {
             "pid": "3eIUZ2DpEqhjofCCuxAr3m86uLZC0P8S30U1pT9fkVg",
             "name": "high-back bench",
-            "images": '{"images": ["https://placehold.co/600x400", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681751026/react-comfy-store-products/product-5_n184nu.jpg", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681752461/react-comfy-store-products/product-6_rhaxfo.jpg", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681753280/react-comfy-store-products/prod-7_ta21yy.jpg"]}',
+            "images": '{"image": ["https://placehold.co/600x400", "https://placehold.co/600x400", "https://placehold.co/600x400", "https://placehold.co/600x400"]}',
             "catId": "6",
             "owner": "1",
             "price": "1000.00",
@@ -122,7 +115,7 @@ def seed() -> list[dict]:
         {
             "pid": "x-0_jP22txO5H71RapBXx_allThjot6YGgiQ6HlirBE",
             "name": "leather chair",
-            "images": '{"images": ["https://placehold.co/600x400", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681751026/react-comfy-store-products/product-5_n184nu.jpg", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681752461/react-comfy-store-products/product-6_rhaxfo.jpg", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681753280/react-comfy-store-products/prod-7_ta21yy.jpg"]}',
+            "images": '{"image": ["https://placehold.co/600x400", "https://placehold.co/600x400", "https://placehold.co/600x400", "https://placehold.co/600x400"]}',
             "catId": "1",
             "owner": "1",
             "price": "1000.00",
@@ -135,7 +128,7 @@ def seed() -> list[dict]:
         {
             "pid": "6XRoFVxWrz2t_2B6wcINfh6x7AJtcYKCjFS8-_pUv2E",
             "name": "leather sofa",
-            "images": '{"images": ["https://placehold.co/600x400", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681751026/react-comfy-store-products/product-5_n184nu.jpg", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681752461/react-comfy-store-products/product-6_rhaxfo.jpg", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681753280/react-comfy-store-products/prod-7_ta21yy.jpg"]}',
+            "images": '{"image": ["https://placehold.co/600x400", "https://placehold.co/600x400", "https://placehold.co/600x400", "https://placehold.co/600x400"]}',
             "catId": "2",
             "owner": "1",
             "price": "1000.00",
@@ -148,7 +141,7 @@ def seed() -> list[dict]:
         {
             "pid": "SwFgIUBo8x-z0fFB1T4QMDu-ioWd1DpTjmy1zYuMdMA",
             "name": "modern bookshelf",
-            "images": '{"images": ["https://placehold.co/600x400", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681751026/react-comfy-store-products/product-5_n184nu.jpg", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681752461/react-comfy-store-products/product-6_rhaxfo.jpg", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681753280/react-comfy-store-products/prod-7_ta21yy.jpg"]}',
+            "images": '{"image": ["https://placehold.co/600x400", "https://placehold.co/600x400", "https://placehold.co/600x400", "https://placehold.co/600x400"]}',
             "catId": "3",
             "owner": "1",
             "price": "1000.00",
@@ -161,7 +154,7 @@ def seed() -> list[dict]:
         {
             "pid": "M6M_NZSuazW0vI-qb2rqj-DeQXEuGR04gSo-sLDDcEw",
             "name": "modern poster",
-            "images": '{"images": ["https://placehold.co/600x400", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681751026/react-comfy-store-products/product-5_n184nu.jpg", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681752461/react-comfy-store-products/product-6_rhaxfo.jpg", "https://res.cloudinary.com/dt2g7mgtv/image/upload/v1681753280/react-comfy-store-products/prod-7_ta21yy.jpg"]}',
+            "images": '{"image": ["https://placehold.co/600x400", "https://placehold.co/600x400", "https://placehold.co/600x400", "https://placehold.co/600x400"]}',
             "catId": "4",
             "owner": "1",
             "price": "1000.00",
