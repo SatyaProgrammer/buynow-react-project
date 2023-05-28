@@ -57,7 +57,7 @@ const SingleProductPage = () => {
 
   return (
     <Wrapper>
-      <PageHero title={name} product={product} />
+      <PageHero title={name} />
       <div className="section section-center">
         <Link to="/" className="btn">
           back to products

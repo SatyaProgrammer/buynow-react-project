@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-const ProductImages = ({ images = { image: [] } }) => {
-  const imagess = images.image;
+const ProductImages = ({ images = { images: [] } }) => {
+  const imagess = images.images;
   console.log(imagess);
   const [main, setMain] = useState(imagess[0]);
   return (
