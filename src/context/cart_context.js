@@ -7,6 +7,7 @@ import {
   CLEAR_CART,
   COUNT_CART_TOTALS,
 } from "../actions";
+// import { useNavigate } from "react-router-dom";
 
 const getLocalStorage = () => {
   let cart = localStorage.getItem("cart");
@@ -27,6 +28,9 @@ const initialState = {
 const CartContext = React.createContext();
 
 export const CartProvider = ({ children }) => {
+  // const cookies = new Cookies();
+  // const token = cookies.get("jwt_authorization");
+  // const navigate = useNavigate();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   // add to cart
@@ -56,7 +60,14 @@ export const CartProvider = ({ children }) => {
 
   return (
     <CartContext.Provider
-      value={{ ...state, addToCart, removeItem, toggleAmount, clearCart }}
+      value={{
+        ...state,
+        addToCart,
+        removeItem,
+        toggleAmount,
+        clearCart,
+        // getTrackings,
+      }}
     >
       {children}
     </CartContext.Provider>

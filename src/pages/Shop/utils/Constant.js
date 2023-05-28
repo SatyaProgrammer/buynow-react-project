@@ -31,11 +31,11 @@ export const SidebarItems = [
         link: '/shop/order',
         icon: <IconGift fill = {iconColor}/>
     },
-    {
-        name: 'customer',
-        link: '/shop/customer',
-        icon: <IconUser fill = {iconColor}/>
-    },
+    // {
+    //     name: 'customer',
+    //     link: '/shop/customer',
+    //     icon: <IconUser fill = {iconColor}/>
+    // },
 ]
 
 export const ProductTableHeader = [

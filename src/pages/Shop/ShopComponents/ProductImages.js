@@ -1,21 +1,19 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-const ProductImages = ({ images = { images: [] } }) => {
-  const imagess = images.images;
-  console.log(imagess);
-  const [main, setMain] = useState(imagess[0]);
+const ProductImages = ({ images = [] }) => {
+  const [main, setMain] = useState(images[0]);
   return (
     <Wrapper>
       <img src={main} alt="main image" className="main" />
       <div className="gallery">
-        {imagess.map((image, index) => {
+        {images.map((image, index) => {
           return (
             <img
               src={image}
               alt={image}
               key={index}
-              onClick={() => setMain(imagess[index])}
+              onClick={() => setMain(images[index])}
               className={`${image.url === main.url ? "active" : null}`}
             />
           );
@@ -27,7 +25,7 @@ const ProductImages = ({ images = { images: [] } }) => {
 
 const Wrapper = styled.section`
   .main {
-    height: 600px;
+    height: 200px;
   }
   img {
     width: 100%;
@@ -41,7 +39,7 @@ const Wrapper = styled.section`
     grid-template-columns: repeat(5, 1fr);
     column-gap: 1rem;
     img {
-      height: 100px;
+      height: 40px;
       cursor: pointer;
     }
   }
@@ -50,21 +48,21 @@ const Wrapper = styled.section`
   }
   @media (max-width: 576px) {
     .main {
-      height: 300px;
+      height: 200px;
     }
     .gallery {
       img {
-        height: 50px;
+        height: 40px;
       }
     }
   }
   @media (min-width: 992px) {
     .main {
-      height: 500px;
+      height: 200px;
     }
     .gallery {
       img {
-        height: 75px;
+        height: 40px;
       }
     }
   }

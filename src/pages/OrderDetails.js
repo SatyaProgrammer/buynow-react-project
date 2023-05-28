@@ -1,36 +1,37 @@
-import React, { useEffect, useReducer } from "react";
-import styled from "styled-components";
-import { useCartContext } from "../context/cart_context";
+import { PageHero } from "../components";
 import { Link } from "react-router-dom";
-import HistoryColumns from "./HistoryColumns";
-import CartItem from "./CartItem";
-import CartTotals from "./CartTotals";
-import { useNavigate } from "react-router-dom";
-import reducer from "../reducers/history_reducer";
+import DetailColumn from "../components/DetailColumns";
+import DetailItem from "../components/DetailItem";
 import axios from "axios";
 import Cookies from "universal-cookie";
-import HistoryItem from "./HistoryItem";
+import { useNavigate } from "react-router-dom";
+import { useReducer } from "react";
+import reducer from "../reducers/detail_reducer";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
+import styled from "styled-components";
 
-const initialState = {
-  trackings: [],
+const iniatialState = {
+  data: [],
 };
 
-const HistoryContent = () => {
-  // get all tracking data
+const OrderDetails = () => {
+  const { id } = useParams();
+  const [state, dispatch] = useReducer(reducer, iniatialState);
   const navigate = useNavigate();
   const cookies = new Cookies();
   const token = cookies.get("jwt_authorization");
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const getTrackings = async () => {
+  const getTracking = async (id) => {
     try {
-      const response = await axios.get("http://api.localhost/trackings", {
+      const response = await axios.get(`http://api.localhost/trackings/${id}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Basic ${token}`,
         },
       });
-      const data = response.data.trackings;
-      dispatch({ type: "TRACKINGS", payload: { data } });
+      const data = response.data.orders;
+      console.log(data);
+      dispatch({ type: "TRACKING", payload: { data } });
     } catch (error) {
       if (error?.response?.data?.error_code == "BX0001") {
         cookies.remove("jwt_authorization");
@@ -40,19 +41,27 @@ const HistoryContent = () => {
   };
   useEffect(() => {
     setTimeout(() => {
-      getTrackings();
-    }, "500");
+      getTracking(id);
+    }, 300);
   }, []);
-  console.log(state.trackings);
   return (
-    <Wrapper className="section section-center">
-      <HistoryColumns />
-      {state.trackings.map((tracking) => {
-        return <HistoryItem key={tracking.id} {...tracking} {...state} />;
-      })}
+    <Wrapper>
+      <PageHero title="Order History" product="18" />
+      <div className="section section-center">
+        <DetailColumn />
+        {state.data.map((product) => {
+          return <DetailItem key={product.pid} {...product} />;
+        })}
+        <div className="link-container">
+          <Link to="/history" className="link-btn">
+            back to order history
+          </Link>
+        </div>
+      </div>
     </Wrapper>
   );
 };
+
 const Wrapper = styled.section`
   h1,
   h2,
@@ -131,4 +140,4 @@ const Wrapper = styled.section`
     background: var(--clr-black);
   }
 `;
-export default HistoryContent;
+export default OrderDetails;

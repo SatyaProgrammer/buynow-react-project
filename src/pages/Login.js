@@ -52,7 +52,7 @@ const Login = () => {
 
   return (
     <div className="h-screen bg-gray-100 grid place-items-center">
-      <div className="w-96 bg-white text-primary4 rounded-md shadow-lg flex flex-col gap-8">
+      <div className="w-80 sm:w-96 bg-white text-primary4 rounded-md shadow-lg flex flex-col gap-8">
         <div className="text-2xl font-semibold underline border-gray-100 mt-8 px-8">
           Sign In
         </div>

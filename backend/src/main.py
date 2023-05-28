@@ -18,13 +18,11 @@ load_dotenv(dotenv_path=".env.local")
 
 app = Flask(__name__, subdomain_matching=True)
 CORS(app)
-app.config['SERVER_NAME'] = os.getenv("SERVER_NAME")
-if app.config['SERVER_NAME'] == None:
+app.config["SERVER_NAME"] = os.getenv("SERVER_NAME")
+if app.config["SERVER_NAME"] == None:
     raise Exception("FATAL: No SERVER_NAME defined")
 
-app.wsgi_app = ProxyFix(
-    app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
-)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 limiter.init_app(app)
 
 __db_conn = create_connection()
@@ -38,10 +36,12 @@ Global.console = Console()
 
 api = Blueprint("api", __name__, subdomain="api")
 
+
 @api.route("/")
 def hello_world():
     return "<p>Hello, World!</p>"
-    
+
+
 app.register_blueprint(api, subdomain="api")
 app.register_blueprint(prod_api, subdomain="api")
 app.register_blueprint(auth_api, subdomain="api")
@@ -50,20 +50,28 @@ app.register_blueprint(orders_api, subdomain="api")
 app.register_blueprint(dashboard_api, subdomain="api")
 app.register_blueprint(reviews_api, subdomain="api")
 
+
 @app.errorhandler(404)
 def page_not_found(e):
-    return {
-        "error_code": "BX0000",
-        "error": "The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again."
-    }, 404, {"Content-Type": "application/json"}
+    return (
+        {
+            "error_code": "BX0000",
+            "error": "The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.",
+        },
+        404,
+        {"Content-Type": "application/json"},
+    )
+
 
 @app.errorhandler(Exception)
 def handle_all_errors(e):
     Global.console.print(e.original_error)
-    return {
-        "error_code": "BX0001",
-        "error": "Something went wrong."
-    }, 500, {"Content-Type": "application/json"}
+    return (
+        {"error_code": "BX0001", "error": "Something went wrong."},
+        500,
+        {"Content-Type": "application/json"},
+    )
+
 
 @app.errorhandler(msc.errors.OperationalError)
 def handle_stupid_error(e):
@@ -73,12 +81,17 @@ def handle_stupid_error(e):
         db_conn = __db_conn.unwrap()
     else:
         raise Exception("Cannot create a database connection")
-    
+
     Global.db_conn = db_conn
-    return {
-        "error_code": "BX0002",
-        "error": "The database does not like whatever you are doing. One at a time please."
-    }, 500, {"Content-Type": "application/json"}
+    return (
+        {
+            "error_code": "BX0002",
+            "error": "The database does not like whatever you are doing. One at a time please.",
+        },
+        500,
+        {"Content-Type": "application/json"},
+    )
+
 
 @app.errorhandler(msc.errors.InterfaceError)
 def handle_another_stupid_error(e):
@@ -96,8 +109,9 @@ def handle_another_stupid_error(e):
     }, 500, {"Content-Type": "application/json"}
 
 def main() -> None:
-    app.run(host='0.0.0.0')
+    app.run(host="0.0.0.0")
     pass
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

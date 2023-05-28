@@ -22,6 +22,7 @@ import ProductDetail from "./pages/Shop/ProductDetail/ProductDetail";
 import History from "./pages/HistoryPage";
 import { PrivateRoutes } from "./utils/ManageRoute";
 import EditProduct from "./pages/Shop/EditProduct/EditProduct";
+import OrderDetails from "./pages/OrderDetails";
 
 const MainLayout = () => {
   return (
@@ -105,6 +106,15 @@ const MainLayout = () => {
             }
           />
 
+          <Route
+            path="/history/:id"
+            element={
+              <>
+                <OrderDetails />
+              </>
+            }
+          />
+
           <Route path="/shop" element={<Shop />} />
         </Route>
 
@@ -112,7 +122,7 @@ const MainLayout = () => {
         <Route path="/about" element={<About />} />
         <Route path="/cart" element={<Cart />} />
         {/* <Route path="/products" element={<Products />} /> */}
-        <Route path="/products/:id" element={<SingleProduct />} />
+        {/* <Route path="/products/:id" element={<SingleProduct />} /> */}
         <Route path="/shop" element={<Shop />} />
 
         <Route path="*" element={<Error />} />

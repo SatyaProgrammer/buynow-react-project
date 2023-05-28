@@ -1,26 +1,36 @@
 # BuyNow API: Create Orders
 
-| Key | Value |
-| --- | --- |
+| Key      | Value                     |
+| -------- | ------------------------- |
 | Endpoint | `api.localhost/trackings` |
-| Method | `POST` |
-| Auth | `Yes` |
+| Method   | `POST`                    |
+| Auth     | `Yes`                     |
 
 ## Headers
 
-| Key | Value |
-| --- | --- |
-| Content-Type | `application/json` |
-| Authorization | `Basic <token>` |
+| Key           | Value              |
+| ------------- | ------------------ |
+| Content-Type  | `application/json` |
+| Authorization | `Basic <token>`    |
 
 ## Request
 
 ```ts
 {
-    orders: {
-        pid: string,
-        quantity: number,
-    }[]
+  orders: [
+    {
+      pid: string,
+      quantity: number,
+    },
+    {
+      pid: string,
+      quantity: number,
+    },
+    {
+      pid: string,
+      quantity: number,
+    },
+  ];
 }
 ```
 
@@ -37,7 +47,7 @@
 4xx/5xx:
 
 ```ts
-{   
+{
     "error_code": string, // "BXxxxx"
     "error": string,
 }

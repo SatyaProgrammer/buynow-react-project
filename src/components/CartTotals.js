@@ -4,11 +4,62 @@ import { useCartContext } from "../context/cart_context";
 import { formatPrice } from "../utils/helpers";
 import { Link } from "react-router-dom";
 import Cookies from "universal-cookie";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const CartTotals = () => {
   const cookies = new Cookies();
   const data = cookies.get("jwt_authorization");
-  const { total_amount, shipping_fee } = useCartContext();
+  const { total_amount, shipping_fee, cart, clearCart } = useCartContext();
+  const navigate = useNavigate();
+  const token = cookies.get("jwt_authorization");
+
+  const checkOutModal = () => {
+    Swal.fire({
+      title: "Please confirm your order !",
+      text: "You won't be able to revert this!",
+      showCancelButton: true,
+      confirmButtonColor: "hsl(22, 31%, 52%)",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        orderProducts();
+        clearCart();
+        navigate("/history");
+        // Swal.fire("Deleted!", "Your file has been deleted.", "success");
+      }
+    });
+  };
+  const orderProducts = async (e) => {
+    // e.preventDefault();
+    let data = cart.map((product) => {
+      return { pid: product.pid, quantity: product.amount };
+    });
+
+    console.log(data);
+    data = JSON.stringify({ orders: data });
+    console.log(data);
+    try {
+      const response = await axios.post(
+        "http://api.localhost/trackings",
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Basic ${token}`,
+          },
+        }
+      );
+    } catch (error) {
+      if (error?.response.data.error_code == "BX0001") {
+        cookies.remove("jwt_authorization");
+        navigate("/shop/login", { replace: true });
+      }
+    }
+  };
+
   return (
     <Wrapper>
       <div>
@@ -26,7 +77,7 @@ const CartTotals = () => {
           </h4>
         </article>
         {data ? (
-          <Link to="/checkout" className="btn">
+          <Link className="btn" onClick={checkOutModal}>
             proceed to checkout
           </Link>
         ) : (

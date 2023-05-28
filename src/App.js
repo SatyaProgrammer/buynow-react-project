@@ -7,6 +7,7 @@ import Signup from "./pages/Signup";
 import Verify from "./pages/Verify";
 import { LoggedRoute } from "./utils/ManageRoute";
 import Redirecter from "./components/Redirecter";
+import SingleProductPage from "./pages/SingleProductPage";
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
       <Routes>
         <Route path="*" element={<MainLayout />} />
         <Route path="/redirect" element={<Redirecter />} />
+        <Route path="/products/:id" element={<SingleProductPage />} />
         <Route element={<LoggedRoute />}>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />

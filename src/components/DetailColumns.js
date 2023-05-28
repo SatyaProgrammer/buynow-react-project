@@ -1,13 +1,14 @@
 import React from "react";
 import styled from "styled-components";
 
-const HistoryColumns = () => {
+const DetailColumn = () => {
   return (
     <Wrapper>
       <div className="content">
-        <h5>Tracking Number</h5>
-        <h5>Status</h5>
-        <h5>Detail</h5>
+        <h5>item</h5>
+        <h5>price</h5>
+        <h5>quantity</h5>
+        <span></span>
       </div>
       <hr />
     </Wrapper>
@@ -40,4 +41,4 @@ const Wrapper = styled.div`
   }
 `;
 
-export default HistoryColumns;
+export default DetailColumn;

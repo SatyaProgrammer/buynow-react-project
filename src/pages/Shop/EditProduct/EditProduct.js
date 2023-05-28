@@ -25,31 +25,23 @@ const EditProduct = () => {
   const navigate = useNavigate();
   const pid = useParams().id;
 
-  const handleAddSubCustom = (i) => {
+  const handleAddSubCustom = (key) => {
     let inputData = state.customization;
-    inputData[i]["value"].push("");
-    dispatch({
-      type: ACTION_TYPES.SET_CUSTOMIZATION,
-      payload: [inputData],
-    });
+    inputData[key].push("");
+    dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
   };
 
-  const handleChangeSubCustom = (onChangeValue, i, k) => {
+  const handleChangeSubCustom = (onChangeValue, key, idx) => {
     let inputData = state.customization;
-    inputData[i]["value"][k] = onChangeValue.target.value;
-    dispatch({
-      type: ACTION_TYPES.SET_CUSTOMIZATION,
-      payload: [inputData],
-    });
+    inputData[key][idx] = onChangeValue.target.value;
+    dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
   };
 
-  const handleRemoveSubCustom = (i, k) => {
+
+  const handleRemoveSubCustom = (key, idx) => {
     let inputData = state.customization;
-    inputData[i]["value"].splice(k, 1);
-    dispatch({
-      type: ACTION_TYPES.SET_CUSTOMIZATION,
-      payload: [inputData],
-    });
+    inputData[key].splice(idx, 1);
+    dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
   };
 
   const handleAddImage = () => {
@@ -93,6 +85,21 @@ const EditProduct = () => {
   // console.log(state.image);
   // console.log(state.imageUrl);
 
+  const fetchCategory = async () => {
+    try {
+      const response = await axios.get("http://api.localhost/categories");
+
+      if (response && response.data) {
+        dispatch({
+          type: ACTION_TYPES.SET_GET_CATEGORY,
+          payload: response.data,
+        });
+      }
+    } catch (err) {
+      console.log(err.response);
+    }
+  };
+
   const handleFetch = async () => {
     try {
       const response = await axios.get(`http://api.localhost/products/${pid}`, {
@@ -122,16 +129,32 @@ const EditProduct = () => {
         type: ACTION_TYPES.SET_DELIVERYOPTION,
         payload: response.data.deliveryOption,
       });
-      dispatch({ type: ACTION_TYPES.SET_IMAGE, payload: response.data.images });
-      imageCheck(response.data.images);
+      dispatch({
+        type: ACTION_TYPES.SET_IMAGE,
+        payload: response.data.images.images,
+      });
+      imageCheck(response.data.images.images);
     } catch (err) {
       console.log(err);
+    }
+
+    try {
+      const response = await axios.get("http://api.localhost/categories");
+
+      if (response && response.data) {
+        dispatch({
+          type: ACTION_TYPES.SET_GET_CATEGORY,
+          payload: response.data,
+        });
+      }
+    } catch (err) {
+      console.log(err.response);
     }
   };
 
   useEffect(() => {
     handleFetch();
-    dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: [] });
+    dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: { images: [] } });
   }, []);
 
   const handleSubmit = async (e) => {
@@ -152,14 +175,9 @@ const EditProduct = () => {
     const token = cookies.get("jwt_authorization");
 
     if (token) {
-      console.log(state.imageUrl);
-      console.log("statee");
       for (let i = 0; i < state.image.length; i++) {
         if (state.image[i] != "") {
           if (typeof state.image[i] != "string") {
-            console.log("uncloude");
-            console.log(state.image[i]);
-            console.log("uncloude");
             const file = state.image[i];
             const formData = new FormData();
             formData.append("file", file);
@@ -171,14 +189,14 @@ const EditProduct = () => {
               )
               .then((res) => {
                 let inputData = state.imageUrl;
-                inputData.push(res.data.secure_url);
+                inputData.images.push(res.data.secure_url);
                 dispatch({
                   type: ACTION_TYPES.SET_IMAGE_URL,
                   payload: inputData,
                 });
                 dispatch({
                   type: ACTION_TYPES.SET_IMAGE_URL,
-                  payload: [""],
+                  payload: { images: [] },
                 });
               })
               .catch((err) => {
@@ -191,11 +209,8 @@ const EditProduct = () => {
           }
           if (typeof state.image[i] == "string") {
             let inputData = state.imageUrl;
-            inputData.push(state.image[i]);
-            console.log(inputData);
+            inputData.images.push(state.image[i]);
             dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: inputData });
-
-            console.log(state.imageUrl);
           }
         }
       }
@@ -228,18 +243,9 @@ const EditProduct = () => {
         }
       );
       dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: true });
-      dispatch({ type: ACTION_TYPES.SET_NAME, payload: "" });
-      dispatch({ type: ACTION_TYPES.SET_DESCRIPTION, payload: "" });
-      dispatch({ type: ACTION_TYPES.SET_CATEGORY, payload: "" });
-      dispatch({ type: ACTION_TYPES.SET_PRICE, payload: "" });
-      dispatch({ type: ACTION_TYPES.RESET_CUSTOMIZATION });
-      dispatch({ type: ACTION_TYPES.SET_AVAILABILITY, payload: 0 });
-      dispatch({ type: ACTION_TYPES.SET_DELIVERYOPTION, payload: "" });
-      dispatch({ type: ACTION_TYPES.SET_IMAGE, payload: [""] });
-      dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: [] });
       dispatch({
         type: ACTION_TYPES.SET_SUCCESS,
-        payload: "Product listed for sale",
+        payload: "Product edited succesfully",
       });
       dispatch({ type: ACTION_TYPES.SET_DURING_SUBMIT, payload: false });
       window.scrollTo(0, 0);
@@ -289,9 +295,12 @@ const EditProduct = () => {
               ""
             )}
             <div className="bg-white p-4 shadow-lg rounded-md flex flex-col gap-4">
-              <Link to={"/shop/product"} className="btn w-fit">
+              <div
+                onClick={() => navigate(-1)}
+                className="btn cursor-pointer w-fit"
+              >
                 Back
-              </Link>
+              </div>
               <div className="flex flex-col gap-2">
                 <div className="text-xl font-semibold text-cldark">
                   Product Name
@@ -345,7 +354,76 @@ const EditProduct = () => {
                 <div className="text-xl font-semibold text-cldark">
                   Category
                 </div>
-                <input
+                <button
+                  onClick={() =>
+                    dispatch({
+                      type: ACTION_TYPES.SET_CATEGORY_DROPDOWN,
+                    })
+                  }
+                  id="dropdownDefaultButton"
+                  data-dropdown-toggle="dropdown"
+                  className={
+                    state.category
+                      ? "text-cldark border border-gray-300 w-full p-3 rounded-lg font-normal focus:outline focus:outline-1"
+                      : "text-gray-400 border border-gray-300 w-full p-3 rounded-lg font-normal focus:outline focus:outline-1"
+                  }
+                  type="button"
+                >
+                  <div className="flex justify-between items-center w-full">
+                    {state.category ? state.category : "Product category"}
+                    <svg
+                      className="w-4 h-4 ml-2"
+                      aria-hidden="true"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M19 9l-7 7-7-7"
+                      ></path>
+                    </svg>
+                  </div>
+                </button>
+                <div
+                  id="dropdown"
+                  className={
+                    state.categoryDropdown
+                      ? "z-10 bg-white divide-y h-44 overflow-scroll dropdown-scrolling divide-gray-100 rounded-lg shadow w-full dark:bg-gray-700"
+                      : "hidden"
+                  }
+                >
+                  <ul
+                    className="py-2 text-md text-gray-700 dark:text-gray-200"
+                    aria-labelledby="dropdownDefaultButton"
+                  >
+                    {state.getCategory.categories
+                      ? state.getCategory.categories.map((category, idx) => (
+                          <li
+                            key={idx}
+                            onClick={() => {
+                              dispatch({
+                                type: ACTION_TYPES.SET_CATEGORY,
+                                payload: category.name,
+                              });
+                              dispatch({
+                                type: ACTION_TYPES.SET_CATEGORY_DROPDOWN,
+                              });
+                            }}
+                            className="cursor-pointer"
+                          >
+                            <div className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                              {category.name}
+                            </div>
+                          </li>
+                        ))
+                      : ""}
+                  </ul>
+                </div>
+                {/* <input
                   type="text"
                   placeholder="Product category"
                   required
@@ -361,7 +439,7 @@ const EditProduct = () => {
                   name="category"
                   value={state.category}
                   className="border border-gray-300 w-full p-3 rounded-lg text-cldark focus:outline focus:outline-1"
-                />
+                /> */}
               </div>
               <div className="flex flex-col gap-2">
                 <div className="text-xl font-semibold text-cldark">Price</div>
@@ -388,29 +466,30 @@ const EditProduct = () => {
                 <div className="text-xl font-semibold text-cldark">
                   Color & Size
                 </div>
-                {state.customization
-                  ? state.customization.map((custom, i) => (
-                      <div key={i} className="flex flex-col gap-1">
-                        <div className="grid grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-3">
-                          <div className="col-span-2 md:col-span-1">
-                            <div className="flex gap-2 items-center">
-                              <div className="flex items-center  border rounded-lg  border-gray-300 focus-within:outline focus-within:outline-1 w-full">
-                                <div className="w-full p-3 rounded-lg  text-cldark text-center">
-                                  {custom.type}
-                                </div>
-                              </div>
+                {Object.keys(state.customization).map((key, idx) => (
+                  <div className="flex flex-col gap-1">
+                    <div className="grid grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-3">
+                      <div className="col-span-2 md:col-span-1">
+                        <div className="flex gap-2 items-center">
+                          <div className="flex items-center  border rounded-lg  border-gray-300 focus-within:outline focus-within:outline-1 w-full">
+                            <div className="w-full p-3 rounded-lg  text-cldark text-center">
+                              {key}
                             </div>
                           </div>
+                        </div>
+                      </div>
 
-                          <div className="flex flex-col gap-3 col-span-4 md:col-span-5 lg:col-span-7 xl:col-span-9">
-                            {state.customization[i]["value"].map((t, k) => (
-                              <div key={k}>
+                      <div className="flex flex-col gap-3 col-span-4 md:col-span-5 lg:col-span-7 xl:col-span-9">
+                        {console.log(state.customization)}
+                        {state.customization[key] && Array.isArray(state.customization[key])
+                          ? state.customization[key].map((data, idx) => (
+                              <div key={idx}>
                                 <div>
                                   <div className="flex gap-2 items-center">
                                     <div className="flex items-center border rounded-lg w-full  border-gray-300 focus-within:outline focus-within:outline-1">
                                       <input
                                         type="text"
-                                        placeholder={state.cholder[i]}
+                                        placeholder={state.cholder[idx]}
                                         required
                                         onFocus={() =>
                                           dispatch({
@@ -419,16 +498,16 @@ const EditProduct = () => {
                                           })
                                         }
                                         onChange={(e) =>
-                                          handleChangeSubCustom(e, i, k)
+                                          handleChangeSubCustom(e, key, idx)
                                         }
-                                        value={
-                                          state.customization[i]["value"][k]
-                                        }
+                                        value={data}
                                         name="subCustom"
                                         className="focus:outline-none w-full p-3 rounded-lg text-cldark"
                                       />
                                       <div
-                                        onClick={() => handleAddSubCustom(i)}
+                                        onClick={() =>
+                                          handleAddSubCustom(key, idx)
+                                        }
                                         className="p-2 hover:scale-110 transition-full duration-300"
                                       >
                                         <div className="w-4 h-4 cursor-pointer">
@@ -436,11 +515,10 @@ const EditProduct = () => {
                                         </div>
                                       </div>
                                     </div>
-                                    {state.customization[i]["value"].length >
-                                    1 ? (
+                                    {state.customization[key].length > 1 ? (
                                       <div
                                         onClick={() =>
-                                          handleRemoveSubCustom(i, k)
+                                          handleRemoveSubCustom(key, idx)
                                         }
                                         className="w-5 h-5 hover:scale-110 duration-300 transition-all cursor-pointer"
                                       >
@@ -452,12 +530,12 @@ const EditProduct = () => {
                                   </div>
                                 </div>
                               </div>
-                            ))}
-                          </div>
-                        </div>
+                            ))
+                          : ""}
                       </div>
-                    ))
-                  : ""}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
 
