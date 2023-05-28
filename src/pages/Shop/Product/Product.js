@@ -18,7 +18,6 @@ const Product = () => {
   const cookies = new Cookies();
   const location = new useLocation();
   const token = cookies.get("jwt_authorization");
-  const current_user = cookies.get("current_user");
 
   const handleFetch = async () => {
     dispatch({ type: ACTION_TYPES.FETCH_START });
@@ -52,8 +51,6 @@ const Product = () => {
     let data = JSON.stringify({
       pid: pid,
     });
-    console.log(data);
-    console.log("Token: " + token);
     try {
       const response = await axios.post(
         `http://api.localhost/products/delete`,
@@ -119,7 +116,7 @@ const Product = () => {
                 Add Product
               </Link>
             </div>
-            <div className="p-4 border-t flex items-center sm:justify-between sm:flex-row gap-1 flex-col justify-center">
+            {/* <div className="p-4 border-t flex items-center sm:justify-between sm:flex-row gap-1 flex-col justify-center">
               <div className="flex items-center gap-1">
                 <div className="text-md text-cldark font-semibold">Show</div>
                 <div>
@@ -172,7 +169,7 @@ const Product = () => {
                   />
                 </div>
               </form>
-            </div>
+            </div> */}
             <div className="overflow-x-auto table-scrolling">
               <table className="w-full">
                 <thead className="bg-gray-100">
@@ -195,7 +192,7 @@ const Product = () => {
                             <div className="flex items-center gap-2 w-48">
                               <div className="w-16">
                                 <img
-                                  src={product.images[0]}
+                                  src={product.images.images[0]}
                                   alt="product image"
                                   className="w-full h-10 rounded-md shadow-md object-cover"
                                 />

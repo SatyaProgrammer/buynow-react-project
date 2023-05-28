@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { PageHero } from "../components";
 import aboutImg from "../assets/hero-bcg.jpeg";
+import { Link } from "react-router-dom";
 
 const AboutPage = () => {
   return (
@@ -11,7 +12,7 @@ const AboutPage = () => {
         <img src={aboutImg} alt="nice desk" />
         <article>
           <div className="title">
-            <h2>sell now - buy now</h2>
+            <h2 className="text-primary4">sell now - buy now</h2>
             <div className="underline"></div>
           </div>
           <p>

@@ -3,12 +3,7 @@ import "./Dashboard.css";
 import { LineChart, PieChart } from "../../../components/Chart";
 import { useState } from "react";
 import { UserData } from "../ChartTempData";
-import {
-  IconShoppingCart,
-  IconDollar,
-  IconUser,
-  IconCreditCard,
-} from "../utils/Icons";
+import { IconShoppingCart, IconDollar, IconUser } from "../utils/Icons";
 import { Link } from "react-router-dom";
 import {
   dashboardReducer,
@@ -21,23 +16,6 @@ import Cookies from "universal-cookie";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
-  const [userData, setUserData] = useState({
-    labels: UserData.map((data) => data.year),
-    datasets: [
-      {
-        label: "Users Gained",
-        data: UserData.map((data) => data.userGain),
-        backgroundColor: [
-          "rgba(75,192,192,1)",
-          "#ecf0f1",
-          "#50AF95",
-          "#f3ba2f",
-          "#2a71d0",
-        ],
-      },
-    ],
-  });
-
   const [state, dispatch] = useReducer(dashboardReducer, INITIAL_STATE);
   const cookies = new Cookies();
   const navigate = new useNavigate();
@@ -144,8 +122,9 @@ const Dashboard = () => {
   useEffect(() => {
     handleFetch();
   }, []);
+
   return (
-    <>
+    <div>
       <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
         <p className="text-cldark text-4xl font-bold my-4">Dashboard</p>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -251,18 +230,18 @@ const Dashboard = () => {
                   </tr>
                 </thead>
                 <tbody className="">
-                  {/* {state.post.recent_order ? "df" : "fd"} */}
-
-                  {state.post.recent_order ? (
-                    "No order"
+                  {state.post.recent_order?.order ? (
+                    state.post.recent_order?.orders.map(() => {
+                      <tr>
+                        <td className="text-cldark p-2">001</td>
+                        <td className="text-cldark p-2">001</td>
+                        <td className="text-cldark p-2">001</td>
+                        <td className="text-cldark p-2">001</td>
+                        <td className="text-cldark p-2">001</td>
+                      </tr>;
+                    })
                   ) : (
-                    <tr>
-                      <td className="text-cldark p-2">001</td>
-                      <td className="text-cldark p-2">001</td>
-                      <td className="text-cldark p-2">001</td>
-                      <td className="text-cldark p-2">001</td>
-                      <td className="text-cldark p-2">001</td>
-                    </tr>
+                    <td className="py-2">No order found</td>
                   )}
                 </tbody>
               </table>
@@ -270,7 +249,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

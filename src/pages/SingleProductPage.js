@@ -1,6 +1,6 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useProductsContext } from "../context/products_context";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Loading,
   Error,
@@ -11,10 +11,28 @@ import {
 } from "../components";
 import styled from "styled-components";
 import { formatPrice } from "../utils/helpers";
+import RatingModal from "../components/RatingModal/RatingModal";
+import Navbar from "../components/Navbar";
+import { IconCross } from "./Shop/utils/Icons";
+import { IconContext } from "react-icons";
+import { BsStarFill, BsStarHalf, BsStar } from "react-icons/bs";
+import "../components/RatingModal/RatingModal.css";
 
 const SingleProductPage = () => {
   const { id } = useParams();
   const history = useNavigate();
+  const [openModal, setOpenModal] = useState(false);
+  const [productRating, setProductRating] = useState([
+    false,
+    false,
+    false,
+    false,
+    false,
+  ]);
+
+  const onClose = () => {
+    setOpenModal(false);
+  };
 
   const {
     single_product_loading: loading,
@@ -57,7 +75,72 @@ const SingleProductPage = () => {
 
   return (
     <Wrapper>
-      <PageHero title={name} />
+      {/* <PageHero title={name} /> */}
+      {/* <div onClick={onClose} className={openModal ? "overlay" : "hidden"}>
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          className="modalContainer p-4 flex flex-col "
+        >
+          <div className="w-full flex justify-end">
+            <div
+              onClick={onClose}
+              className="w-6 h-6 hover:scale-110 transition-all duration-300"
+            >
+              <IconCross />
+            </div>
+          </div>
+          <div className="w-full flex-1">
+            <div className="text-center text-lg text-cldark my-4">
+              Rate this product
+            </div>
+            <div className="w-full flex items-center justify-center gap-4">
+              {productRating.map((star, idx) => (
+                <div key={idx}>
+                  {productRating[idx] ? (
+                    <IconContext.Provider
+                      value={{ color: "green", size: "50px" }}
+                    >
+                      <BsStarFill
+                        onClick={() => {
+                          let inputData = [false, false, false, false, false];
+                          for (let i = 0; i < inputData.length; i++) {
+                            if (i <= idx) {
+                              inputData[i] = true;
+                            } else inputData[i] = false;
+                          }
+                          setProductRating(inputData);
+                        }}
+                        className="hover:scale-110 transition-all duration-300"
+                      />
+                    </IconContext.Provider>
+                  ) : (
+                    <IconContext.Provider
+                      value={{ color: "green", size: "50px" }}
+                    >
+                      <BsStar
+                        onClick={() => {
+                          let inputData = [false, false, false, false, false];
+                          for (let i = 0; i < inputData.length; i++) {
+                            if (i <= idx) {
+                              inputData[i] = true;
+                            } else inputData[i] = false;
+                          }
+                          setProductRating(inputData);
+                        }}
+                        className="hover:scale-110 transition-all duration-300"
+                      />
+                    </IconContext.Provider>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div> */}
+      <Navbar />
+      <PageHero title={name} product={product} />
       <div className="section section-center">
         <Link to="/" className="btn">
           back to products
@@ -89,6 +172,8 @@ const SingleProductPage = () => {
                 Out of Stock
               </h2>
             )}
+            {/* {availability > 0 && <AddToCart product={product} />} */}
+            <div onClick={() => setOpenModal(true)}>Rate product</div>
           </section>
         </div>
       </div>

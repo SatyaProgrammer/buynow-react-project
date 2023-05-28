@@ -91,7 +91,7 @@ const Signup = () => {
 
   return (
     <div className=" p-8 bg-gray-100 grid place-items-center">
-      <div className="w-96 bg-white shadow-lg flex flex-col gap-6 rounded-md">
+      <div className="w-80 sm:w-96 bg-white shadow-lg flex flex-col gap-6 rounded-md">
         <div className="text-3xl font-semibold text-primary4 underline px-8 mt-6">
           Sign up
         </div>
