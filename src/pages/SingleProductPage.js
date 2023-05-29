@@ -53,7 +53,7 @@ const SingleProductPage = () => {
     });
     console.log("data");
     console.log(data);
-
+    console.log('test')
     try {
       const response = axios.post(`http://api.localhost/reviews/${id}`, data, {
         headers: {
