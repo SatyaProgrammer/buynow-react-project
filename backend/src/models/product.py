@@ -252,7 +252,7 @@ WHERE p.pid = %s"""
         db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True)
         cursor.execute(
-            "SELECT COUNT(*) FROM reviews WHERE pid = %s AND authorId = %s", (pid, uid)
+            "SELECT COUNT(*) FROM reviews WHERE productId = %s AND authorId = %s", (pid, uid)
         )
         result = cursor.fetchone()
         cursor.close()
