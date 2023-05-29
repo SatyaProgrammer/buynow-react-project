@@ -39,7 +39,7 @@ const Product = () => {
       if (response.data.length >= 1) {
         dispatch({
           type: ACTION_TYPES.FETCH_SUCCESS,
-          payload: [{products: {availability: "No product found" }}],
+          payload: [{ products: { availability: "No product found" } }],
         });
       } else {
         dispatch({ type: ACTION_TYPES.FETCH_SUCCESS, payload: response.data });
@@ -185,58 +185,66 @@ const Product = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {state.post.products
-                    ? state.post.products.map((product, idx) => (
-                        <tr key={idx} className="hover:bg-gray-50 ">
-                          <td className="text-cldark p-4 border-b overflow-hidden whitespace-nowrap name-row">
-                            <div className="flex items-center gap-2 w-48">
-                              <div className="w-16">
-                                <img
-                                  src={product.images.images[0]}
-                                  alt="product image"
-                                  className="w-full h-10 rounded-md shadow-md object-cover"
-                                />
-                              </div>
-                              <div className="font-semibold w-32 overflow-hidden">
-                                {product.name}
-                              </div>
+                  {state.post.products ? (
+                    state.post.products.map((product, idx) => (
+                      <tr key={idx} className="hover:bg-gray-50 ">
+                        <td className="text-cldark p-4 border-b overflow-hidden whitespace-nowrap name-row">
+                          <div className="flex items-center gap-2 w-48">
+                            <div className="w-16">
+                              <img
+                                src={product.images.images[0]}
+                                alt="product image"
+                                className="w-full h-10 rounded-md shadow-md object-cover"
+                              />
                             </div>
-                          </td>
-                          <td className="text-cldark p-4 border-b whitespace-nowrap">
-                            {product.catName}
-                          </td>
-                          <td className="text-cldark p-4 border-b whitespace-nowrap">
-                            ${product.price}
-                          </td>
-                          <td className="text-cldark p-4 border-b whitespace-nowrap">
-                            {product.availability}
-                          </td>
-                          <td className="text-cldark p-4 border-b whitespace-nowrap">
-                            {product.deliveryOption}
-                          </td>
-                          <td className="text-cldark p-4 border-b whitespace-nowrap">
-                            <div className="flex gap-2 items-center">
-                              <Link to={"/shop/product/".concat(product.pid)}>
-                                <div className="w-5 h-5 hover:scale-110 transition-all duration-300">
-                                  <IconFile fill="hsl(22, 28%, 45%)" />
-                                </div>
-                              </Link>
-                              <Link to={"/shop/product/edit_product/".concat(product.pid)}>
-                                <div className="w-6 h-6 hover:scale-110 transition-all duration-300">
-                                  <IconEdit fill="hsl(22, 28%, 45%)" />
-                                </div>
-                              </Link>
-                              <div
-                                onClick={() => handleDelete(product.pid)}
-                                className="w-7 h-7 hover:scale-110 transition-all duration-300"
-                              >
-                                <IconDelete fill="hsl(22, 28%, 45%)" />
-                              </div>
+                            <div className="font-semibold w-32 overflow-hidden">
+                              {product.name}
                             </div>
-                          </td>
-                        </tr>
-                      ))
-                    : ""}
+                          </div>
+                        </td>
+                        <td className="text-cldark p-4 border-b whitespace-nowrap">
+                          {product.catName}
+                        </td>
+                        <td className="text-cldark p-4 border-b whitespace-nowrap">
+                          ${product.price}
+                        </td>
+                        <td className="text-cldark p-4 border-b whitespace-nowrap">
+                          {product.availability}
+                        </td>
+                        <td className="text-cldark p-4 border-b whitespace-nowrap">
+                          {product.deliveryOption}
+                        </td>
+                        <td className="text-cldark p-4 border-b whitespace-nowrap">
+                          <div className="flex gap-2 items-center">
+                            <Link to={"/shop/product/".concat(product.pid)}>
+                              <div className="w-5 h-5 hover:scale-110 transition-all duration-300">
+                                <IconFile fill="hsl(22, 28%, 45%)" />
+                              </div>
+                            </Link>
+                            <Link
+                              to={"/shop/product/edit_product/".concat(
+                                product.pid
+                              )}
+                            >
+                              <div className="w-6 h-6 hover:scale-110 transition-all duration-300">
+                                <IconEdit fill="hsl(22, 28%, 45%)" />
+                              </div>
+                            </Link>
+                            <div
+                              onClick={() => handleDelete(product.pid)}
+                              className="w-7 h-7 hover:scale-110 transition-all duration-300"
+                            >
+                              <IconDelete fill="hsl(22, 28%, 45%)" />
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td>No product found</td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>

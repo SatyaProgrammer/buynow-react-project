@@ -241,7 +241,9 @@ const Dashboard = () => {
                       </tr>;
                     })
                   ) : (
-                    <td className="py-2">No order found</td>
+                    <tr>
+                      <td className="py-2">No order found</td>
+                    </tr>
                   )}
                 </tbody>
               </table>
