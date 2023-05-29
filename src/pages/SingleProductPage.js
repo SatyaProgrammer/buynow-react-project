@@ -17,8 +17,13 @@ import { IconCross } from "./Shop/utils/Icons";
 import { IconContext } from "react-icons";
 import { BsStarFill, BsStarHalf, BsStar } from "react-icons/bs";
 import "../components/RatingModal/RatingModal.css";
+import axios from "axios";
+import Cookies from "universal-cookie";
 
 const SingleProductPage = () => {
+  const cookies = new Cookies();
+  const token = cookies.get("jwt_authorization");
+  const navigate = new useNavigate();
   const { id } = useParams();
   const history = useNavigate();
   const [openModal, setOpenModal] = useState(false);
@@ -29,9 +34,41 @@ const SingleProductPage = () => {
     false,
     false,
   ]);
+  const [comment, setComment] = useState("");
 
   const onClose = () => {
     setOpenModal(false);
+  };
+
+  const handleSubmit = async () => {
+    let ratingInput = 0;
+    for (let i = 0; i < productRating.length; i++) {
+      if (productRating[i] === true) {
+        ratingInput++;
+      }
+    }
+    let data = JSON.stringify({
+      rating: ratingInput,
+      comment: comment,
+    });
+    console.log("data");
+    console.log(data);
+
+    try {
+      const response = axios.post(`http://api.localhost/reviews/${id}`, data, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Basic ${token}`,
+        },
+      });
+      console.log(response)
+    } catch (err) {
+      console.log(err.response.data)
+      if (err?.response.data.error_code == "BX0001") {
+        cookies.remove("jwt_authorization");
+        navigate("/login", { replace: true });
+      }
+    }
   };
 
   const {
@@ -76,7 +113,7 @@ const SingleProductPage = () => {
   return (
     <Wrapper>
       {/* <PageHero title={name} /> */}
-      {/* <div onClick={onClose} className={openModal ? "overlay" : "hidden"}>
+      <div onClick={onClose} className={openModal ? "overlay" : "hidden"}>
         <div
           onClick={(e) => {
             e.stopPropagation();
@@ -91,8 +128,8 @@ const SingleProductPage = () => {
               <IconCross />
             </div>
           </div>
-          <div className="w-full flex-1">
-            <div className="text-center text-lg text-cldark my-4">
+          <div className="w-full flex-1 flex flex-col gap-4 mt-4">
+            <div className="text-center text-lg text-cldark">
               Rate this product
             </div>
             <div className="w-full flex items-center justify-center gap-4">
@@ -100,7 +137,7 @@ const SingleProductPage = () => {
                 <div key={idx}>
                   {productRating[idx] ? (
                     <IconContext.Provider
-                      value={{ color: "green", size: "50px" }}
+                      value={{ color: "hsl(22, 28%, 45%)", size: "50px" }}
                     >
                       <BsStarFill
                         onClick={() => {
@@ -117,7 +154,7 @@ const SingleProductPage = () => {
                     </IconContext.Provider>
                   ) : (
                     <IconContext.Provider
-                      value={{ color: "green", size: "50px" }}
+                      value={{ color: "hsl(22, 28%, 45%)", size: "50px" }}
                     >
                       <BsStar
                         onClick={() => {
@@ -136,9 +173,27 @@ const SingleProductPage = () => {
                 </div>
               ))}
             </div>
+            <div className="flex flex-col gap-2">
+              <div className="text-xl font-semibold text-cldark">Comment</div>
+              <textarea
+                type="text"
+                placeholder="Product feedback"
+                required
+                onChange={(e) => setComment(e.target.value)}
+                name="description"
+                value={comment}
+                rows="4"
+                className="w-full border border-gray-300 rounded-lg p-3 text-cldark focus:outline focus:outline-1"
+              />
+            </div>
+          </div>
+          <div className=" mt-4"> 
+            <button onClick={handleSubmit} className="btn">
+              Submit
+            </button>
           </div>
         </div>
-      </div> */}
+      </div>
       <Navbar />
       <PageHero title={name} product={product} />
       <div className="section section-center">

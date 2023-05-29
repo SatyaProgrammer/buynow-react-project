@@ -179,7 +179,6 @@ const AddProduct = () => {
       availability: state.availability,
       deliveryOption: state.deliveryOption,
     });
-    console.log(data)
 
     try {
       const response = await axios.post(
