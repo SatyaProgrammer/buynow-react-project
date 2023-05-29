@@ -466,8 +466,8 @@ const EditProduct = () => {
                 <div className="text-xl font-semibold text-cldark">
                   Color & Size
                 </div>
-                {Object.keys(state.customization).map((key, idx) => (
-                  <div className="flex flex-col gap-1">
+                {Object.keys(state.customization).map((key, id) => (
+                  <div key={id} className="flex flex-col gap-1">
                     <div className="grid grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-3">
                       <div className="col-span-2 md:col-span-1">
                         <div className="flex gap-2 items-center">
