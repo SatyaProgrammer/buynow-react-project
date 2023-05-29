@@ -2,6 +2,7 @@ from flask import Blueprint, request
 from secrets import token_urlsafe
 import jwt
 import os
+from werkzeug.exceptions import InternalServerError
 from backend.src.lib import Global
 from backend.src.lib.passwd import safe_compare, make_password
 from backend.src.middleware.auth_middleware import token_required

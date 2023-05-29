@@ -120,6 +120,8 @@ def handle_stupid_error_again(e):
         raise Exception("Cannot create a database connection")
     
     Global.db_conn = db_conn
+    Global.console.print_exception()
+    
     return {
         "error_code": "BX0004",
         "error": "The database does not like whatever you are doing. One at a time please."
