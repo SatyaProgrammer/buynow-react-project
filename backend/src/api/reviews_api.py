@@ -1,9 +1,10 @@
 from flask import Blueprint, request
+
+from backend.src.lib import Global
+from backend.src.lib.validate import base64_valid
 from backend.src.middleware.auth_middleware import token_required
 from backend.src.middleware.rate_limiter import limiter
-from backend.src.lib.validate import base64_valid
 from backend.src.models import Product, User
-from backend.src.lib import Global
 
 reviews_api = Blueprint("reviews_api", __name__)
 

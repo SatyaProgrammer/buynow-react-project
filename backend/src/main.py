@@ -1,18 +1,20 @@
 import os
+
 from dotenv import load_dotenv
-from flask import Flask, abort, Blueprint
+from flask import Blueprint, Flask, abort
 from flask_cors import CORS
+from rich.console import Console
 from werkzeug.exceptions import InternalServerError
 from werkzeug.middleware.proxy_fix import ProxyFix
-from rich.console import Console
-from backend.src.api.products_api import prod_api
+
 from backend.src.api.auth_api import auth_api
 from backend.src.api.customization_api import cust_api
-from backend.src.api.orders_api import orders_api
 from backend.src.api.dashboard_api import dashboard_api
+from backend.src.api.orders_api import orders_api
+from backend.src.api.products_api import prod_api
 from backend.src.api.reviews_api import reviews_api
-from backend.src.lib.db import create_connection, msc
 from backend.src.lib import Global
+from backend.src.lib.db import create_connection, msc
 from backend.src.middleware.rate_limiter import limiter
 
 load_dotenv(dotenv_path=".env.local")
@@ -102,12 +104,16 @@ def handle_another_stupid_error(e):
         db_conn = __db_conn.unwrap()
     else:
         raise Exception("Cannot create a database connection")
-    
+
     Global.db_conn = db_conn
-    return {
-        "error_code": "BX0003",
-        "error": "The database does not like whatever you are doing. One at a time please."
-    }, 500, {"Content-Type": "application/json"}
+    return (
+        {
+            "error_code": "BX0003",
+            "error": "The database does not like whatever you are doing. One at a time please.",
+        },
+        500,
+        {"Content-Type": "application/json"},
+    )
 
 
 @app.errorhandler(InternalServerError)
@@ -118,14 +124,18 @@ def handle_stupid_error_again(e):
         db_conn = __db_conn.unwrap()
     else:
         raise Exception("Cannot create a database connection")
-    
+
     Global.db_conn = db_conn
     Global.console.print_exception()
-    
-    return {
-        "error_code": "BX0004",
-        "error": "The database does not like whatever you are doing. One at a time please."
-    }, 500, {"Content-Type": "application/json"}
+
+    return (
+        {
+            "error_code": "BX0004",
+            "error": "The database does not like whatever you are doing. One at a time please.",
+        },
+        500,
+        {"Content-Type": "application/json"},
+    )
 
 
 def main() -> None:

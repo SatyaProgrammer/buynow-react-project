@@ -1,9 +1,9 @@
 from json import loads
-from backend.src.lib import Global
+
+from backend.src.lib import Global, Result
+from backend.src.models.category import Category
 from backend.src.models.model import Model
 from backend.src.models.user import User
-from backend.src.models.category import Category
-from backend.src.lib import Result
 
 
 class Product(Model):
@@ -222,7 +222,7 @@ WHERE p.pid = %s"""
         except Exception as e:
             Global.console.print_exception()
             return Result.Err(str(e))
-        
+
     @staticmethod
     def delete(pid: str) -> Result[tuple, str]:
         try:
@@ -235,7 +235,7 @@ WHERE p.pid = %s"""
         except Exception as e:
             Global.console.print_exception()
             return Result.Err(str(e))
-    
+
     @staticmethod
     def attest_nonexistent(pid: str) -> bool:
         db_conn = Global.db_conn
@@ -251,10 +251,12 @@ WHERE p.pid = %s"""
         uid = int(uid)
         db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True)
-        cursor.execute("SELECT COUNT(*) FROM reviews WHERE pid = %s AND authorId = %s", (pid, uid))
+        cursor.execute(
+            "SELECT COUNT(*) FROM reviews WHERE pid = %s AND authorId = %s", (pid, uid)
+        )
         result = cursor.fetchone()
         cursor.close()
-        
+
         return result[0] != 0
 
     @staticmethod
