@@ -61,140 +61,93 @@ const filter_reducer = (state, action) => {
     const { all_products } = state;
     const { text, catName, ownerName, color, price, shipping } = state.filters;
     let tempProducts = [...all_products];
-
-    if (text) {
-      try {
-        const response = axios.get(
-          `http://api.localhost/products/matching?name=m${text}`,
-          {
-            headers: { "Content-Type": "application/json" },
-          }
-        );
-        const data = response.data;
-        tempProducts = data;
-        console.log(tempProducts);
-        return { ...state, filtered_products: tempProducts };
-      } catch (error) {
-        console.log(error.response);
-      }
+    // Filtering
+    // Text
+    if (action.text) {
+      // tempProducts = action.text.result;
+      // console.log(action.text.result);
+      tempProducts = action.text.result;
     }
-
-    return { ...state, filtered_products: tempProducts };
+    if (action.category) {
+      // console.log(action.category.result);
+      tempProducts = action.category.result;
+    }
+    if (action.textAndCategory) {
+      // console.log(action.textAndCategory.result);
+      tempProducts = action.textAndCategory.result;
+    }
+    if (action.ownerName) {
+      tempProducts = action.ownerName.result;
+    }
+    if (action.ownerNameAndCategory) {
+      tempProducts = action.ownerNameAndCategory.result;
+    }
+    if (action.ownerNameAndSearch) {
+      tempProducts = action.ownerNameAndSearch.result;
+    }
+    if (action.ownerNameAndSearchAndCategory) {
+      tempProducts = action.ownerNameAndSearchAndCategory.result;
+    }
+    if (action.price) {
+      tempProducts = action.price.result;
+    }
+    if (action.priceAndVendor) {
+      tempProducts = action.priceAndVendor.result;
+    }
+    if (action.priceAndCategory) {
+      tempProducts = action.priceAndCategory.result;
+    }
+    if (action.priceAndText) {
+      tempProducts = action.priceAndText.result;
+    }
+    if (action.priceAndCatAndOwner) {
+      console.log(action.priceAndCatAndOwner);
+      tempProducts = action.priceAndCatAndOwner.result;
+    }
+    if (action.priceAndSearchAndOwner) {
+      tempProducts = action.priceAndSearchAndOwner.result;
+    }
+    if (action.priceAndSearchAndCat) {
+      tempProducts = action.priceAndSearchAndCat.result;
+    }
+    if (action.priceAndSearchAndCatAndOwner) {
+      tempProducts = action.priceAndSearchAndCatAndOwner.result;
+    }
+    return { ...state, filter: false, filtered_products: tempProducts };
   }
-
-  // if (action.type === FILTER_PRODUCTS) {
-  //   const { all_products } = state;
-  //   const { text, catName, ownerName, color, price, shipping } = state.filters;
-  //   let tempProducts = [...all_products];
-  //   // Filtering
-  //   // Text
-
-  //   if (text) {
-  //     try {
-  //       const response = axios.get(
-  //         `http://api.localhost/products/matching?name=m${text}`,
-  //         {
-  //           headers: { "Content-Type": "application/json" },
-  //         }
-  //       );
-  //       const data = response.data;
-  //       tempProducts = data;
-  //       console.log(tempProducts);
-  //       return { ...state, filtered_products: tempProducts };
-  //     } catch (error) {
-  //       console.log(error.response);
-  //     }
-  //   }
-  //   // Category
-  //   if (catName !== "all") {
-  //     tempProducts = tempProducts.filter(
-  //       (product) => product.catName === catName
-  //     );
-  //     console.log(tempProducts);
-  //   }
-  //   // Company
-  //   if (ownerName !== "all") {
-  //     tempProducts = tempProducts.filter(
-  //       (product) => product.ownerName === ownerName
-  //     );
-  //   }
-  //   // Colors
-  //   if (color !== "all") {
-  //     tempProducts = tempProducts.filter((product) => {
-  //       return product.customization.color.find((c) => c === color);
-  //     });
-  //   }
-  //   // Price
-  //   // tempProducts = tempProducts.filter((product) => product.price <= price);
-  //   // console.log(tempProducts);
-  //   // Shipping
-  //   // if (shipping) {
-  //   //   tempProducts = tempProducts.filter(
-  //   //     (product) => product.shipping === true
-  //   //   );
-  //   // }
-  //   return { ...state, filtered_products: tempProducts };
-  // }
 
   if (action.type === UPDATE_FILTERS) {
     const { name, value } = action.payload;
+    if (name === "text") {
+      return {
+        ...state,
+        filter: true,
+        filters: { ...state.filters, [name]: value },
+      };
+    }
     return { ...state, filters: { ...state.filters, [name]: value } };
-  }
-
-  if (action.type === "SEARCH_PRODUCTS") {
-    const { all_products } = state;
-    let tempProducts = [...all_products];
-    if (action.payload) {
-      console.log(action.payload.result.length);
-      let data = action.payload;
-      tempProducts = data.result;
-    }
-    return { ...state, filtered_products: tempProducts };
-  }
-
-  if (action.type === "FILTER_BY_CATEGORY") {
-    const { all_products } = state;
-    let tempProducts = [...all_products];
-    if (action.payload) {
-      console.log(action.payload.result.length);
-      let data = action.payload;
-      tempProducts = data.result;
-    }
-    return { ...state, filtered_products: tempProducts };
-  }
-
-  if (action.type === "FILTER_VENDOR") {
-    const { all_products } = state;
-    let tempProducts = [...all_products];
-    if (action.payload) {
-      console.log(action.payload.result.length);
-      let data = action.payload;
-      tempProducts = data.result;
-    }
-    return { ...state, filtered_products: tempProducts };
-  }
-
-  if (action.type === "FILTER_PRICE") {
-    const { all_products } = state;
-    let tempProducts = [...all_products];
-    console.log(state.filters.price);
-    return { ...state, filtered_products: tempProducts };
   }
 
   if (action.type === CLEAR_FILTERS) {
     return {
       ...state,
+      filtered_products: state.all_products,
       filters: {
         ...state.filters,
         text: "",
         ownerName: "all",
         catName: "all",
-        color: "all",
         price: state.filters.max_price,
         shipping: false,
       },
     };
   }
-};
 
+  if (action.type === "FILTER") {
+    return {
+      ...state,
+      filter: true,
+    };
+  }
+};
 export default filter_reducer;

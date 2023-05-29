@@ -9,7 +9,6 @@ import { IconPlus, IconBin, IconAlert, IconCheck } from "../utils/Icons";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import { useNavigate, Navigate, useLocation } from "react-router-dom";
-import { Loading } from "../../../components";
 
 const AddProduct = () => {
   const [state, dispatch] = useReducer(addProductReducer, INITIAL_STATE);
@@ -38,21 +37,21 @@ const AddProduct = () => {
   //   dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
   // };
 
-  const handleAddSubCustom = (i) => {
+  const handleAddSubCustom = (key) => {
     let inputData = state.customization;
-    inputData[i]["value"].push("");
+    inputData[key].push("");
     dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
   };
 
-  const handleChangeSubCustom = (onChangeValue, i, k) => {
+  const handleChangeSubCustom = (onChangeValue, key, idx) => {
     let inputData = state.customization;
-    inputData[i]["value"][k] = onChangeValue.target.value;
+    inputData[key][idx] = onChangeValue.target.value;
     dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
   };
 
-  const handleRemoveSubCustom = (i, k) => {
+  const handleRemoveSubCustom = (key, idx) => {
     let inputData = state.customization;
-    inputData[i]["value"].splice(k, 1);
+    inputData[key].splice(idx, 1);
     dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
   };
 
@@ -74,10 +73,35 @@ const AddProduct = () => {
     dispatch({ type: ACTION_TYPES.SET_IMAGE, payload: inputData });
   };
 
+  const handleFetch = async () => {
+    try {
+      const response = await axios.get("http://api.localhost/categories");
+
+      if (response && response.data) {
+        dispatch({
+          type: ACTION_TYPES.SET_GET_CATEGORY,
+          payload: response.data,
+        });
+      }
+    } catch (err) {
+      console.log(err.response);
+    }
+  };
+
   useEffect(() => {
+    handleFetch();
     if (state.image.length <= 0) {
       dispatch({ type: ACTION_TYPES.ADD_IMAGE, payload: "" });
     }
+    dispatch({ type: ACTION_TYPES.SET_NAME, payload: "" });
+    dispatch({ type: ACTION_TYPES.SET_DESCRIPTION, payload: "" });
+    dispatch({ type: ACTION_TYPES.SET_CATEGORY, payload: "" });
+    dispatch({ type: ACTION_TYPES.SET_PRICE, payload: "" });
+    dispatch({ type: ACTION_TYPES.RESET_CUSTOMIZATION });
+    dispatch({ type: ACTION_TYPES.SET_AVAILABILITY, payload: 0 });
+    dispatch({ type: ACTION_TYPES.SET_DELIVERYOPTION, payload: "" });
+    dispatch({ type: ACTION_TYPES.SET_IMAGE, payload: [""] });
+    dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: {images: []} });
   }, []);
 
   useEffect(() => {
@@ -125,7 +149,7 @@ const AddProduct = () => {
             )
             .then((res) => {
               let inputData = state.imageUrl;
-              inputData.push(res.data.secure_url);
+              inputData.images.push(res.data.secure_url);
               dispatch({
                 type: ACTION_TYPES.SET_IMAGE_URL,
                 payload: inputData,
@@ -176,7 +200,7 @@ const AddProduct = () => {
       dispatch({ type: ACTION_TYPES.SET_AVAILABILITY, payload: 0 });
       dispatch({ type: ACTION_TYPES.SET_DELIVERYOPTION, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_IMAGE, payload: [""] });
-      dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: [] });
+      dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: {images: []} });
       dispatch({
         type: ACTION_TYPES.SET_SUCCESS,
         payload: "Product listed for sale",
@@ -188,7 +212,7 @@ const AddProduct = () => {
         cookies.remove("jwt_authorization");
         navigate("/shop/add_product", { replace: true });
       }
-      dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: [] });
+      dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: {images: []} });
       dispatch({
         type: ACTION_TYPES.SET_ERROR,
         payload: err?.response.data.error,
@@ -200,6 +224,7 @@ const AddProduct = () => {
 
   return (
     <>
+      {console.log(state.imageUrl)}
       <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
         <p className="text-cldark text-4xl font-bold my-4 text-medium">
           Add Product
@@ -276,13 +301,82 @@ const AddProduct = () => {
                 />
               </div>
             </div>
-
             <div className="bg-white p-4 shadow-lg rounded-md flex flex-col gap-4">
               <div className="flex flex-col gap-2">
                 <div className="text-xl font-semibold text-cldark">
                   Category
                 </div>
-                <input
+
+                <button
+                  onClick={() =>
+                    dispatch({
+                      type: ACTION_TYPES.SET_CATEGORY_DROPDOWN,
+                    })
+                  }
+                  id="dropdownDefaultButton"
+                  data-dropdown-toggle="dropdown"
+                  className={
+                    state.category
+                      ? "text-cldark border border-gray-300 w-full p-3 rounded-lg font-normal focus:outline focus:outline-1"
+                      : "text-gray-400 border border-gray-300 w-full p-3 rounded-lg font-normal focus:outline focus:outline-1"
+                  }
+                  type="button"
+                >
+                  <div className="flex justify-between items-center w-full">
+                    {state.category ? state.category : "Product category"}
+                    <svg
+                      className="w-4 h-4 ml-2"
+                      aria-hidden="true"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M19 9l-7 7-7-7"
+                      ></path>
+                    </svg>
+                  </div>
+                </button>
+                <div
+                  id="dropdown"
+                  className={
+                    state.categoryDropdown
+                      ? "z-10 bg-white divide-y h-44 overflow-scroll dropdown-scrolling divide-gray-100 rounded-lg shadow w-full dark:bg-gray-700"
+                      : "hidden"
+                  }
+                >
+                  <ul
+                    className="py-2 text-md text-gray-700 dark:text-gray-200"
+                    aria-labelledby="dropdownDefaultButton"
+                  >
+                    {state.getCategory.categories
+                      ? state.getCategory.categories.map((category, idx) => (
+                          <li
+                            key={idx}
+                            onClick={() => {
+                              dispatch({
+                                type: ACTION_TYPES.SET_CATEGORY,
+                                payload: category.name,
+                              });
+                              dispatch({
+                                type: ACTION_TYPES.SET_CATEGORY_DROPDOWN,
+                              });
+                            }}
+                            className="cursor-pointer"
+                          >
+                            <div className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                              {category.name}
+                            </div>
+                          </li>
+                        ))
+                      : ""}
+                  </ul>
+                </div>
+                {/* <input
                   type="text"
                   placeholder="Product category"
                   required
@@ -298,7 +392,7 @@ const AddProduct = () => {
                   name="category"
                   value={state.category}
                   className="border border-gray-300 w-full p-3 rounded-lg text-cldark focus:outline focus:outline-1"
-                />
+                /> */}
               </div>
               <div className="flex flex-col gap-2">
                 <div className="text-xl font-semibold text-cldark">Price</div>
@@ -321,13 +415,12 @@ const AddProduct = () => {
                 />
               </div>
 
-              <div className="flex flex-col gap-2">
+              {/* <div className="flex flex-col gap-2">
                 <div className="text-xl font-semibold text-cldark">
                   Color & Size
                 </div>
                 {state.customization?.map((custom, i) => (
                   <div key={i} className="flex flex-col gap-1">
-                    {/* <div className="text-cldark text-sm font-semibold">Type</div> */}
                     <div className="grid grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-3">
                       <div className="col-span-2 md:col-span-1">
                         <div className="flex gap-2 items-center">
@@ -340,7 +433,6 @@ const AddProduct = () => {
                       </div>
 
                       <div className="flex flex-col gap-3 col-span-4 md:col-span-5 lg:col-span-7 xl:col-span-9">
-                        {/* {Object.entries(state.customization[i]).filter(([key, _]) => key !== "title").map((t,k) => ( */}
                         {state.customization[i]["value"].map((t, k) => (
                           <div key={k}>
                             <div>
@@ -386,6 +478,120 @@ const AddProduct = () => {
                             </div>
                           </div>
                         ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div> */}
+
+              <div className="flex flex-col gap-2">
+                <div className="text-xl font-semibold text-cldark">
+                  Color & Size
+                </div>
+                {Object.keys(state.customization).map((key, idx) => (
+                  <div className="flex flex-col gap-1">
+                    <div className="grid grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-3">
+                      <div className="col-span-2 md:col-span-1">
+                        <div className="flex gap-2 items-center">
+                          <div className="flex items-center  border rounded-lg  border-gray-300 focus-within:outline focus-within:outline-1 w-full">
+                            <div className="w-full p-3 rounded-lg  text-cldark text-center">
+                              {key}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col gap-3 col-span-4 md:col-span-5 lg:col-span-7 xl:col-span-9">
+                        {state.customization[key].map((data, idx) => (
+                          <div key={idx}>
+                            <div>
+                              <div className="flex gap-2 items-center">
+                                <div className="flex items-center border rounded-lg w-full  border-gray-300 focus-within:outline focus-within:outline-1">
+                                  <input
+                                    type="text"
+                                    placeholder={state.cholder[idx]}
+                                    required
+                                    onFocus={() =>
+                                      dispatch({
+                                        type: ACTION_TYPES.SET_SUCCESS,
+                                        payload: "",
+                                      })
+                                    }
+                                    onChange={(e) =>
+                                      handleChangeSubCustom(e, key, idx)
+                                    }
+                                    value={data}
+                                    name="subCustom"
+                                    className="focus:outline-none w-full p-3 rounded-lg text-cldark"
+                                  />
+                                  <div
+                                    onClick={() => handleAddSubCustom(key, idx)}
+                                    className="p-2 hover:scale-110 transition-full duration-300"
+                                  >
+                                    <div className="w-4 h-4 cursor-pointer">
+                                      <IconPlus fill="#222" />
+                                    </div>
+                                  </div>
+                                </div>
+                                {state.customization[key].length > 1 ? (
+                                  <div
+                                    onClick={() => handleRemoveSubCustom(key, idx)}
+                                    className="w-5 h-5 hover:scale-110 duration-300 transition-all cursor-pointer"
+                                  >
+                                    <IconBin fill="#222" />
+                                  </div>
+                                ) : (
+                                  ""
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                        {/* {state.customization[key].map((t, k) => (
+                          <div key={k}>
+                            <div>
+                              <div className="flex gap-2 items-center">
+                                <div className="flex items-center border rounded-lg w-full  border-gray-300 focus-within:outline focus-within:outline-1">
+                                  <input
+                                    type="text"
+                                    placeholder={""}
+                                    required
+                                    onFocus={() =>
+                                      dispatch({
+                                        type: ACTION_TYPES.SET_SUCCESS,
+                                        payload: "",
+                                      })
+                                    }
+                                    onChange={(e) =>
+                                      // handleChangeSubCustom(e, i, k)
+                                    }
+                                    value={state.customization[i]["value"][k]}
+                                    name="subCustom"
+                                    className="focus:outline-none w-full p-3 rounded-lg text-cldark"
+                                  />
+                                  <div
+                                    // onClick={() => handleAddSubCustom(i)}
+                                    className="p-2 hover:scale-110 transition-full duration-300"
+                                  >
+                                    <div className="w-4 h-4 cursor-pointer">
+                                      <IconPlus fill="#222" />
+                                    </div>
+                                  </div>
+                                </div>
+                                {state.customization[i]["value"].length > 1 ? (
+                                  <div
+                                    // onClick={() => handleRemoveSubCustom(i, k)}
+                                    className="w-5 h-5 hover:scale-110 duration-300 transition-all cursor-pointer"
+                                  >
+                                    <IconBin fill="#222" />
+                                  </div>
+                                ) : (
+                                  ""
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))} */}
                       </div>
                     </div>
                   </div>

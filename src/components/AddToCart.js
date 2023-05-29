@@ -8,7 +8,8 @@ import { useCartContext } from "../context/cart_context";
 const AddToCart = ({ product }) => {
   const { addToCart } = useCartContext();
   const { pid, availability, customization } = product;
-  const colors = customization[0].value;
+  console.log(customization);
+  const colors = customization.color;
 
   const [mainColor, setMainColor] = useState(colors[0]);
   const [amount, setAmount] = useState(1);
@@ -35,15 +36,16 @@ const AddToCart = ({ product }) => {
 
   return (
     <Wrapper>
-      <div className="colors">
+      <div className="colors z-0">
         <span> colors : </span>
+        {console.log(colors)}
         <div>
           {colors.map((color, index) => {
             return (
               <button
                 key={index}
                 className={
-                  mainColor === color ? "color-btn active" : "color-btn"
+                  mainColor === color ? "color-btn active" : "color-btn active"
                 }
                 style={{ background: color }}
                 onClick={() => setMainColor(color)}

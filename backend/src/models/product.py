@@ -222,7 +222,20 @@ WHERE p.pid = %s"""
         except Exception as e:
             Global.console.print_exception()
             return Result.Err(str(e))
-
+        
+    @staticmethod
+    def delete(pid: str) -> Result[tuple, str]:
+        try:
+            db_conn = Global.db_conn
+            cursor = db_conn.cursor(prepared=True)
+            cursor.execute("DELETE FROM products WHERE pid = %s", (pid,))
+            db_conn.commit()
+            cursor.close()
+            return Result.Ok(())
+        except Exception as e:
+            Global.console.print_exception()
+            return Result.Err(str(e))
+    
     @staticmethod
     def attest_nonexistent(pid: str) -> bool:
         db_conn = Global.db_conn
@@ -232,6 +245,17 @@ WHERE p.pid = %s"""
         cursor.close()
 
         return result[0] == 0
+
+    @staticmethod
+    def attest_reviewed(pid: str, uid: str | int) -> bool:
+        uid = int(uid)
+        db_conn = Global.db_conn
+        cursor = db_conn.cursor(prepared=True)
+        cursor.execute("SELECT COUNT(*) FROM reviews WHERE pid = %s AND authorId = %s", (pid, uid))
+        result = cursor.fetchone()
+        cursor.close()
+        
+        return result[0] != 0
 
     @staticmethod
     def __canonical_name(k: str) -> str:
@@ -251,7 +275,7 @@ WHERE p.pid = %s"""
             s = c[k][0]
             if s == "r":
                 sb.append(f"{Product.__canonical_name(k)} BETWEEN %s AND %s")
-                r1, r2 = c[k][1].split("-")
+                r1, r2 = c[k][1:].split("-")
                 args.append(r1)
                 args.append(r2)
             elif s == "m":

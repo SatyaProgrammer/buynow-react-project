@@ -1,33 +1,55 @@
-import React from "react";
+import React, { useEffect, useReducer } from "react";
 import styled from "styled-components";
 import { useCartContext } from "../context/cart_context";
 import { Link } from "react-router-dom";
 import HistoryColumns from "./HistoryColumns";
 import CartItem from "./CartItem";
 import CartTotals from "./CartTotals";
+import { useNavigate } from "react-router-dom";
+import reducer from "../reducers/history_reducer";
+import axios from "axios";
+import Cookies from "universal-cookie";
+import HistoryItem from "./HistoryItem";
+
+const initialState = {
+  trackings: [],
+};
 
 const HistoryContent = () => {
-  //   const { cart, clearCart } = useCartContext();
+  // get all tracking data
+  const navigate = useNavigate();
+  const cookies = new Cookies();
+  const token = cookies.get("jwt_authorization");
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const getTrackings = async () => {
+    try {
+      const response = await axios.get("http://api.localhost/trackings", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Basic ${token}`,
+        },
+      });
+      const data = response.data.trackings;
+      dispatch({ type: "TRACKINGS", payload: { data } });
+    } catch (error) {
+      if (error?.response?.data?.error_code == "BX0001") {
+        cookies.remove("jwt_authorization");
+        navigate("/login", { replace: true });
+      }
+    }
+  };
+  useEffect(() => {
+    setTimeout(() => {
+      getTrackings();
+    }, "500");
+  }, []);
+  console.log(state.trackings);
   return (
     <Wrapper className="section section-center">
       <HistoryColumns />
-      {/* {cart.map((item) => {
-        return <CartItem key={item.id} {...item} />;
+      {state.trackings.map((tracking) => {
+        return <HistoryItem key={tracking.id} {...tracking} {...state} />;
       })}
-      <hr />
-      <div className="link-container">
-        <Link to="/" className="link-btn">
-          continue shopping
-        </Link>
-        <button
-          type="button"
-          className="link-btn clear-btn"
-          onClick={clearCart}
-        >
-          clear shopping cart
-        </button>
-      </div>
-      <CartTotals /> */}
     </Wrapper>
   );
 };

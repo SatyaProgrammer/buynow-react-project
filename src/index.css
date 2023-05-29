@@ -236,6 +236,23 @@ p {
     opacity: 0.5;
 }
 
+/* Dropdown scrollbar */
+.dropdown-scrolling::-webkit-scrollbar{
+    width: 4px;
+}
+.dropdown-scrolling::-webkit-scrollbar-track{
+    background-color: white;
+    /* border-radius: 100vw; */
+    /* margin-block: 1em; */
+}
+.dropdown-scrolling::-webkit-scrollbar-thumb{
+    background-color: rgb(176, 176, 176);
+    /* border-radius: 100vw; */
+}
+.dropdown-scrolling::-webkit-scrollbar-thumb:hover{
+    opacity: 0.5;
+}
+
 /* Number input */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {

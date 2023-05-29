@@ -7,20 +7,86 @@ import "./Product.css";
 import { API_CALL } from "../utils/Constant";
 import { IconDelete, IconEdit, IconFile, IconArrowDown } from "../utils/Icons";
 import { Loading } from "../../../components";
-import Table from "../../../components/Table";
 import { ProductTableHeader, ProductTableData } from "../utils/Constant";
+import Cookies from "universal-cookie";
+import { useNavigate, Navigate, useLocation } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const Product = () => {
   const [state, dispatch] = useReducer(productReducer, INITIAL_STATE);
+  const navigate = new useNavigate();
+  const cookies = new Cookies();
+  const location = new useLocation();
+  const token = cookies.get("jwt_authorization");
 
   const handleFetch = async () => {
     dispatch({ type: ACTION_TYPES.FETCH_START });
-    const response = await axios.get(API_CALL.ALL_PRODUCT).catch((err) => {
-      // console.log("Error:", err)
-    });
+    const response = await axios
+      .get(`http://api.localhost/products/me`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Basic ${token}`,
+        },
+      })
+      .catch((err) => {
+        if (err?.response.data.error_code == "BX0001") {
+          cookies.remove("jwt_authorization");
+          navigate("/shop/product");
+        }
+      });
     if (response && response.data) {
-      dispatch({ type: ACTION_TYPES.FETCH_SUCCESS, payload: response.data });
+      console.log(response.data.products);
+      if (response.data.length >= 1) {
+        dispatch({
+          type: ACTION_TYPES.FETCH_SUCCESS,
+          payload: [{products: {availability: "No product found" }}],
+        });
+      } else {
+        dispatch({ type: ACTION_TYPES.FETCH_SUCCESS, payload: response.data });
+      }
     }
+  };
+
+  const deleteProduct = async (pid) => {
+    let data = JSON.stringify({
+      pid: pid,
+    });
+    try {
+      const response = await axios.post(
+        `http://api.localhost/products/delete`,
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Basic ${token}`,
+          },
+        }
+      );
+      navigate("/redirect");
+    } catch (err) {
+      console.log(err);
+      if (err?.response.data.error_code == "BX0001") {
+        cookies.remove("jwt_authorization");
+        navigate("/shop/product");
+      }
+    }
+  };
+
+  const handleDelete = (pid) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteProduct(pid);
+        // Swal.fire("Deleted!", "Your file has been deleted.", "success");
+      }
+    });
   };
 
   useEffect(() => {
@@ -37,21 +103,20 @@ const Product = () => {
     <>
       {state.loading ? (
         <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex justify-center items-center transition-full duration-300">
-          <Loading/>
+          <Loading />
         </div>
       ) : (
         <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
           <p className="text-cldark text-4xl font-bold my-4 text-medium">
             Product
           </p>
-
           <div className="shadow-md bg-white pt-4">
             <div className="mb-4 p-2 px-4">
               <Link to="/shop/add_product" className="btn">
                 Add Product
               </Link>
             </div>
-            <div className="p-4 border-t flex items-center sm:justify-between sm:flex-row gap-1 flex-col justify-center">
+            {/* <div className="p-4 border-t flex items-center sm:justify-between sm:flex-row gap-1 flex-col justify-center">
               <div className="flex items-center gap-1">
                 <div className="text-md text-cldark font-semibold">Show</div>
                 <div>
@@ -104,12 +169,77 @@ const Product = () => {
                   />
                 </div>
               </form>
+            </div> */}
+            <div className="overflow-x-auto table-scrolling">
+              <table className="w-full">
+                <thead className="bg-gray-100">
+                  <tr>
+                    {ProductTableHeader.map((th, idx) => (
+                      <th
+                        key={idx}
+                        className="text-cldark text-left font-semibold text-md p-4 border-y name-row whitespace-nowrap"
+                      >
+                        {th}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {state.post.products
+                    ? state.post.products.map((product, idx) => (
+                        <tr key={idx} className="hover:bg-gray-50 ">
+                          <td className="text-cldark p-4 border-b overflow-hidden whitespace-nowrap name-row">
+                            <div className="flex items-center gap-2 w-48">
+                              <div className="w-16">
+                                <img
+                                  src={product.images.images[0]}
+                                  alt="product image"
+                                  className="w-full h-10 rounded-md shadow-md object-cover"
+                                />
+                              </div>
+                              <div className="font-semibold w-32 overflow-hidden">
+                                {product.name}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="text-cldark p-4 border-b whitespace-nowrap">
+                            {product.catName}
+                          </td>
+                          <td className="text-cldark p-4 border-b whitespace-nowrap">
+                            ${product.price}
+                          </td>
+                          <td className="text-cldark p-4 border-b whitespace-nowrap">
+                            {product.availability}
+                          </td>
+                          <td className="text-cldark p-4 border-b whitespace-nowrap">
+                            {product.deliveryOption}
+                          </td>
+                          <td className="text-cldark p-4 border-b whitespace-nowrap">
+                            <div className="flex gap-2 items-center">
+                              <Link to={"/shop/product/".concat(product.pid)}>
+                                <div className="w-5 h-5 hover:scale-110 transition-all duration-300">
+                                  <IconFile fill="hsl(22, 28%, 45%)" />
+                                </div>
+                              </Link>
+                              <Link to={"/shop/product/edit_product/".concat(product.pid)}>
+                                <div className="w-6 h-6 hover:scale-110 transition-all duration-300">
+                                  <IconEdit fill="hsl(22, 28%, 45%)" />
+                                </div>
+                              </Link>
+                              <div
+                                onClick={() => handleDelete(product.pid)}
+                                className="w-7 h-7 hover:scale-110 transition-all duration-300"
+                              >
+                                <IconDelete fill="hsl(22, 28%, 45%)" />
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    : ""}
+                </tbody>
+              </table>
             </div>
-            <Table
-              th={ProductTableHeader}
-              tr={state.post}
-              td={ProductTableData}
-            />
           </div>
         </div>
       )}

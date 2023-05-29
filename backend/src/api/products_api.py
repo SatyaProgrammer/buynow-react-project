@@ -184,14 +184,15 @@ def update_product(uid):
                 "error": "Invalid product id."
             }, 400, {"Content-Type": "application/json"}
         
-        if not Product.attest_exists(pid):
+        if Product.attest_nonexistent(pid):
             return {
                 "error_code": "BX1206",
                 "error": "Product doesn't exist."
             }, 400, {"Content-Type": "application/json"}
         
         product = Product.pid(pid)
-        if product["owner"] != user_id:
+        user = User.id(user_id)
+        if product["ownerName"] != user["username"]:
             return {
                 "error_code": "BX1207",
                 "error": "You don't own this product."
@@ -215,7 +216,7 @@ def update_product(uid):
         availability = request_data["availability"]
         deliveryOption = request_data["deliveryOption"]
         
-        if not validate_json(images) or not validate_json(customization):
+        if not validate_json(json.dumps(images)) or not validate_json(json.dumps(customization)):
             return {
                 "error_code": "BX1203",
                 "error": "Invalid JSON."
@@ -231,10 +232,10 @@ def update_product(uid):
         
         res = Product.update(pid, {
             "name": name,
-            "images": images,
+            "images": json.dumps(images),
             "catId": cat_id,
             "price": price,
-            "customization": customization,
+            "customization": json.dumps(customization),
             "description": description,
             "availability": availability,
             "deliveryOption": deliveryOption
@@ -280,14 +281,15 @@ def delete_product(uid):
                 "error": "Invalid product id."
             }, 400, {"Content-Type": "application/json"}
         
-        if not Product.attest_exists(pid):
+        if Product.attest_nonexistent(pid):
             return {
                 "error_code": "BX1206",
                 "error": "Product doesn't exist."
             }, 400, {"Content-Type": "application/json"}
         
         product = Product.pid(pid)
-        if product["owner"] != user_id:
+        user = User.id(user_id)
+        if product["ownerName"] != user["username"]:
             return {
                 "error_code": "BX1207",
                 "error": "You don't own this product."
@@ -306,6 +308,41 @@ def delete_product(uid):
                 "error": "Couldn't delete product."
             }, 500, {"Content-Type": "application/json"}
             
+    except Exception as e:
+        Global.console.print_exception()
+        return {
+            "error_code": "BX0000",
+            "error": "Something went wrong."
+        }, 500, {"Content-Type": "application/json"}
+
+@prod_api.get("/products/me")
+@limiter.limit("10 per minute")
+@token_required
+def get_my_products(uid):
+    try:
+        user_id = uid
+        
+        res = Product.fetch_matching([], {"owner": f"={user_id}"})
+        
+        return {
+            "products": res
+        }, 200, {"Content-Type": "application/json"}
+    except Exception as e:
+        Global.console.print_exception()
+        return {
+            "error_code": "BX0000",
+            "error": "Something went wrong."
+        }, 500, {"Content-Type": "application/json"}
+        
+@prod_api.get("/categories")
+@limiter.limit("10 per minute")
+def get_categories():
+    try:
+        res = Category.fetch_all(["id", "name"])
+        
+        return {
+            "categories": res
+        }, 200, {"Content-Type": "application/json"}
     except Exception as e:
         Global.console.print_exception()
         return {

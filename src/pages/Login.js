@@ -41,17 +41,18 @@ const Login = () => {
       });
       // Set Cookies
       cookies.set("jwt_authorization", response.data.token);
+      cookies.set("current_user", user);
       setUser("");
       setPwd("");
       navigate(from, { replace: true });
     } catch (error) {
-      setErrMsg(error?.response.data.error)
+      setErrMsg(error?.response.data.error);
     }
   };
 
   return (
     <div className="h-screen bg-gray-100 grid place-items-center">
-      <div className="w-96 bg-white text-primary4 rounded-md shadow-lg flex flex-col gap-8">
+      <div className="w-80 sm:w-96 bg-white text-primary4 rounded-md shadow-lg flex flex-col gap-8">
         <div className="text-2xl font-semibold underline border-gray-100 mt-8 px-8">
           Sign In
         </div>

@@ -59,6 +59,16 @@ class User(Model):
         return res
     
     @staticmethod
+    def is_admin(uid: str | int) -> bool:
+        uid = int(uid)
+        db_conn = Global.db_conn
+        cursor = db_conn.cursor(prepared=True)
+        cursor.execute("SELECT admin FROM users WHERE id = %s", (uid,))
+        result = cursor.fetchone()
+        cursor.close()
+        return true(result[0])
+    
+    @staticmethod
     def __result_to_dict(result: tuple, taking: list[str] = None) -> dict[str]:
         if not result:
             return {}
@@ -70,7 +80,7 @@ class User(Model):
                 "password": result[3],
                 "salt": result[4],
                 "verified": true(result[5]),
-                "userType": result[6],
+                "isAdmin": result[6],
                 "createdAt": result[7],
             }
         else:

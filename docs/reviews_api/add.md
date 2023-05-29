@@ -1,8 +1,8 @@
-# BuyNow API: Create Orders
+# BuyNow API: Add Reviews
 
 | Key | Value |
 | --- | --- |
-| Endpoint | `api.localhost/trackings` |
+| Endpoint | `api.localhost/reviews/<pid>` |
 | Method | `POST` |
 | Auth | `Yes` |
 
@@ -11,16 +11,13 @@
 | Key | Value |
 | --- | --- |
 | Content-Type | `application/json` |
-| Authorization | `Basic <token>` |
 
 ## Request
 
 ```ts
 {
-    orders: {
-        pid: string,
-        quantity: number,
-    }[]
+    rating: number,
+    comment: string
 }
 ```
 
@@ -37,8 +34,12 @@
 4xx/5xx:
 
 ```ts
-{   
+{
     "error_code": string, // "BXxxxx"
     "error": string,
 }
 ```
+
+## Note
+
+`rating` $\in [1, 5]$ (between 1 and 5, inclusive).

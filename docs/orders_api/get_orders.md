@@ -1,8 +1,8 @@
-# BuyNow API: Get Orders
+# BuyNow API: Getting orders associated with a tracking number
 
 | Key | Value |
 | --- | --- |
-| Endpoint | `api.localhost/trackings` |
+| Endpoint | `api.localhost/trackings/<tracking_number>` |
 | Method | `GET` |
 | Auth | `Yes` |
 
@@ -19,10 +19,16 @@
 
 ```ts
 {
-    trackings: {
-        id: number,
-        status: string,
-        userId: number,
+    orders: {
+        trackingNumber: number,
+        pid: string,
+        name: string,
+        images: string[],
+        customization: {
+            [string]: string[]
+        },
+        quantity: number,
+        cost: number
     }[]
 }
 ```
