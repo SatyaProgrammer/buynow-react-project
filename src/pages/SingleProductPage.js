@@ -53,17 +53,21 @@ const SingleProductPage = () => {
     });
     console.log("data");
     console.log(data);
-    console.log('test')
+    console.log("test");
     try {
-      const response = axios.post(`http://api.localhost/reviews/${id}`, data, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Basic ${token}`,
-        },
-      });
-      console.log(response)
+      const response = await axios.post(
+        `http://api.localhost/reviews/${id}`,
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Basic ${token}`,
+          },
+        }
+      );
+      console.log(response);
     } catch (err) {
-      console.log(err.response.data)
+      console.log(err.response.data);
       if (err?.response.data.error_code == "BX0001") {
         cookies.remove("jwt_authorization");
         navigate("/login", { replace: true });
@@ -128,50 +132,74 @@ const SingleProductPage = () => {
               <IconCross />
             </div>
           </div>
-          <div className="w-full flex-1 flex flex-col gap-4 mt-4">
+          <div className="w-full flex-1 flex flex-col gap-4">
             <div className="text-center text-lg text-cldark">
               Rate this product
             </div>
-            <div className="w-full flex items-center justify-center gap-4">
-              {productRating.map((star, idx) => (
-                <div key={idx}>
-                  {productRating[idx] ? (
-                    <IconContext.Provider
-                      value={{ color: "hsl(22, 28%, 45%)", size: "50px" }}
-                    >
-                      <BsStarFill
-                        onClick={() => {
-                          let inputData = [false, false, false, false, false];
-                          for (let i = 0; i < inputData.length; i++) {
-                            if (i <= idx) {
-                              inputData[i] = true;
-                            } else inputData[i] = false;
-                          }
-                          setProductRating(inputData);
-                        }}
-                        className="hover:scale-110 transition-all duration-300"
-                      />
-                    </IconContext.Provider>
-                  ) : (
-                    <IconContext.Provider
-                      value={{ color: "hsl(22, 28%, 45%)", size: "50px" }}
-                    >
-                      <BsStar
-                        onClick={() => {
-                          let inputData = [false, false, false, false, false];
-                          for (let i = 0; i < inputData.length; i++) {
-                            if (i <= idx) {
-                              inputData[i] = true;
-                            } else inputData[i] = false;
-                          }
-                          setProductRating(inputData);
-                        }}
-                        className="hover:scale-110 transition-all duration-300"
-                      />
-                    </IconContext.Provider>
-                  )}
-                </div>
-              ))}
+            <div className="flex flex-col items-center justify-center gap-2">
+              <div className="w-full flex items-center justify-center gap-4">
+                {productRating.map((star, idx) => (
+                  <div key={idx}>
+                    <div>
+                      {productRating[idx] ? (
+                        <IconContext.Provider
+                          value={{ color: "hsl(22, 28%, 45%)", size: "50px" }}
+                        >
+                          <BsStarFill
+                            onClick={() => {
+                              let inputData = [
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                              ];
+                              for (let i = 0; i < inputData.length; i++) {
+                                if (i <= idx) {
+                                  inputData[i] = true;
+                                } else inputData[i] = false;
+                              }
+                              setProductRating(inputData);
+                            }}
+                            className="hover:scale-110 transition-all duration-300"
+                          />
+                        </IconContext.Provider>
+                      ) : (
+                        <IconContext.Provider
+                          value={{ color: "hsl(22, 28%, 45%)", size: "50px" }}
+                        >
+                          <BsStar
+                            onClick={() => {
+                              let inputData = [
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                              ];
+                              for (let i = 0; i < inputData.length; i++) {
+                                if (i <= idx) {
+                                  inputData[i] = true;
+                                } else inputData[i] = false;
+                              }
+                              setProductRating(inputData);
+                            }}
+                            className="hover:scale-110 transition-all duration-300"
+                          />
+                        </IconContext.Provider>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div
+                onClick={() =>
+                  setProductRating([false, false, false, false, false])
+                }
+                className="text-sm text-grey4 underline cursor-pointer"
+              >
+                Reset rating
+              </div>
             </div>
             <div className="flex flex-col gap-2">
               <div className="text-xl font-semibold text-cldark">Comment</div>
@@ -187,7 +215,7 @@ const SingleProductPage = () => {
               />
             </div>
           </div>
-          <div className=" mt-4"> 
+          <div className=" mt-4">
             <button onClick={handleSubmit} className="btn">
               Submit
             </button>

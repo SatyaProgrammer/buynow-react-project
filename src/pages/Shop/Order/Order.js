@@ -56,8 +56,8 @@ const Order = () => {
           </p>
 
           <div className="shadow-md bg-white">
-              <div className="p-4 flex items-center sm:justify-between sm:flex-row gap-1 flex-col justify-center">
-                {/* <div className="flex items-center gap-1">
+            <div className="p-4 flex items-center sm:justify-between sm:flex-row gap-1 flex-col justify-center">
+              {/* <div className="flex items-center gap-1">
                   <div className="text-md text-cldark font-semibold">Show</div>
                   <div>
                     <div className="w-20 h-7 border rounded-md px-1 flex justify-between items-center">
@@ -109,8 +109,10 @@ const Order = () => {
                     />
                   </div>
                 </form> */}
-                <div className="text-2xl font-semibold text-primary4">Customer orders</div>
+              <div className="text-2xl font-semibold text-primary4">
+                Customer orders
               </div>
+            </div>
             <div className="overflow-x-auto table-scrolling table-wrapper page">
               <table className="w-full">
                 <thead className="bg-gray-100 z-50">
@@ -228,7 +230,9 @@ const Order = () => {
                       </tr>
                     ))
                   ) : (
-                    <td className="p-4">No order found</td>
+                    <tr>
+                      <td className="p-4">No order found</td>
+                    </tr>
                   )}
                 </tbody>
               </table>
