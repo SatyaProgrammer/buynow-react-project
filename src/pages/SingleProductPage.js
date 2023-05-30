@@ -202,7 +202,7 @@ const SingleProductPage = () => {
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              <div className="text-xl font-semibold text-cldark">Comment</div>
+              <div className="text-xl font-semibold text-cldark">Review</div>
               <textarea
                 type="text"
                 placeholder="Product feedback"
@@ -215,7 +215,7 @@ const SingleProductPage = () => {
               />
             </div>
           </div>
-          <div className=" mt-4">
+          <div className=" mt-4 w-full flex justify-center">
             <button onClick={handleSubmit} className="btn">
               Submit
             </button>

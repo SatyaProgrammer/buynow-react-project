@@ -132,6 +132,10 @@ def register():
         sql = "INSERT INTO users (username, password, salt, email) VALUES (%s, %s, %s, %s)"
 
         cursor.execute(sql, (name, passwd, salt, email))
+        uid = cursor.lastrowid
+
+        sql = "INSERT INTO userscustomization (recipientId, theme) VALUES (%s, %s)"
+        cursor.execute(sql, (uid, "light"))
 
         db_conn.commit()
 

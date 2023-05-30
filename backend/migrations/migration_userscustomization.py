@@ -10,7 +10,9 @@ def up():
     table = Table(name=TABLE_NAME)
     table.int("id").primary_key().auto_increment()
     table.foreign_key("recipientId", "users", "id")
-    table.enum("theme", "light", "dark")
+    table.enum("theme", "light", "dark").default("light")
+    table.varchar("image", 280).nullable()
+    table.json("contactInfo").default(r"'{}'")
 
     table.migrate()  # always finish with a call to table.migrate()
     return table
