@@ -31,7 +31,7 @@ const Product = () => {
       .catch((err) => {
         if (err?.response.data.error_code == "BX0001") {
           cookies.remove("jwt_authorization");
-          navigate("/shop/product");
+          navigate("/sell/product");
         }
       });
     if (response && response.data) {
@@ -67,7 +67,7 @@ const Product = () => {
       console.log(err);
       if (err?.response.data.error_code == "BX0001") {
         cookies.remove("jwt_authorization");
-        navigate("/shop/product");
+        navigate("/sell/product");
       }
     }
   };
@@ -112,7 +112,7 @@ const Product = () => {
           </p>
           <div className="shadow-md bg-white pt-4">
             <div className="mb-4 p-2 px-4">
-              <Link to="/shop/add_product" className="btn">
+              <Link to="/sell/add_product" className="btn">
                 Add Product
               </Link>
             </div>
@@ -216,13 +216,13 @@ const Product = () => {
                         </td>
                         <td className="text-cldark p-4 border-b whitespace-nowrap">
                           <div className="flex gap-2 items-center">
-                            <Link to={"/shop/product/".concat(product.pid)}>
+                            <Link to={"/sell/product/".concat(product.pid)}>
                               <div className="w-5 h-5 hover:scale-110 transition-all duration-300">
                                 <IconFile fill="hsl(22, 28%, 45%)" />
                               </div>
                             </Link>
                             <Link
-                              to={"/shop/product/edit_product/".concat(
+                              to={"/sell/product/edit_product/".concat(
                                 product.pid
                               )}
                             >

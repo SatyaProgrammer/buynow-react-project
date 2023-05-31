@@ -14,7 +14,7 @@ export const links = [
   {
     id: 2,
     text: "sell",
-    url: "/shop",
+    url: "/sell",
   },
   {
     id: 3,

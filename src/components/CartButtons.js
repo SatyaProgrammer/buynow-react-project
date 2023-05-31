@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaShoppingCart, FaUserMinus, FaUserPlus } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -22,6 +22,8 @@ const CartButtons = () => {
     navigate("/login");
   };
 
+  const [dropDown, setDropDown] = useState(false);
+
   return (
     <Wrapper className="cart-btn-wrapper">
       <Link to="/cart" className="cart-btn" onClick={closeSidebar}>
@@ -31,7 +33,7 @@ const CartButtons = () => {
           <span className="cart-value">{total_items}</span>
         </span>
       </Link>
-      {data ? (
+      {/* {data ? (
         <button type="button" className="auth-btn" onClick={logout}>
           Logout <FaUserMinus />
         </button>
@@ -39,7 +41,61 @@ const CartButtons = () => {
         <button type="button" className="auth-btn" onClick={login}>
           Login <FaUserPlus />
         </button>
-      )}
+      )} */}
+      <div className="relative">
+        <div className="flex gap-2 items-center">
+          <div className="cart-btn">Username</div>
+          <div className="rounded-full w-10 h-10 bg-gray-200"></div>
+        </div>
+
+        {/* <!-- Dropdown menu --> */}
+        <div
+          id="dropdownInformation"
+          class="z-20 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600 absolute right-0 mt-2"
+        >
+          <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
+            <div>Bonnie Green</div>
+            <div className="font-medium truncate">name@flowbite.com</div>
+          </div>
+          <ul
+            className="py-2 text-sm text-gray-700 dark:text-gray-200"
+            aria-labelledby="dropdownInformationButton"
+          >
+            <li>
+              <a
+                href="#"
+                className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+              >
+                Dashboard
+              </a>
+            </li>
+            <li>
+              <a
+                href="#"
+                className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+              >
+                Settings
+              </a>
+            </li>
+            <li>
+              <a
+                href="#"
+                className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+              >
+                Earnings
+              </a>
+            </li>
+          </ul>
+          <div className="py-2">
+            <a
+              href="#"
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+            >
+              Sign out
+            </a>
+          </div>
+        </div>
+      </div>
     </Wrapper>
   );
 };
@@ -47,6 +103,7 @@ const CartButtons = () => {
 const Wrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
+  gap: 2rem;
   align-items: center;
   width: 225px;
 
@@ -56,7 +113,6 @@ const Wrapper = styled.div`
     letter-spacing: var(--spacing);
     color: var(--clr-grey-1);
     display: flex;
-
     align-items: center;
   }
   .cart-container {

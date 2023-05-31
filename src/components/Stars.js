@@ -21,7 +21,7 @@ const Stars = ({ stars, reviews }) => {
   return (
     <Wrapper>
       <div className="stars">{tempStars}</div>
-      <p className="reviews">(Delivery option : {reviews})</p>
+      {/* <p className="reviews">(Delivery option : {reviews})</p> */}
     </Wrapper>
   );
 };
