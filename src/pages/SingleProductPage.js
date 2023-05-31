@@ -114,6 +114,8 @@ const SingleProductPage = () => {
     category,
   } = product;
 
+  console.log(product);
+
   return (
     <Wrapper>
       {/* <PageHero title={name} /> */}
@@ -247,6 +249,11 @@ const SingleProductPage = () => {
               <span>Vendor : </span>
               {owner}
             </p>
+            <p className="info">
+              <span>Delivery option: </span>
+              {deliveryOption}
+            </p>
+            <p className="info"></p>
             <hr />
             {availability > 0 ? (
               <AddToCart product={product} />
@@ -282,9 +289,9 @@ const Wrapper = styled.main`
   }
   .info {
     text-transform: capitalize;
-    width: 300px;
+    width: 400px;
     display: grid;
-    grid-template-columns: 125px 1fr;
+    grid-template-columns: 160px 1fr;
     span {
       font-weight: 700;
     }

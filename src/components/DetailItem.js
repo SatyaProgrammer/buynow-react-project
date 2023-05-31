@@ -1,11 +1,12 @@
 import React from "react";
 import styled from "styled-components";
+import { formatPrice } from "../utils/helpers";
 //  = { images: [] }
-const DetailItem = ({ name, images = { image: [] }, cost, quantity }) => {
+const DetailItem = ({ name, images, cost, quantity }) => {
   return (
     <Wrapper>
       <h4>{name}</h4>
-      <h4>{cost}</h4>
+      <h4 style={{ color: "hsl(22, 28%, 45%)" }}>{formatPrice(cost)}</h4>
       <h4>{quantity}</h4>
     </Wrapper>
   );

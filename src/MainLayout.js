@@ -34,7 +34,7 @@ const MainLayout = () => {
           <Route path="/checkout" element={<Checkout />} />
 
           <Route
-            path="/shop/dashboard"
+            path="/sell/dashboard"
             element={
               <>
                 <ShopSidebar />
@@ -43,7 +43,7 @@ const MainLayout = () => {
             }
           />
           <Route
-            path="/shop/product"
+            path="/sell/product"
             element={
               <>
                 <ShopSidebar />
@@ -52,7 +52,7 @@ const MainLayout = () => {
             }
           />
           <Route
-            path="/shop/order"
+            path="/sell/order"
             element={
               <>
                 <ShopSidebar />
@@ -61,7 +61,7 @@ const MainLayout = () => {
             }
           />
           <Route
-            path="/shop/customer"
+            path="/sell/customer"
             element={
               <>
                 <ShopSidebar />
@@ -70,7 +70,7 @@ const MainLayout = () => {
             }
           />
           <Route
-            path="/shop/add_product"
+            path="/sell/add_product"
             element={
               <>
                 <ShopSidebar />
@@ -79,7 +79,7 @@ const MainLayout = () => {
             }
           />
           <Route
-            path="/shop/product/edit_product/:id"
+            path="/sell/product/edit_product/:id"
             element={
               <>
                 <ShopSidebar />
@@ -88,7 +88,7 @@ const MainLayout = () => {
             }
           />
           <Route
-            path="/shop/product/:id"
+            path="/sell/product/:id"
             element={
               <>
                 <ShopSidebar />
@@ -115,7 +115,7 @@ const MainLayout = () => {
             }
           />
 
-          <Route path="/shop" element={<Shop />} />
+          <Route path="/sell" element={<Shop />} />
         </Route>
 
         <Route path="/" element={<Products />} />
@@ -123,7 +123,7 @@ const MainLayout = () => {
         <Route path="/cart" element={<Cart />} />
         {/* <Route path="/products" element={<Products />} /> */}
         {/* <Route path="/products/:id" element={<SingleProduct />} /> */}
-        <Route path="/shop" element={<Shop />} />
+        <Route path="/sell" element={<Shop />} />
 
         <Route path="*" element={<Error />} />
       </Routes>

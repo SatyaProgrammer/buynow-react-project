@@ -10,9 +10,9 @@ const Shop = () => {
   const token = cookies.get("jwt_authorization");
 
   const logged = () => {
-    navigate("/shop/dashboard");
+    navigate("/sell/dashboard");
   };
-  
+
   useEffect(() => {
     logged();
   }, []);

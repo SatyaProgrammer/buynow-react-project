@@ -62,12 +62,12 @@ const ProductDetail = () => {
           },
         }
       );
-      navigate("/shop/product");
+      navigate("/sell/product");
     } catch (err) {
       console.log(err);
       if (err?.response.data.error_code == "BX0001") {
         cookies.remove("jwt_authorization");
-        navigate("/shop/product");
+        navigate("/sell/product");
       }
     }
   };
@@ -119,7 +119,7 @@ const ProductDetail = () => {
                   <ProductImages images={state.post.images?.images} />
                   <div className="flex flex-col gap-2">
                     <div className="w-full border">
-                      <Link to={"/shop/product/edit_product/".concat(pid)}>
+                      <Link to={"/sell/product/edit_product/".concat(pid)}>
                         <div className="w-full text-white bg-primary4 flex justify-center py-1 rounded-sm hover:opacity-80 transition-all duration-300">
                           Edit
                         </div>
