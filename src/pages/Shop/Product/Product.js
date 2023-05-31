@@ -22,7 +22,7 @@ const Product = () => {
   const handleFetch = async () => {
     dispatch({ type: ACTION_TYPES.FETCH_START });
     const response = await axios
-      .get(`http://api.localhost/products/me`, {
+      .get(`${process.env.REACT_APP_BACKEND_URL}/products/me`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Basic ${token}`,
@@ -53,7 +53,7 @@ const Product = () => {
     });
     try {
       const response = await axios.post(
-        `http://api.localhost/products/delete`,
+        `${process.env.REACT_APP_BACKEND_URL}/products/delete`,
         data,
         {
           headers: {

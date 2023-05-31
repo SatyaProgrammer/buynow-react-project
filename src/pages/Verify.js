@@ -11,17 +11,17 @@ const Verify = () => {
   const handleVerify = async (e) => {
     let verifyToken = { token: searchParams.get("token") };
 
-    if(verifyToken){
+    if (verifyToken) {
       const response = await axios.post(
-        "http://api.localhost/auth/verify",
+        `${process.env.REACT_APP_BACKEND_URL}/auth/verify`,
         verifyToken,
         {
           headers: { "Content-Type": "application/json" },
         }
       );
       navigate("/login");
-    }else {
-      navigate("/")
+    } else {
+      navigate("/");
     }
   };
 

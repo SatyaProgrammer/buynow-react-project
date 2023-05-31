@@ -43,7 +43,7 @@ const CartTotals = () => {
     console.log(data);
     try {
       const response = await axios.post(
-        "http://api.localhost/trackings",
+        `${process.env.REACT_APP_BACKEND_URL}/trackings`,
         data,
         {
           headers: {

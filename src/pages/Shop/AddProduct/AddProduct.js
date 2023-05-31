@@ -75,7 +75,9 @@ const AddProduct = () => {
 
   const handleFetch = async () => {
     try {
-      const response = await axios.get("http://api.localhost/categories");
+      const response = await axios.get(
+        "${process.env.REACT_APP_BACKEND_URL}/categories"
+      );
 
       if (response && response.data) {
         dispatch({
@@ -101,7 +103,7 @@ const AddProduct = () => {
     dispatch({ type: ACTION_TYPES.SET_AVAILABILITY, payload: 0 });
     dispatch({ type: ACTION_TYPES.SET_DELIVERYOPTION, payload: "" });
     dispatch({ type: ACTION_TYPES.SET_IMAGE, payload: [""] });
-    dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: {images: []} });
+    dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: { images: [] } });
   }, []);
 
   useEffect(() => {
@@ -182,7 +184,7 @@ const AddProduct = () => {
 
     try {
       const response = await axios.post(
-        "http://api.localhost/products/add",
+        `${process.env.REACT_APP_BACKEND_URL}/products/add`,
         data,
         {
           headers: {
@@ -200,7 +202,7 @@ const AddProduct = () => {
       dispatch({ type: ACTION_TYPES.SET_AVAILABILITY, payload: 0 });
       dispatch({ type: ACTION_TYPES.SET_DELIVERYOPTION, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_IMAGE, payload: [""] });
-      dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: {images: []} });
+      dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: { images: [] } });
       dispatch({
         type: ACTION_TYPES.SET_SUCCESS,
         payload: "Product listed for sale",
@@ -212,7 +214,7 @@ const AddProduct = () => {
         cookies.remove("jwt_authorization");
         navigate("/shop/add_product", { replace: true });
       }
-      dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: {images: []} });
+      dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: { images: [] } });
       dispatch({
         type: ACTION_TYPES.SET_ERROR,
         payload: err?.response.data.error,
@@ -535,7 +537,9 @@ const AddProduct = () => {
                                 </div>
                                 {state.customization[key].length > 1 ? (
                                   <div
-                                    onClick={() => handleRemoveSubCustom(key, idx)}
+                                    onClick={() =>
+                                      handleRemoveSubCustom(key, idx)
+                                    }
                                     className="w-5 h-5 hover:scale-110 duration-300 transition-all cursor-pointer"
                                   >
                                     <IconBin fill="#222" />

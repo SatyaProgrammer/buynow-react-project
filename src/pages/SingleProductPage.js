@@ -56,7 +56,7 @@ const SingleProductPage = () => {
     console.log("test");
     try {
       const response = await axios.post(
-        `http://api.localhost/reviews/${id}`,
+        `${process.env.REACT_APP_BACKEND_URL}/reviews/${id}`,
         data,
         {
           headers: {
@@ -83,7 +83,7 @@ const SingleProductPage = () => {
   } = useProductsContext();
 
   useEffect(() => {
-    fetchSingleProduct(`http://api.localhost/products/${id}`);
+    fetchSingleProduct(`${process.env.REACT_APP_BACKEND_URL}/products/${id}`);
   }, [id]);
 
   useEffect(() => {

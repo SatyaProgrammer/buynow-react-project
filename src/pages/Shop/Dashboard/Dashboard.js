@@ -28,7 +28,7 @@ const Dashboard = () => {
 
     // CUSTOMERS
     const customers_response = await axios
-      .get("http://api.localhost/dashboard/customers", {
+      .get(`${process.env.REACT_APP_BACKEND_URL}/dashboard/customers`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Basic ${token}`,
@@ -54,7 +54,7 @@ const Dashboard = () => {
 
     // ORDER COUNTS
     const order_counts_response = await axios
-      .get("http://api.localhost/dashboard/orders_count", {
+      .get(`${process.env.REACT_APP_BACKEND_URL}/dashboard/orders_count`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Basic ${token}`,
@@ -76,7 +76,7 @@ const Dashboard = () => {
 
     // REVENUE
     const revenue_response = await axios
-      .get("http://api.localhost/dashboard/revenue", {
+      .get(`${process.env.REACT_APP_BACKEND_URL}/dashboard/revenue`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Basic ${token}`,
@@ -98,7 +98,7 @@ const Dashboard = () => {
 
     // RECENT ORDER
     const recent_order_response = await axios
-      .get("http://api.localhost/dashboard/recent_orders", {
+      .get(`${process.env.REACT_APP_BACKEND_URL}/dashboard/recent_orders`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Basic ${token}`,
