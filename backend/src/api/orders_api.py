@@ -1,3 +1,4 @@
+import json
 from flask import Blueprint, request
 
 from backend.src.lib import Global
@@ -152,6 +153,8 @@ WHERE trackingNumber = ?""",
                     404,
                     {"Content-Type": "application/json"},
                 )
+
+            orders["images"] = json.loads(orders["images"])
 
             return {"orders": orders}, 200, {"Content-Type": "application/json"}
         else:

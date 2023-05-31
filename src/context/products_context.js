@@ -40,7 +40,7 @@ export const ProductsProvider = ({ children }) => {
     dispatch({ type: GET_PRODUCTS_BEGIN });
     try {
       const response = await axios.get(
-        "http://api.localhost/products/matching?limit=-1",
+        `${process.env.REACT_APP_BACKEND_URL}/products/matching?limit=-1`,
         {
           headers: { "Content-Type": "application/json" },
         }

@@ -23,12 +23,15 @@ const HistoryContent = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const getTrackings = async () => {
     try {
-      const response = await axios.get("http://api.localhost/trackings", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Basic ${token}`,
-        },
-      });
+      const response = await axios.get(
+        "${process.env.REACT_APP_BACKEND_URL}/trackings",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Basic ${token}`,
+          },
+        }
+      );
       const data = response.data.trackings;
       dispatch({ type: "TRACKINGS", payload: { data } });
     } catch (error) {

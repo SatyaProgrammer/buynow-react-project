@@ -17,7 +17,7 @@ const Order = () => {
   const handleFetch = async () => {
     dispatch({ type: ACTION_TYPES.FETCH_START });
     try {
-      const response = await axios.get("http://api.localhost/trackings", {
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/trackings`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Basic ${token}`,

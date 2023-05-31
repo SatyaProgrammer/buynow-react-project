@@ -37,7 +37,6 @@ const EditProduct = () => {
     dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
   };
 
-
   const handleRemoveSubCustom = (key, idx) => {
     let inputData = state.customization;
     inputData[key].splice(idx, 1);
@@ -87,7 +86,9 @@ const EditProduct = () => {
 
   const fetchCategory = async () => {
     try {
-      const response = await axios.get("http://api.localhost/categories");
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/categories`
+      );
 
       if (response && response.data) {
         dispatch({
@@ -102,11 +103,14 @@ const EditProduct = () => {
 
   const handleFetch = async () => {
     try {
-      const response = await axios.get(`http://api.localhost/products/${pid}`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/products/${pid}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       dispatch({ type: ACTION_TYPES.SET_NAME, payload: response.data.name });
       dispatch({
         type: ACTION_TYPES.SET_DESCRIPTION,
@@ -139,7 +143,9 @@ const EditProduct = () => {
     }
 
     try {
-      const response = await axios.get("http://api.localhost/categories");
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/categories`
+      );
 
       if (response && response.data) {
         dispatch({
@@ -233,7 +239,7 @@ const EditProduct = () => {
 
     try {
       const response = await axios.post(
-        "http://api.localhost/products/update",
+        "${process.env.REACT_APP_BACKEND_URL}/products/update",
         data,
         {
           headers: {
@@ -481,7 +487,8 @@ const EditProduct = () => {
 
                       <div className="flex flex-col gap-3 col-span-4 md:col-span-5 lg:col-span-7 xl:col-span-9">
                         {console.log(state.customization)}
-                        {state.customization[key] && Array.isArray(state.customization[key])
+                        {state.customization[key] &&
+                        Array.isArray(state.customization[key])
                           ? state.customization[key].map((data, idx) => (
                               <div key={idx}>
                                 <div>

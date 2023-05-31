@@ -12,7 +12,7 @@ def up():
     table.foreign_key("productId", "products", "id")
     table.foreign_key("authorId", "users", "id")
     table.int("rating")
-    table.text("comment")
+    table.text("comment").nullable()
 
     table.migrate()  # always finish with a call to table.migrate()
     return table

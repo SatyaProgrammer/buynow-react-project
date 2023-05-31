@@ -8,7 +8,7 @@ TABLE_NAME = "orders"
 
 def up():
     table = Table(name=TABLE_NAME)
-    table.int("id").primary_key().auto_incremenwwwwwwwwwwwwwwwwwt()
+    table.int("id").primary_key().auto_increment()
     table.foreign_key("trackingNumber", "trackings", "id")
     table.foreign_key("productId", "products", "id")
     table.json("customization").default("'{}'")

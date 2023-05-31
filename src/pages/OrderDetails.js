@@ -23,12 +23,15 @@ const OrderDetails = () => {
   const token = cookies.get("jwt_authorization");
   const getTracking = async (id) => {
     try {
-      const response = await axios.get(`http://api.localhost/trackings/${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Basic ${token}`,
-        },
-      });
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/trackings/${id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Basic ${token}`,
+          },
+        }
+      );
       const data = response.data.orders;
       console.log(data);
       dispatch({ type: "TRACKING", payload: { data } });

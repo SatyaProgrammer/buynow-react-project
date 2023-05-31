@@ -24,11 +24,14 @@ const ProductDetail = () => {
 
   const handleFetch = async () => {
     dispatch({ type: ACTION_TYPES.FETCH_START });
-    const response = await axios.get(`http://api.localhost/products/${pid}`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await axios.get(
+      `${process.env.REACT_APP_BACKEND_URL}/products/${pid}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
     if (response && response.data) {
       dispatch({ type: ACTION_TYPES.FETCH_SUCCESS, payload: response.data });
 
@@ -53,7 +56,7 @@ const ProductDetail = () => {
     });
     try {
       const response = await axios.post(
-        `http://api.localhost/products/delete`,
+        `${process.env.REACT_APP_BACKEND_URL}/products/delete`,
         data,
         {
           headers: {

@@ -4,7 +4,7 @@ import { IconAlert } from "./Shop/utils/Icons";
 import axios from "axios";
 import Cookies from "universal-cookie";
 
-const LOGIN_URL = "http://api.localhost/auth/login";
+const LOGIN_URL = `${process.env.REACT_APP_BACKEND_URL}/auth/login`;
 
 const Login = () => {
   // Initialize cookies

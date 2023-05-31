@@ -70,7 +70,7 @@ const Signup = () => {
     });
     try {
       const response = await axios.post(
-        "http://api.localhost/auth/register",
+        `${process.env.REACT_APP_BACKEND_URL}/auth/register`,
         data,
         {
           headers: { "Content-Type": "application/json" },
@@ -82,9 +82,15 @@ const Signup = () => {
       dispatch({ type: ACTION_TYPES.SET_EMAIL, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_CONFIRM_PASSWORD, payload: "" });
       window.scrollTo(0, 0);
-      dispatch({type:ACTION_TYPES.SET_SUCCESS, payload: "Signup successful"})
+      dispatch({
+        type: ACTION_TYPES.SET_SUCCESS,
+        payload: "Signup successful",
+      });
     } catch (err) {
-      dispatch({type:ACTION_TYPES.SET_ERROR, payload: err?.response.data.error})
+      dispatch({
+        type: ACTION_TYPES.SET_ERROR,
+        payload: err?.response.data.error,
+      });
       window.scrollTo(0, 0);
     }
   };
@@ -106,7 +112,9 @@ const Signup = () => {
                         <IconCheck fill="#25bb32" />
                       </div>
                     </div>
-                    <div className="col-span-11">{state.success}, verify your account with gmail</div>
+                    <div className="col-span-11">
+                      {state.success}, verify your account with gmail
+                    </div>
                   </div>
                 ) : (
                   ""
