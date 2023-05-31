@@ -38,6 +38,7 @@ export const ProductsProvider = ({ children }) => {
 
   const fetchProducts = async () => {
     dispatch({ type: GET_PRODUCTS_BEGIN });
+    console.log(process.env.REACT_APP_BACKEND_URL);
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_BACKEND_URL}/products/matching?limit=-1`,
