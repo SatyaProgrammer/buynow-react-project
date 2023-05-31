@@ -178,6 +178,8 @@ WHERE trackingNumber = ? AND p.owner = ?""",
                     404,
                     {"Content-Type": "application/json"},
                 )
+            
+            orders["images"] = json.loads(orders["images"])
 
             return {"orders": orders}, 200, {"Content-Type": "application/json"}
 
