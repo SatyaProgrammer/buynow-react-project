@@ -154,7 +154,8 @@ WHERE trackingNumber = ?""",
                     {"Content-Type": "application/json"},
                 )
 
-            orders["images"] = json.loads(orders["images"])
+            for order in orders:
+                order["images"] = json.loads(order["images"])
 
             return {"orders": orders}, 200, {"Content-Type": "application/json"}
         else:
@@ -178,8 +179,9 @@ WHERE trackingNumber = ? AND p.owner = ?""",
                     404,
                     {"Content-Type": "application/json"},
                 )
-            
-            orders["images"] = json.loads(orders["images"])
+
+            for order in orders:
+                order["images"] = json.loads(order["images"])
 
             return {"orders": orders}, 200, {"Content-Type": "application/json"}
 
