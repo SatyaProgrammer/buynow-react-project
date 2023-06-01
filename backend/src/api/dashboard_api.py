@@ -109,7 +109,7 @@ FROM orders as o
 INNER JOIN trackings as t ON o.trackingNumber = t.id
 INNER JOIN users as u ON t.userId = u.id
 INNER JOIN products as p ON o.productId = p.id
-WHERE p.owner = 1
+WHERE p.owner = ?
 ORDER BY o.createdAt DESC
 LIMIT 20;"""
         cursor.execute(query, (uid,))
