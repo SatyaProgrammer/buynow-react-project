@@ -263,10 +263,11 @@ def get_orders_from_vendor(uid):
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         cursor.execute(
             """\
-SELECT o.trackingNumber, p.pid, p.name, p.images, o.customization, o.quantity, o.cost
+SELECT o.trackingNumber, t.userId, u.username, p.pid, p.name, p.images, o.customization, o.quantity, o.cost
 FROM orders as o
-INNER JOIN products as p
-ON o.productId = p.id
+INNER JOIN trackings as t ON o.trackingNumber = t.id
+INNER JOIN users as u ON t.userId = u.id
+INNER JOIN products as p ON o.productId = p.id
 WHERE p.owner = ?""",
             (uid,),
         )
