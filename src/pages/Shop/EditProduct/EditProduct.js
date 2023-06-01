@@ -239,7 +239,7 @@ const EditProduct = () => {
 
     try {
       const response = await axios.post(
-        "${process.env.REACT_APP_BACKEND_URL}/products/update",
+        `${process.env.REACT_APP_BACKEND_URL}/products/update`,
         data,
         {
           headers: {
@@ -429,23 +429,6 @@ const EditProduct = () => {
                       : ""}
                   </ul>
                 </div>
-                {/* <input
-                  type="text"
-                  placeholder="Product category"
-                  required
-                  onFocus={() =>
-                    dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: "" })
-                  }
-                  onChange={(e) =>
-                    dispatch({
-                      type: ACTION_TYPES.SET_CATEGORY,
-                      payload: e.target.value,
-                    })
-                  }
-                  name="category"
-                  value={state.category}
-                  className="border border-gray-300 w-full p-3 rounded-lg text-cldark focus:outline focus:outline-1"
-                /> */}
               </div>
               <div className="flex flex-col gap-2">
                 <div className="text-xl font-semibold text-cldark">Price</div>

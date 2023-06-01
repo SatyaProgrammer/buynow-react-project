@@ -202,6 +202,30 @@ def verify_email():
         )
 
 
+@auth_api.get("/auth/resend_verify")
+@limiter.limit("1 per 60 seconds")
+@token_required
+def resend_verification_email(uid):
+    try:
+        db_conn = Global.db_conn
+        cursor = db_conn.cursor(prepared=True, dictionary=True)
+        sql = "SELECT email, username FROM users WHERE id = %s"
+        cursor.execute(sql, (uid,))
+        data = cursor.fetchone()
+        email = data["email"]
+        name = data["username"]
+
+        verify_token = token_urlsafe(32)
+        send_verification_email(email, name, verify_token)
+    except Exception as e:
+        Global.console.print_exception()
+        return (
+            {"error_code": "BX0001", "error": "Something went wrong."},
+            500,
+            {"Content-Type": "application/json"},
+        )
+
+
 @auth_api.get("/auth/test")
 @limiter.limit("1 per 10 seconds")
 @token_required

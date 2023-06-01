@@ -24,7 +24,7 @@ const HistoryContent = () => {
   const getTrackings = async () => {
     try {
       const response = await axios.get(
-        "${process.env.REACT_APP_BACKEND_URL}/trackings",
+        `${process.env.REACT_APP_BACKEND_URL}/trackings`,
         {
           headers: {
             "Content-Type": "application/json",

@@ -183,6 +183,9 @@ WHERE trackingNumber = ? AND p.owner = ?""",
             for order in orders:
                 order["images"] = json.loads(order["images"])
 
+            for order in orders:
+                order["images"] = json.loads(order["images"])
+
             return {"orders": orders}, 200, {"Content-Type": "application/json"}
 
     except Exception as e:
