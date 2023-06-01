@@ -34,10 +34,6 @@ const CartButtons = () => {
         </span>
       </Link>
       {data ? (
-        // <button type="button" className="auth-btn" onClick={logout}>
-        //   Logout <FaUserMinus />
-        // </button>
-
         <div
           onClick={() => setDropDown(!dropDown)}
           className="relative cursor-pointer"
@@ -51,57 +47,70 @@ const CartButtons = () => {
             id="dropdownInformation"
             className={
               dropDown
-                ? "z-20 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600 absolute right-0 mt-2"
+                ? "z-20 bg-white rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600 absolute right-0 mt-2"
                 : "hidden"
             }
           >
-            <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
-              <div>Bonnie Green</div>
-              <div className="font-medium truncate">name@flowbite.com</div>
-            </div>
             <ul
               className="py-2 text-sm text-gray-700 dark:text-gray-200"
               aria-labelledby="dropdownInformationButton"
             >
               <li>
-                <a
-                  href="#"
-                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                >
+                <a href="#" className="block px-4 py-2 hover:text-main">
                   View Profile
                 </a>
               </li>
               <li>
                 <a
                   href="#"
-                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  className="block px-4 py-2 hover:text-main"
+                  onClick={logout}
                 >
-                  Edit Profile
+                  Sign out
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      ) : (
+        <div
+          onClick={() => setDropDown(!dropDown)}
+          className="relative cursor-pointer"
+        >
+          <div className="flex gap-2 items-center">
+            <div className="cart-btn">Username</div>
+            <div className="rounded-full w-10 h-10 bg-gray-200"></div>
+          </div>
+
+          <div
+            id="dropdownInformation"
+            className={
+              dropDown
+                ? "z-20 bg-main divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600 absolute right-0 mt-2"
+                : "hidden"
+            }
+          >
+            <ul
+              className="py-2 text-sm text-gray-700 dark:text-gray-200"
+              aria-labelledby="dropdownInformationButton"
+            >
+              <li>
+                <a href="#" className="block px-4 py-2 hover:text-main">
+                  View Profile
                 </a>
               </li>
               <li>
                 <a
                   href="#"
-                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  className="block px-4 py-2 hover:bg-gray-700"
+                  onClick={login}
                 >
-                  Setup Contact
+                  Sign in
                 </a>
               </li>
             </ul>
-            <div onClick={logout} className="py-2">
-              <a
-                href="#"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-              >
-                Sign out
-              </a>
-            </div>
           </div>
         </div>
-      ) : (
-        <button type="button" className="auth-btn" onClick={login}>
-          Login <FaUserPlus />
-        </button>
       )}
     </Wrapper>
   );
