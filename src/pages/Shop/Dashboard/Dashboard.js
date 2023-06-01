@@ -140,7 +140,7 @@ const Dashboard = () => {
                 {state.post.order_counts?.count}
               </div>
             </div>
-            <Link to="/shop/order">
+            <Link to="/sell/order">
               <div>
                 <div className="text-md text-primary4 font-bold">
                   View orders
@@ -230,21 +230,16 @@ const Dashboard = () => {
                   </tr>
                 </thead>
                 <tbody className="">
-                  {state.post.recent_order?.order ? (
-                    state.post.recent_order?.orders.map(() => {
-                      <tr>
-                        <td className="text-cldark p-2">001</td>
-                        <td className="text-cldark p-2">001</td>
-                        <td className="text-cldark p-2">001</td>
-                        <td className="text-cldark p-2">001</td>
-                        <td className="text-cldark p-2">001</td>
-                      </tr>;
-                    })
-                  ) : (
-                    <tr>
-                      <td className="py-2">No order found</td>
+                  {console.log(state.post.recent_order?.orders)}
+                  {state.post.recent_order?.orders.map((product, idx) => (
+                    <tr key={idx}>
+                      <td className="text-cldark p-2">001</td>
+                      <td className="text-cldark p-2">001</td>
+                      <td className="text-cldark p-2">001</td>
+                      <td className="text-cldark p-2">001</td>
+                      <td className="text-cldark p-2">001</td>
                     </tr>
-                  )}
+                  ))}
                 </tbody>
               </table>
             </div>

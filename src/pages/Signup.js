@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useRef } from "react";
+import React, { useEffect, useReducer, useRef, useState } from "react";
 import {
   signupReducer,
   INITIAL_STATE,
@@ -19,10 +19,37 @@ const Signup = () => {
   const [state, dispatch] = useReducer(signupReducer, INITIAL_STATE);
   const usernameRef = useRef();
   const emailRed = useRef();
+  const [windowSize, setWindowSize] = useState(window.innerHeight);
+  const [isFull, setIsFull] = useState(true);
+  const [mainHeight, setMainHeight] = useState();
+  const mainRef = useRef();
 
   useEffect(() => {
     usernameRef.current.focus();
+    if (windowSize > 560 + 20) {
+      console.log("word");
+      setIsFull(true);
+    }
+    window.addEventListener("resize", handleResize, false);
   }, []);
+
+  useEffect(() => {
+    setMainHeight(mainRef.current.clientHeight);
+  });
+
+  const handleResize = () => {
+    setWindowSize(window.innerHeight);
+  };
+
+  React.useEffect(() => {
+    if (mainHeight) {
+      if (windowSize > mainHeight + 20) {
+        setIsFull(true);
+      } else {
+        setIsFull(false);
+      }
+    }
+  }, [windowSize]);
 
   useEffect(() => {
     dispatch({
@@ -96,10 +123,20 @@ const Signup = () => {
   };
 
   return (
-    <div className=" p-8 bg-gray-100 grid place-items-center">
-      <div className="w-80 sm:w-96 bg-white shadow-lg flex flex-col gap-6 rounded-md">
+    <div
+      className={
+        isFull
+          ? "bg-gray-100 h-screen grid place-items-center"
+          : "bg-gray-100 grid place-items-center p-8"
+      }
+    >
+      {console.log(isFull)}
+      <div
+        ref={mainRef}
+        className="w-80 sm:w-96 bg-white shadow-lg flex flex-col gap-6 rounded-md"
+      >
         <div className="text-3xl font-semibold text-primary4 underline px-8 mt-6">
-          Sign up
+          Sign up {windowSize}
         </div>
         <form onSubmit={handleSubmit}>
           <div className="px-8 pb-8">
