@@ -65,7 +65,13 @@ const AddProduct = () => {
     dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
 
     inputData = colPicker;
-    inputData.splice(idx,1);
+    inputData.splice(idx, 1);
+    setColPicker(inputData);
+  };
+
+  const handleColPicker = (idx) => {
+    let inputData = colPicker;
+    inputData[idx] = !inputData[idx];
     setColPicker(inputData);
   };
 
@@ -458,10 +464,13 @@ const AddProduct = () => {
                                 <div className="flex items-center border rounded-lg w-full  border-gray-300 focus-within:outline focus-within:outline-1">
                                   {state.cholder[id].isColor ? (
                                     <div>
-                                      <div className="w-full text-gray-400 p-3 cursor-pointer">
+                                      <button
+                                        onClick={() => handleColPicker(idx)}
+                                        className="w-full text-gray-400 p-3 cursor-pointer"
+                                      >
                                         Select color
-                                      </div>
-                                      {/* <div>
+                                      </button>
+                                      {/* <div className={colPicker[idx]? "block" : "hidden"}>
                                         <SketchPicker
                                           color={col}
                                           onChangeComplete={handleColor}
