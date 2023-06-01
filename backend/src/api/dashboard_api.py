@@ -1,3 +1,4 @@
+import json
 from flask import Blueprint, request
 
 from backend.src.lib import Global
@@ -112,6 +113,9 @@ ORDER BY o.createdAt DESC
 LIMIT 20;"""
         cursor.execute(query, (uid,))
         result = cursor.fetchall()
+
+        for order in result:
+            order["images"] = json.loads(order["images"])
         cursor.close()
         return {"orders": result}, 200, {"Content-Type": "application/json"}
     except Exception as e:
