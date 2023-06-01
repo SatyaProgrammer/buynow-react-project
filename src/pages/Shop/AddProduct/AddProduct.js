@@ -9,7 +9,7 @@ import { IconPlus, IconBin, IconAlert, IconCheck } from "../utils/Icons";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import { useNavigate, Navigate, useLocation } from "react-router-dom";
-import { SketchPicker } from "react-color";
+// import { SketchPicker } from "react-color";
 
 const AddProduct = () => {
   const [state, dispatch] = useReducer(addProductReducer, INITIAL_STATE);
