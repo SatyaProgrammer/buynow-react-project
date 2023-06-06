@@ -1,3 +1,4 @@
+import json
 from flask import Blueprint, request
 
 from backend.src.lib import Global
@@ -103,15 +104,19 @@ def get_recent_orders(uid):
     try:
         db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)
-        query = """SELECT o.trackingNumber, o.productId, p.name, p.images, o.customization, o.quantity, o.cost
+        query = """SELECT o.trackingNumber, t.userId, u.username, o.productId, p.name, p.images, o.customization, o.quantity, o.cost
 FROM orders as o
-INNER JOIN products as p
-ON o.productId = p.id
+INNER JOIN trackings as t ON o.trackingNumber = t.id
+INNER JOIN users as u ON t.userId = u.id
+INNER JOIN products as p ON o.productId = p.id
 WHERE p.owner = ?
 ORDER BY o.createdAt DESC
 LIMIT 20;"""
         cursor.execute(query, (uid,))
         result = cursor.fetchall()
+
+        for order in result:
+            order["images"] = json.loads(order["images"])
         cursor.close()
         return {"orders": result}, 200, {"Content-Type": "application/json"}
     except Exception as e:
