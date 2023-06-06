@@ -25,7 +25,7 @@ const CartButtons = () => {
   const [dropDown, setDropDown] = useState(false);
 
   return (
-    <Wrapper className="cart-btn-wrapper">
+    <Wrapper className={data ? "cart-btn-wrapper" : "cart-btn-wrapper"}>
       <Link to="/cart" className="cart-btn" onClick={closeSidebar}>
         Cart
         <span className="cart-container">
@@ -42,75 +42,48 @@ const CartButtons = () => {
             <div className="cart-btn">Username</div>
             <div className="rounded-full w-10 h-10 bg-gray-200"></div>
           </div>
-
           <div
-            id="dropdownInformation"
-            className={
+            id="dropdown"
+            class={
               dropDown
-                ? "z-20 bg-white rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600 absolute right-0 mt-2"
+                ? "z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute right-0 mt-1"
                 : "hidden"
             }
           >
             <ul
-              className="py-2 text-sm text-gray-700 dark:text-gray-200"
-              aria-labelledby="dropdownInformationButton"
+              class="text-sm text-gray-700 dark:text-gray-200"
+              aria-labelledby="dropdownDefaultButton"
             >
               <li>
-                <a href="#" className="block px-4 py-2 hover:text-main">
+                <Link
+                  class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  to="/profile"
+                >
                   View Profile
-                </a>
+                </Link>
+                {/* <a
+                  href=
+                  class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  View Profile
+                </a> */}
               </li>
               <li>
                 <a
                   href="#"
-                  className="block px-4 py-2 hover:text-main"
+                  class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                   onClick={logout}
                 >
-                  Sign out
+                  Logout
                 </a>
               </li>
             </ul>
           </div>
         </div>
       ) : (
-        <div
-          onClick={() => setDropDown(!dropDown)}
-          className="relative cursor-pointer"
-        >
-          <div className="flex gap-2 items-center">
-            <div className="cart-btn">Username</div>
-            <div className="rounded-full w-10 h-10 bg-gray-200"></div>
-          </div>
-
-          <div
-            id="dropdownInformation"
-            className={
-              dropDown
-                ? "z-20 bg-main divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600 absolute right-0 mt-2"
-                : "hidden"
-            }
-          >
-            <ul
-              className="py-2 text-sm text-gray-700 dark:text-gray-200"
-              aria-labelledby="dropdownInformationButton"
-            >
-              <li>
-                <a href="#" className="block px-4 py-2 hover:text-main">
-                  View Profile
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="block px-4 py-2 hover:bg-gray-700"
-                  onClick={login}
-                >
-                  Sign in
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
+        <button type="button" className="auth-btn" onClick={login}>
+          Login <FaUserPlus />
+        </button>
       )}
     </Wrapper>
   );
@@ -119,9 +92,9 @@ const CartButtons = () => {
 const Wrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2rem;
   align-items: center;
   width: 225px;
+  gap: 1.5rem;
 
   .cart-btn {
     color: var(--clr-grey-1);

@@ -37,6 +37,11 @@ export const SidebarItems = [
     link: "/sell/order",
     icon: <IconGift fill={iconColor} />,
   },
+  {
+    name: "Profile",
+    link: "/profile",
+    icon: <IconUser fill={iconColor} />,
+  },
   // {
   //     name: 'customer',
   //     link: '/sell/customer',

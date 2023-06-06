@@ -53,6 +53,7 @@ const OrderDetails = () => {
       <div className="section section-center">
         <DetailColumn />
         {state.data.map((product) => {
+          console.log(product);
           return <DetailItem key={product.pid} {...product} />;
         })}
         <div className="link-container">

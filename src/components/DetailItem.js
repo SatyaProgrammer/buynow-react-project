@@ -6,8 +6,14 @@ const DetailItem = ({ name, images, cost, quantity }) => {
   return (
     <Wrapper>
       <h4>{name}</h4>
-      <h4 style={{ color: "hsl(22, 28%, 45%)" }}>{formatPrice(cost)}</h4>
+      <img
+        src={images.images[0]}
+        alt={name}
+        className="object-cover w-full h-full"
+        style={{ width: "140px" }}
+      />
       <h4>{quantity}</h4>
+      <h4 style={{ color: "hsl(22, 28%, 45%)" }}>{formatPrice(cost)}</h4>
     </Wrapper>
   );
 };
@@ -33,13 +39,6 @@ const Wrapper = styled.article`
     align-items: center;
     text-align: left;
     gap: 1rem;
-  }
-  img {
-    width: 100%;
-    height: 100%;
-    display: block;
-    border-radius: var(--radius);
-    object-fit: cover;
   }
   h5 {
     font-size: 0.75rem;
@@ -120,7 +119,7 @@ const Wrapper = styled.article`
         height: 0.75rem;
       }
     }
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr auto;
     align-items: center;
     grid-template-rows: 75px;
     img {

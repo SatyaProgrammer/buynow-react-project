@@ -23,6 +23,7 @@ import History from "./pages/HistoryPage";
 import { PrivateRoutes } from "./utils/ManageRoute";
 import EditProduct from "./pages/Shop/EditProduct/EditProduct";
 import OrderDetails from "./pages/OrderDetails";
+import ProfilePage from "./pages/Shop/Profile/ProfilePage";
 
 const MainLayout = () => {
   return (
@@ -111,6 +112,16 @@ const MainLayout = () => {
             element={
               <>
                 <OrderDetails />
+              </>
+            }
+          />
+
+          <Route
+            path="/profile"
+            element={
+              <>
+                <ShopSidebar />
+                <ProfilePage />
               </>
             }
           />
