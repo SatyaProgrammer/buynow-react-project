@@ -39,7 +39,10 @@ export const INITIAL_STATE = {
 
   customization: [{ color: [""], size: [""] }],
 
-  cholder: ["red", "small"],
+  cholder: [
+    { type: "red", isColor: true },
+    { type: "small", isColor: false },
+  ],
 
   availability: 0,
 

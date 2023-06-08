@@ -1,11 +1,11 @@
 import React from "react";
-import { useReducer, useEffect, useRef } from "react";
+import { useReducer, useEffect, useRef, useState } from "react";
 import {
   editProductReducer,
   INITIAL_STATE,
   ACTION_TYPES,
 } from "./EditProductReducer";
-import { IconPlus, IconBin, IconAlert, IconCheck } from "../utils/Icons";
+import { IconPlus, IconBin, IconAlert, IconCheck, IconCross } from "../utils/Icons";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import {
@@ -15,6 +15,7 @@ import {
   useParams,
   Link,
 } from "react-router-dom";
+import { SketchPicker } from "react-color";
 
 const EditProduct = () => {
   const [state, dispatch] = useReducer(editProductReducer, INITIAL_STATE);
@@ -24,11 +25,21 @@ const EditProduct = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const pid = useParams().id;
+  const [colPicker, setColPicker] = useState([false]);
+  const handleColor = (color, idx) => {
+    let inputData = state.customization;
+    inputData.color[idx] = color;
+    dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: inputData });
+  };
 
   const handleAddSubCustom = (key) => {
     let inputData = state.customization;
-    inputData[key].push("");
+    inputData[key].push("#FFFFFF");
     dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
+
+    inputData = colPicker;
+    inputData.push(false);
+    setColPicker(inputData);
   };
 
   const handleChangeSubCustom = (onChangeValue, key, idx) => {
@@ -41,6 +52,10 @@ const EditProduct = () => {
     let inputData = state.customization;
     inputData[key].splice(idx, 1);
     dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
+
+    inputData = colPicker;
+    inputData.splice(idx, 1);
+    setColPicker(inputData);
   };
 
   const handleAddImage = () => {
@@ -475,7 +490,157 @@ const EditProduct = () => {
                           ? state.customization[key].map((data, idx) => (
                               <div key={idx}>
                                 <div>
-                                  <div className="flex gap-2 items-center">
+                                  {state.cholder[id].isColor ? (
+                                    <div>
+                                      <div className="flex gap-2 items-center">
+                                        <div className="flex items-center border rounded-lg w-full  border-gray-300 focus-within:outline focus-within:outline-1">
+                                          <div className="w-full">
+                                            <div
+                                              className={
+                                                colPicker[idx]
+                                                  ? "flex items-center hover:bg-gray-200 bg-gray-200 rounded-l-md cursor-pointer"
+                                                  : "flex items-center hover:bg-gray-200 rounded-l-md cursor-pointer"
+                                              }
+                                            >
+                                              <div
+                                                style={{
+                                                  backgroundColor:
+                                                    state.customization.color[
+                                                      idx
+                                                    ],
+                                                }}
+                                                className="w-8 h-8 border ml-4 rounded-full"
+                                              ></div>
+                                              <div
+                                                onClick={(e) => {
+                                                  e.preventDefault();
+                                                  setColPicker((colPicker) =>
+                                                    colPicker.map((col, i) =>
+                                                      i === idx ? !col : false
+                                                    )
+                                                  );
+                                                }}
+                                                className="focus:outline-none w-full p-3 rounded-lg text-gray-400"
+                                              >
+                                                Select color
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div>
+                                            <div
+                                              onClick={() =>
+                                                handleAddSubCustom(key, idx)
+                                              }
+                                              className="p-2 hover:scale-110 transition-full duration-300"
+                                            >
+                                              <div className="w-4 h-4 cursor-pointer">
+                                                <IconPlus fill="#222" />
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        {state.customization[key].length > 1 ? (
+                                          <div
+                                            onClick={() =>
+                                              handleRemoveSubCustom(key, idx)
+                                            }
+                                            className="w-5 h-5 hover:scale-110 duration-300 transition-all cursor-pointer"
+                                          >
+                                            <IconBin fill="#222" />
+                                          </div>
+                                        ) : (
+                                          ""
+                                        )}
+                                      </div>
+                                      <div
+                                        className={
+                                          colPicker[idx]
+                                            ? "w-fit p-4 pt-2 shadow-md flex flex-col gap-2 mt-4"
+                                            : "hidden"
+                                        }
+                                      >
+                                        <div className="flex justify-end">
+                                          <div
+                                            onClick={(e) => {
+                                              e.preventDefault();
+                                              setColPicker((colPicker) =>
+                                                colPicker.map((col, i) =>
+                                                  i === idx ? !col : false
+                                                )
+                                              );
+                                            }}
+                                            className=" cursor-pointer w-6 h-6 hover:scale-125 transition-all duration-300"
+                                          >
+                                            <IconCross />
+                                          </div>
+                                        </div>
+                                        <SketchPicker
+                                          className=" shadow-none border-none"
+                                          color={state.customization.color[idx]}
+                                          onChangeComplete={(color) =>
+                                            handleColor(color.hex, idx)
+                                          }
+                                        />
+                                      </div>
+                                      {/* <div
+                                        className={
+                                          colPicker[idx] ? "block" : "hidden"
+                                        }
+                                      >
+                                        <SketchPicker
+                                          color={state.customization.color[idx]}
+                                          onChangeComplete={(color) =>
+                                            handleColor(color.hex, idx)
+                                          }
+                                        />
+                                      </div> */}
+                                    </div>
+                                  ) : (
+                                    <div className="flex gap-2 items-center">
+                                      <div className="flex items-center border rounded-lg w-full  border-gray-300 focus-within:outline focus-within:outline-1">
+                                        <input
+                                          type="text"
+                                          placeholder={state.cholder[id].type}
+                                          required
+                                          onFocus={() =>
+                                            dispatch({
+                                              type: ACTION_TYPES.SET_SUCCESS,
+                                              payload: "",
+                                            })
+                                          }
+                                          onChange={(e) =>
+                                            handleChangeSubCustom(e, key, idx)
+                                          }
+                                          value={data}
+                                          name="subCustom"
+                                          className="focus:outline-none w-full p-3 rounded-lg text-cldark"
+                                        />
+                                        <div
+                                          onClick={() =>
+                                            handleAddSubCustom(key, idx)
+                                          }
+                                          className="p-2 hover:scale-110 transition-full duration-300"
+                                        >
+                                          <div className="w-4 h-4 cursor-pointer">
+                                            <IconPlus fill="#222" />
+                                          </div>
+                                        </div>
+                                      </div>
+                                      {state.customization[key].length > 1 ? (
+                                        <div
+                                          onClick={() =>
+                                            handleRemoveSubCustom(key, idx)
+                                          }
+                                          className="w-5 h-5 hover:scale-110 duration-300 transition-all cursor-pointer"
+                                        >
+                                          <IconBin fill="#222" />
+                                        </div>
+                                      ) : (
+                                        ""
+                                      )}
+                                    </div>
+                                  )}
+                                  {/* <div className="flex gap-2 items-center">
                                     <div className="flex items-center border rounded-lg w-full  border-gray-300 focus-within:outline focus-within:outline-1">
                                       <input
                                         type="text"
@@ -517,7 +682,7 @@ const EditProduct = () => {
                                     ) : (
                                       ""
                                     )}
-                                  </div>
+                                  </div> */}
                                 </div>
                               </div>
                             ))
