@@ -39,3 +39,10 @@ def validate_json(js: str) -> bool:
     except ValueError as e:
         return False
     return True
+
+def validate_phone(phone: str) -> bool:
+    if len(phone) > 20:
+        return False
+    if not re.match(r"^\+?[0-9]+$", phone):
+        return False
+    return True

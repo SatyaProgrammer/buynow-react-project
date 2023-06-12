@@ -12,6 +12,7 @@ def up():
     table.foreign_key("recipientId", "users", "id")
     table.enum("theme", "light", "dark").default("'light'")
     table.varchar("image", 280).nullable()
+    table.varchar("phone", 20).nullable()
     table.json("contactInfo").default(r"'{}'")
 
     table.migrate()  # always finish with a call to table.migrate()

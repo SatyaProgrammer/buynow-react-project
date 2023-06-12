@@ -383,3 +383,78 @@ def forgot_password():
             500,
             {"Content-Type": "application/json"},
         )
+
+@auth_api.post("/auth/change_password")
+@limiter.limit("3 per minute")
+@token_required
+def change_password(uid):
+    try:
+        data = request.get_json()
+
+        old_pass = data["old_password"]
+        new_pass = data["new_password"]
+
+        if not old_pass or not new_pass:
+            return (
+                {"error_code": "BX0201", "error": "Missing required fields."},
+                400,
+                {"Content-Type": "application/json"},
+            )
+        
+        db_conn = Global.db_conn
+        cursor = db_conn.cursor(prepared=True, dictionary=True)
+
+        sql = "SELECT password, salt FROM users WHERE id = %s"
+        cursor.execute(sql, (uid,))
+        result = cursor.fetchone()
+        
+        if result is None:
+            return (
+                {"error_code": "BX0301", "error": "Invalid token."},
+                400,
+                {"Content-Type": "application/json"},
+            )
+        
+        passwd = result["password"]
+        salt = result["salt"]
+
+        if not safe_compare(old_pass, passwd, salt):
+            return (
+                {"error_code": "BX0205", "error": "Incorrect password."},
+                400,
+                {"Content-Type": "application/json"},
+            )
+        
+        if not validate_password(new_pass):
+            return (
+                {"error_code": "BX0202", "error": "Invalid password."},
+                400,
+                {"Content-Type": "application/json"},
+            )
+        
+        new_passwd, new_salt = make_password(new_pass)
+
+        sql = "UPDATE users SET password = %s, salt = %s WHERE id = %s"
+        cursor.execute(sql, (new_passwd, new_salt, uid))
+        db_conn.commit()
+
+        token = Global.tokens.pop(uid, None)
+        if token is None:
+            return {
+                "error_code": "BX9901",
+                "error": "Not logged in. Absurd error."
+            }
+
+        return (
+            {"message": "Password changed. Please login again."},
+            200,
+            {"Content-Type": "application/json"},
+        )
+
+    except Exception as e:
+        Global.console.print_exception()
+        return (
+            {"error_code": "BX0000", "error": "Something went wrong."},
+            500,
+            {"Content-Type": "application/json"},
+        )

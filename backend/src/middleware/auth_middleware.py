@@ -8,6 +8,7 @@ from backend.src.lib import Global
 
 
 def token_required(f):
+    """Decorator function to automatically check for token in request headers."""
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
