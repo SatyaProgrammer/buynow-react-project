@@ -9,7 +9,6 @@ TABLE_NAME = "trackings"
 def up():
     table = Table(name=TABLE_NAME)
     table.int("id").primary_key().auto_increment()
-    table.enum("status", "pending", "delivering", "failed", "completed")
     table.foreign_key("userId", "users", "id")
     table.timestamp("createdAt").default("CURRENT_TIMESTAMP")
 

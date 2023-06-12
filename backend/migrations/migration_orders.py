@@ -14,6 +14,7 @@ def up():
     table.json("customization").default("'{}'")
     table.int("quantity")
     table.decimal("cost", precision=2)
+    table.enum("status", "pending", "delivering", "failed", "completed").default("'pending'")
     table.timestamp("createdAt").default("CURRENT_TIMESTAMP")
 
     table.migrate()  # always finish with a call to table.migrate()

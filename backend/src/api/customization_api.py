@@ -3,7 +3,7 @@ import json
 from flask import Blueprint, request
 
 from backend.src.lib import Global
-from backend.src.lib.validate import validate_json
+from backend.src.lib.validate import validate_json, validate_phone
 from backend.src.middleware.auth_middleware import token_required
 from backend.src.middleware.rate_limiter import limiter
 
@@ -35,6 +35,9 @@ def get_customization(uid):
             result = cursor.fetchone()
             cursor.close()
 
+        if result["contact_info"]:
+            result["contact_info"] = json.loads(result["contact_info"])
+
         return {"customization": result}, 200, {"Content-Type": "application/json"}
 
     except Exception as e:
@@ -54,6 +57,7 @@ def update_customization(uid):
 
         theme = data["theme"]
         image = data["image"]
+        phone = data["phone"]
         contact_info = data["contact_info"]
 
         if theme not in ["light", "dark"]:
@@ -67,13 +71,19 @@ def update_customization(uid):
                 "error_code": "BX1602",
                 "error": "Invalid contact info JSON",
             }, 400, {"Content-Type": "application/json"}
+
+        # if not validate_phone(phone):
+        #     return {
+        #         "error_code": "BX1603",
+        #         "error": "Invalid phone number",
+        #     }, 400, {"Content-Type": "application/json"}
         
         db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)
-        sql = "UPDATE userscustomization SET theme = %s, image = %s, contact_info = %s WHERE recipientId = %s"
-        cursor.execute(sql, (theme, image, contact_info, uid))
+        sql = "UPDATE userscustomization SET theme = %s, image = %s, phone = %s, contact_info = %s WHERE recipientId = %s"
+        cursor.execute(sql, (theme, image, phone, json.dumps(contact_info), uid))
         db_conn.commit()
-        
+
         return {
             "message": "Update successful!"
         }, 200, {"Content-Type": "application/json"}
@@ -82,5 +92,28 @@ def update_customization(uid):
         Global.console.print_exception()
         return {
             "error_code": "BX0001",
+            "error": "Something went wrong."
+        }, 500, {"Content-Type": "application/json"}
+    
+
+@cust_api.delete("/customization")
+@limiter.limit("1/second")
+@token_required
+def delete_customization(uid):
+    try:
+        db_conn = Global.db_conn
+        cursor = db_conn.cursor(prepared=True, dictionary=True)
+        sql = "DELETE FROM userscustomization WHERE recipientId = %s"
+        cursor.execute(sql, (uid,))
+        db_conn.commit()
+
+        return {
+            "message": "Delete successful!"
+        }, 200, {"Content-Type": "application/json"}
+    
+    except Exception as e:
+        Global.console.print_exception()
+        return {
+            "error_code": "BX0002",
             "error": "Something went wrong."
         }, 500, {"Content-Type": "application/json"}

@@ -16,7 +16,7 @@ def get_trackings(uid):
         db_conn = Global.db_conn
 
         cursor = db_conn.cursor(prepared=True, dictionary=True)
-        cursor.execute("SELECT id, status FROM trackings WHERE userId = ?", (uid,))
+        cursor.execute("SELECT id FROM trackings WHERE userId = ?", (uid,))
         trackings = cursor.fetchall()
         cursor.close()
 
@@ -42,7 +42,7 @@ def create_tracking(uid):
         # create tracking number
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         cursor.execute(
-            "INSERT INTO trackings (status, userId) VALUES ('pending', ?)", (uid,)
+            "INSERT INTO trackings (userId) VALUES (?)", (uid,)
         )
         tracking_id = cursor.lastrowid
         print(f"tracking id = {tracking_id}")
@@ -94,7 +94,7 @@ def create_tracking(uid):
             cursor = db_conn.cursor(prepared=True)
             cost = price * i_quantity
             cursor.execute(
-                "INSERT INTO orders (trackingNumber, productId, quantity, cost) VALUES (?, ?, ?, ?)",
+                "INSERT INTO orders (trackingNumber, productId, quantity, cost, status) VALUES (?, ?, ?, ?, 'pending')",
                 (tracking_id, i_id, i_quantity, cost),
             )
 
@@ -135,7 +135,7 @@ def get_order(uid, tracking_number):
         if tracking["userId"] == uid:
             cursor = db_conn.cursor(prepared=True, dictionary=True)
             cursor.execute(
-                """SELECT o.trackingNumber, p.pid, p.name,
+                """SELECT o.id, o.trackingNumber, o.status, p.pid, p.name,
 p.images, o.customization, o.quantity, o.cost
 FROM orders as o
 INNER JOIN products as p
@@ -161,7 +161,7 @@ WHERE trackingNumber = ?""",
         else:
             cursor = db_conn.cursor(prepared=True, dictionary=True)
             cursor.execute(
-                """SELECT o.trackingNumber, p.pid, p.name,
+                """SELECT o.id, o.trackingNumber, o.status p.pid, p.name,
 p.images, o.customization, o.quantity, o.cost
 FROM orders as o
 INNER JOIN products as p
@@ -197,59 +197,31 @@ WHERE trackingNumber = ? AND p.owner = ?""",
         )
 
 
-@orders_api.post("/trackings/<tracking_number>")
+@orders_api.post("/trackings/<order_id>")
 @token_required
 @limiter.limit("10/minute")
-def update_order_status(uid, tracking_number):
+def update_order_status(uid, order_id):
     try:
         db_conn = Global.db_conn
-        order_data = request.get_json()
-        status = order_data["status"]
-
-        cursor = db_conn.cursor(prepared=True, dictionary=True)
-        cursor.execute("SELECT * FROM trackings WHERE id = ?", (tracking_number,))
-        tracking = cursor.fetchone()
-        cursor.close()
-
-        if tracking is None:
-            return (
-                {"error_code": "BX0101", "error": "Order not found."},
-                404,
-                {"Content-Type": "application/json"},
-            )
-
-        # Only the admin can update the order status
-        cursor = db_conn.cursor(prepared=True, dictionary=True)
-        cursor.execute("SELECT admin FROM users WHERE id = ?", (uid,))
-        user = cursor.fetchone()
-        cursor.close()
-
-        if user is None or user["admin"] == 0:
-            return (
-                {"error_code": "BX0103", "error": "Unauthorized."},
-                401,
-                {"Content-Type": "application/json"},
-            )
 
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         cursor.execute(
-            "UPDATE trackings SET status = ? WHERE id = ?", (status, tracking_number)
-        )
-        cursor.close()
-
-        db_conn.commit()
-
-        return (
-            {"message": "Order status updated."},
-            200,
-            {"Content-Type": "application/json"},
+            """\
+SELECT o.id, o.trackingNumber, t.userId, o.status
+FROM orders as o
+INNER JOIN trackings as t ON o.trackingNumber = t.id
+WHERE o.id = ?""",
+        
         )
     except Exception as e:
-        return (
-            {"error_code": "BX0000", "error": "Something went wrong."},
-            500,
-            {"Content-Type": "application/json"},
-        )
+        Global.console.print_exception()
+        return {
+            "error_code": "BX0000",
+            "error": "Something went wrong.",
+        }, 500, {"Content-Type": "application/json"}
+
+    pass
+
 
 
 @orders_api.get("/trackings/vendor")
