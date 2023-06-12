@@ -137,7 +137,6 @@ def handle_stupid_error_again(e):
         {"Content-Type": "application/json"},
     )
 
-
 def main() -> None:
     app.run(host="0.0.0.0")
     pass

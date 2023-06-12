@@ -1,15 +1,15 @@
 # BuyNow API: Get My Review
 
-| Key | Value |
-| --- | --- |
+| Key      | Value                            |
+| -------- | -------------------------------- |
 | Endpoint | `api.localhost/reviews/<pid>/me` |
-| Method | `GET` |
-| Auth | `Yes` |
+| Method   | `GET`                            |
+| Auth     | `Yes`                            |
 
 ## Headers
 
-| Key | Value |
-| --- | --- |
+| Key          | Value              |
+| ------------ | ------------------ |
 | Content-Type | `application/json` |
 
 ## Response

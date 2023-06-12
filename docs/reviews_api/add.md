@@ -1,15 +1,15 @@
 # BuyNow API: Add Reviews
 
-| Key | Value |
-| --- | --- |
+| Key      | Value                         |
+| -------- | ----------------------------- |
 | Endpoint | `api.localhost/reviews/<pid>` |
-| Method | `POST` |
-| Auth | `Yes` |
+| Method   | `POST`                        |
+| Auth     | `Yes`                         |
 
 ## Headers
 
-| Key | Value |
-| --- | --- |
+| Key          | Value              |
+| ------------ | ------------------ |
 | Content-Type | `application/json` |
 
 ## Request

@@ -1,17 +1,17 @@
 # BuyNow API: Getting orders associated with a tracking number
 
-| Key | Value |
-| --- | --- |
+| Key      | Value                                       |
+| -------- | ------------------------------------------- |
 | Endpoint | `api.localhost/trackings/<tracking_number>` |
-| Method | `GET` |
-| Auth | `Yes` |
+| Method   | `GET`                                       |
+| Auth     | `Yes`                                       |
 
 ## Headers
 
-| Key | Value |
-| --- | --- |
-| Content-Type | `application/json` |
-| Authorization | `Basic <token>` |
+| Key           | Value              |
+| ------------- | ------------------ |
+| Content-Type  | `application/json` |
+| Authorization | `Basic <token>`    |
 
 ## Response
 

@@ -1,15 +1,15 @@
 # BuyNow: Product Fetch API
 
-| Key | Value |
-| --- | --- |
+| Key      | Value                                 |
+| -------- | ------------------------------------- |
 | Endpoint | `api.localhost/products/<product_id>` |
-| Method | `GET` |
-| Auth | `No` |
+| Method   | `GET`                                 |
+| Auth     | `No`                                  |
 
 ## Headers
 
-| Key | Value |
-| --- | --- |
+| Key          | Value              |
+| ------------ | ------------------ |
 | Content-Type | `application/json` |
 
 ## Response
