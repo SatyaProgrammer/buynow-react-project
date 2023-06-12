@@ -204,7 +204,7 @@ const Dashboard = () => {
               <div className="text-cldark text-2xl font-semibold">
                 Recent Orders
               </div>
-              <Link to="/shop/order" className="btn">
+              <Link to="/sell/order" className="btn">
                 View more
               </Link>
             </div>
@@ -213,31 +213,44 @@ const Dashboard = () => {
                 <thead className="sticky top-0 bg-white z-50">
                   <tr>
                     <th className="text-cldark font-semibold text-md mr-2 pb-4 border-b">
-                      OrderID
+                      Product
                     </th>
                     <th className="text-cldark font-semibold text-md pb-4 border-b">
                       Customer
                     </th>
                     <th className="text-cldark font-semibold text-md pb-4 border-b">
-                      Product
-                    </th>
-                    <th className="text-cldark font-semibold text-md pb-4 border-b">
                       Quantity
                     </th>
                     <th className="text-cldark font-semibold text-md pb-4 border-b">
-                      Status
+                      Total
+                    </th>
+                    <th className="text-cldark font-semibold text-md pb-4 border-b">
+                      Order ID
                     </th>
                   </tr>
                 </thead>
                 <tbody className="">
                   {console.log(state.post.recent_order?.orders)}
                   {state.post.recent_order?.orders.map((product, idx) => (
-                    <tr key={idx}>
-                      <td className="text-cldark p-2">001</td>
-                      <td className="text-cldark p-2">001</td>
-                      <td className="text-cldark p-2">001</td>
-                      <td className="text-cldark p-2">001</td>
-                      <td className="text-cldark p-2">001</td>
+                    <tr key={idx} className="text-left hover:bg-gray-50">
+                      <td className="text-cldark py-4 whitespace-nowrap overflow-hidden">
+                        <div className="flex items-center gap-2">
+                          <div className="w-16">
+                            <img
+                              src={product.images.images[0]}
+                              alt="product image"
+                              className="w-full h-10 rounded-md shadow-md object-cover"
+                            />
+                          </div>
+                          <div className="font-semibold w-10 overflow-hidden">
+                            {product.name}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="text-cldark py-2">{product.username}</td>
+                      <td className="text-cldark py-2">{product.quantity}</td>
+                      <td className="text-cldark py-2">{product.cost}</td>
+                      <td className="text-cldark py-2">{product.trackingNumber}</td>
                     </tr>
                   ))}
                 </tbody>
