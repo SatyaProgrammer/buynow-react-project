@@ -1,15 +1,15 @@
 # BuyNow API: Categories
 
-| Key | Value |
-| --- | --- |
+| Key      | Value                      |
+| -------- | -------------------------- |
 | Endpoint | `api.localhost/categories` |
-| Method | `GET` |
-| Auth | `No` |
+| Method   | `GET`                      |
+| Auth     | `No`                       |
 
 ## Headers
 
-| Key | Value |
-| --- | --- |
+| Key          | Value              |
+| ------------ | ------------------ |
 | Content-Type | `application/json` |
 
 ## Response

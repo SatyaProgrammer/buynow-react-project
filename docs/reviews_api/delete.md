@@ -1,15 +1,15 @@
 # BuyNow API: Delete Review
 
-| Key | Value |
-| --- | --- |
+| Key      | Value                         |
+| -------- | ----------------------------- |
 | Endpoint | `api.localhost/reviews/<pid>` |
-| Method | `DELETE` |
-| Auth | `Yes` |
+| Method   | `DELETE`                      |
+| Auth     | `Yes`                         |
 
 ## Headers
 
-| Key | Value |
-| --- | --- |
+| Key          | Value              |
+| ------------ | ------------------ |
 | Content-Type | `application/json` |
 
 ## Response

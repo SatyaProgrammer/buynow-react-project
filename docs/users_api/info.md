@@ -1,9 +1,8 @@
-# BuyNow API: Verify
+# BuyNow API: Get User Info
 
 | Key      | Value                       |
 | -------- | --------------------------- |
-| Endpoint | `api.localhost/auth/verify` |
-| Method   | `POST`                      |
+| Endpoint | `api.localhost/users/<uid>` |
 | Auth     | `No`                        |
 
 ## Headers
@@ -12,29 +11,25 @@
 | ------------ | ------------------ |
 | Content-Type | `application/json` |
 
-## Request
-
-```ts
-{
-    "token": string,
-}
-```
-
 ## Response
 
 200:
 
 ```ts
 {
-    "message": string,
+    uid: number,
+    username: string,
+    image: string | null,
+    phone: string | null,
+    contact_info: string | null
 }
 ```
 
 4xx/5xx:
 
 ```ts
-{   
-    "error_code": string, // "BXxxxx"
-    "error": string,
+{
+    error_code: string,
+    error: string
 }
 ```

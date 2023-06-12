@@ -384,6 +384,7 @@ def forgot_password():
             {"Content-Type": "application/json"},
         )
 
+
 @auth_api.post("/auth/change_password")
 @limiter.limit("3 per minute")
 @token_required
@@ -400,21 +401,21 @@ def change_password(uid):
                 400,
                 {"Content-Type": "application/json"},
             )
-        
+
         db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)
 
         sql = "SELECT password, salt FROM users WHERE id = %s"
         cursor.execute(sql, (uid,))
         result = cursor.fetchone()
-        
+
         if result is None:
             return (
                 {"error_code": "BX0301", "error": "Invalid token."},
                 400,
                 {"Content-Type": "application/json"},
             )
-        
+
         passwd = result["password"]
         salt = result["salt"]
 
@@ -424,14 +425,14 @@ def change_password(uid):
                 400,
                 {"Content-Type": "application/json"},
             )
-        
+
         if not validate_password(new_pass):
             return (
                 {"error_code": "BX0202", "error": "Invalid password."},
                 400,
                 {"Content-Type": "application/json"},
             )
-        
+
         new_passwd, new_salt = make_password(new_pass)
 
         sql = "UPDATE users SET password = %s, salt = %s WHERE id = %s"
@@ -440,10 +441,7 @@ def change_password(uid):
 
         token = Global.tokens.pop(uid, None)
         if token is None:
-            return {
-                "error_code": "BX9901",
-                "error": "Not logged in. Absurd error."
-            }
+            return {"error_code": "BX9901", "error": "Not logged in. Absurd error."}
 
         return (
             {"message": "Password changed. Please login again."},

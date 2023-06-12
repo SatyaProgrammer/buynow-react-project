@@ -112,14 +112,27 @@ def add_review(uid, pid):
         cursor.execute(sql, (pid, uid, rating, comment))
         db_conn.commit()
 
+        # update product rating
+        sql = """\
+UPDATE products
+SET rating = (
+    SELECT AVG(rating)
+    FROM reviews
+    WHERE productId = %s
+)
+WHERE id = %s"""
         return {"message": "Review added."}, 201, {"Content-Type": "application/json"}
     except Exception as e:
         Global.console.print_exception()
-        return {
-            "error_code": "BX0001",
-            "error": "Something went wrong.",
-        }, 500, {"Content-Type": "application/json"}
-    
+        return (
+            {
+                "error_code": "BX0001",
+                "error": "Something went wrong.",
+            },
+            500,
+            {"Content-Type": "application/json"},
+        )
+
 
 @reviews_api.get("/reviews/<pid>/me")
 @limiter.limit("10/minute")
@@ -160,6 +173,7 @@ def get_my_review(uid, pid):
             500,
             {"Content-Type": "application/json"},
         )
+
 
 @reviews_api.patch("/reviews/<pid>/<rid>")
 @limiter.limit("10/minute")
@@ -242,6 +256,7 @@ def edit_review(uid, pid, rid):
             500,
             {"Content-Type": "application/json"},
         )
+
 
 @reviews_api.delete("/reviews/<pid>/<rid>")
 @limiter.limit("10/minute")

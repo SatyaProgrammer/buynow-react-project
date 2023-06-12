@@ -41,9 +41,7 @@ def create_tracking(uid):
 
         # create tracking number
         cursor = db_conn.cursor(prepared=True, dictionary=True)
-        cursor.execute(
-            "INSERT INTO trackings (userId) VALUES (?)", (uid,)
-        )
+        cursor.execute("INSERT INTO trackings (userId) VALUES (?)", (uid,))
         tracking_id = cursor.lastrowid
         print(f"tracking id = {tracking_id}")
 
@@ -179,7 +177,7 @@ WHERE trackingNumber = ? AND p.owner = ?""",
                     404,
                     {"Content-Type": "application/json"},
                 )
-            
+
             for order in orders:
                 order["images"] = json.loads(order["images"])
 
@@ -202,26 +200,57 @@ WHERE trackingNumber = ? AND p.owner = ?""",
 @limiter.limit("10/minute")
 def update_order_status(uid, order_id):
     try:
+        data = request.get_json()
+        status = data["status"]
+
         db_conn = Global.db_conn
 
         cursor = db_conn.cursor(prepared=True, dictionary=True)
-        cursor.execute(
-            """\
-SELECT o.id, o.trackingNumber, t.userId, o.status
+        sql = """\
+SELECT o.id, p.owner
 FROM orders as o
-INNER JOIN trackings as t ON o.trackingNumber = t.id
-WHERE o.id = ?""",
-        
-        )
+INNER JOIN products as p ON o.productId = p.id
+WHERE o.id = ?"""
+
+        cursor.execute(sql, (order_id,))
+        order = cursor.fetchone()
+
+        if order is None:
+            return (
+                {"error_code": "BX0101", "error": "Order not found."},
+                404,
+                {"Content-Type": "application/json"},
+            )
+
+        if order["owner"] != uid:
+            return (
+                {"error_code": "BX0103", "error": "Unauthorized."},
+                401,
+                {"Content-Type": "application/json"},
+            )
+
+        if status not in ["pending", "delivering", "failed", "completed"]:
+            return (
+                {"error_code": "BX0102", "error": "Invalid status."},
+                400,
+                {"Content-Type": "application/json"},
+            )
+
+        cursor = db_conn.cursor(prepared=True, dictionary=True)
+        cursor.execute("UPDATE orders SET status = ? WHERE id = ?", (status, order_id))
+        db_conn.commit()
+
+        return {"message": "Order updated."}, 200, {"Content-Type": "application/json"}
     except Exception as e:
         Global.console.print_exception()
-        return {
-            "error_code": "BX0000",
-            "error": "Something went wrong.",
-        }, 500, {"Content-Type": "application/json"}
-
-    pass
-
+        return (
+            {
+                "error_code": "BX0000",
+                "error": "Something went wrong.",
+            },
+            500,
+            {"Content-Type": "application/json"},
+        )
 
 
 @orders_api.get("/trackings/vendor")
@@ -235,7 +264,7 @@ def get_orders_from_vendor(uid):
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         cursor.execute(
             """\
-SELECT o.trackingNumber, t.userId, u.username, p.pid, p.name, p.images, o.customization, o.quantity, o.cost
+SELECT o.trackingNumber, t.userId, u.username, p.pid, p.name, p.images, o.customization, o.quantity, o.cost, o.status
 FROM orders as o
 INNER JOIN trackings as t ON o.trackingNumber = t.id
 INNER JOIN users as u ON t.userId = u.id
@@ -253,7 +282,7 @@ WHERE p.owner = ?""",
                 404,
                 {"Content-Type": "application/json"},
             )
-        
+
         for order in orders:
             order["images"] = json.loads(order["images"])
 

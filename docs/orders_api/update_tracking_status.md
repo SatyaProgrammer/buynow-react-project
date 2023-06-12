@@ -1,17 +1,17 @@
 # BuyNow API: Update Tracking Status
 
-| Key | Value |
-| --- | --- |
+| Key      | Value                                       |
+| -------- | ------------------------------------------- |
 | Endpoint | `api.localhost/trackings/<tracking_number>` |
-| Method | `POST` |
-| Auth | `Yes` |
+| Method   | `POST`                                      |
+| Auth     | `Yes`                                       |
 
 ## Headers
 
-| Key | Value |
-| --- | --- |
-| Content-Type | `application/json` |
-| Authorization | `Basic <token>` |
+| Key           | Value              |
+| ------------- | ------------------ |
+| Content-Type  | `application/json` |
+| Authorization | `Basic <token>`    |
 
 ## Request
 

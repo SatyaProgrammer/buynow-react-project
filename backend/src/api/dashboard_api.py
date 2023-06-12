@@ -104,7 +104,7 @@ def get_recent_orders(uid):
     try:
         db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)
-        query = """SELECT o.trackingNumber, t.userId, u.username, o.productId, p.name, p.images, o.customization, o.quantity, o.cost
+        query = """SELECT o.trackingNumber, t.userId, u.username, o.productId, p.name, p.images, o.customization, o.quantity, o.cost, o.status
 FROM orders as o
 INNER JOIN trackings as t ON o.trackingNumber = t.id
 INNER JOIN users as u ON t.userId = u.id

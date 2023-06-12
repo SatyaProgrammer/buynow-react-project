@@ -1,15 +1,15 @@
 # BuyNow API: Get My Orders
 
-| Key | Value |
-| --- | --- |
+| Key      | Value                        |
+| -------- | ---------------------------- |
 | Endpoint | `api.localhost/trackings/me` |
-| Method | `GET` |
-| Auth | `Yes` |
+| Method   | `GET`                        |
+| Auth     | `Yes`                        |
 
 ## Headers
 
-| Key | Value |
-| --- | --- |
+| Key          | Value              |
+| ------------ | ------------------ |
 | Content-Type | `application/json` |
 
 ## Response
