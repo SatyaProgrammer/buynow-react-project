@@ -15,7 +15,7 @@ const PASSWORD_REGEX =
 const EMAIL_REGEX =
   /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-const Signup = () => {
+const Signup = (props) => {
   const [state, dispatch] = useReducer(signupReducer, INITIAL_STATE);
   const usernameRef = useRef();
   const emailRed = useRef();
@@ -24,8 +24,10 @@ const Signup = () => {
   const [mainHeight, setMainHeight] = useState();
   const mainRef = useRef();
   const [nextPage, setNextPage] = useState(false);
+  const [profile, setProfile] = useState();
 
   useEffect(() => {
+    document.title = props.title;
     usernameRef.current.focus();
     setMainHeight(mainRef.current.clientHeight);
     console.log(mainHeight);
@@ -129,7 +131,7 @@ const Signup = () => {
   };
 
   const handleNextPage = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     setNextPage(!nextPage);
     setIsFull(!isFull);
   };
@@ -479,7 +481,7 @@ const Signup = () => {
                   onClick={(e) => handleNextPage(e)}
                   className="w-full bg-primary4 text-white font-semibold py-2 text-center border border-primary4 hover:bg-white hover:text-primary4 rounded-md transition-all duration-300"
                 >
-                  Submit
+                  Next
                 </button>
               </div>
               <div className="mt-2">
@@ -499,10 +501,47 @@ const Signup = () => {
           }
         >
           <div className="p-4 flex flex-col gap-4">
-            <div onClick={handleNextPage} className="btn w-fit">Back</div>
-            <div className="flex justify-center items-center">
-              <div className="w-36 h-36 rounded-full bg-gray-200"></div>
+            <div onClick={handleNextPage} className="btn w-fit">
+              Back
             </div>
+            <div className="flex flex-col justify-center items-center">
+              <div className="w-36 h-36 rounded-full bg-gray-200 border">
+                {profile ? (
+                  <img
+                    className="w-full h-full rounded-full object-cover"
+                    alt="preview image"
+                    src={profile}
+                  />
+                ) : (
+                  <img
+                    className="w-full h-full rounded-full object-cover"
+                    src="assets/images/emptyProfile.png"
+                    alt="Image"
+                  />
+                )}
+              </div>
+              <label
+                htmlFor="profile"
+                className="text-blue-500 text-sm underline cursor-pointer"
+              >
+                <input
+                  id="profile"
+                  type="file"
+                  onChange={(event) =>
+                    setProfile(URL.createObjectURL(event.target.files[0]))
+                  }
+                  className="hidden"
+                />
+                Add profile image
+              </label>
+            </div>
+            <button
+              // onClick={handleSubmit}
+              onClick={(e) => handleNextPage(e)}
+              className="w-full bg-primary4 text-white font-semibold py-2 text-center border border-primary4 hover:bg-white hover:text-primary4 rounded-md transition-all duration-300"
+            >
+              Submit
+            </button>
           </div>
         </div>
       </div>
