@@ -6,7 +6,7 @@ import Cookies from "universal-cookie";
 
 const LOGIN_URL = `${process.env.REACT_APP_BACKEND_URL}/auth/login`;
 
-const Login = () => {
+const Login = (props) => {
   // Initialize cookies
   const cookies = new Cookies();
 
@@ -21,6 +21,7 @@ const Login = () => {
   const [errMsg, setErrMsg] = useState("");
 
   useEffect(() => {
+    document.title = props.title;
     userRef.current.focus();
   }, []);
 

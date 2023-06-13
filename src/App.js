@@ -17,8 +17,8 @@ const App = () => {
         <Route path="/redirect" element={<Redirecter />} />
         <Route path="/products/:id" element={<SingleProductPage />} />
         <Route element={<LoggedRoute />}>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login title="Login"/>} />
+          <Route path="/signup" element={<Signup title="Signup" />} />
           <Route path="/verify" element={<Verify />} />
         </Route>
       </Routes>
