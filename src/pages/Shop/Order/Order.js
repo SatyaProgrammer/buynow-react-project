@@ -17,15 +17,20 @@ const Order = () => {
   const handleFetch = async () => {
     dispatch({ type: ACTION_TYPES.FETCH_START });
     try {
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/trackings/vendor`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Basic ${token}`,
-        },
-      });
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/trackings/vendor`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Basic ${token}`,
+          },
+        }
+      );
 
       if (response && response.data) {
-        console.log(response.data);
+        response.data.orders.map((data, idx) => {
+          response.data.orders[idx]["status_drop"] = false;
+        });
         dispatch({ type: ACTION_TYPES.FETCH_SUCCESS, payload: response.data });
       }
     } catch (err) {
@@ -36,6 +41,26 @@ const Order = () => {
   useEffect(() => {
     handleFetch();
   }, []);
+
+  const statOpen = (idx) => {
+    let inputData = state.post;
+    let flag = false;
+    inputData.orders.map((order, id) => {
+      if (inputData.orders[id].status_drop == true) {
+        if (id != idx) {
+          flag = true;  
+        }
+      }
+    });
+    if (flag) {
+      inputData.orders.map((order, id) => {
+        inputData.orders[id].status_drop = false;
+      });
+    }
+    inputData.orders[idx].status_drop = !inputData.orders[idx].status_drop;
+    console.log(inputData.orders[idx].status_drop);
+    dispatch({ type: ACTION_TYPES.SET_ORDERS, payload: inputData });
+  };
 
   let toggleShowRow = state.show_row ? "block" : "hidden";
   let toggleShowRowIcon = state.show_row ? "rotate-180" : "rotate-0";
@@ -124,95 +149,127 @@ const Order = () => {
                       Customer
                     </th>
                     <th className="text-cldark text-left font-semibold text-md p-4 border-y name-row whitespace-nowrap">
-                      Order date
-                    </th>
-                    <th className="text-cldark text-left font-semibold text-md p-4 border-y name-row whitespace-nowrap">
-                      Payment Status
+                      Quantity
                     </th>
                     <th className="text-cldark text-left font-semibold text-md p-4 border-y name-row whitespace-nowrap">
                       Total
+                    </th>
+                    <th className="text-cldark text-left font-semibold text-md p-4 border-y name-row whitespace-nowrap">
+                      Status
                     </th>
                     <th className="text-cldark text-left font-semibold text-md p-4 border-y name-row whitespace-nowrap">
                       Action
                     </th>
                   </tr>
                 </thead>
+                {console.log(state.post.orders)}
                 <tbody className="">
-                  {/* {state.post.trackings ? (
-                    state.post.trackings.map((product, idx) => (
+                  {state.post.orders ? (
+                    state.post.orders.map((product, idx) => (
                       <tr key={idx} className="hover:bg-gray-50 ">
                         <td className="text-cldark p-4 border-b whitespace-nowrap overflow-hidden">
                           <div className="flex items-center gap-2 w-48">
                             <div className="w-16">
                               <img
-                                src={product.image}
+                                src={product.images.images[0]}
                                 alt="product image"
                                 className="w-full h-10 rounded-md shadow-md object-cover"
                               />
                             </div>
                             <div className="font-semibold w-32 overflow-hidden">
-                              {product.title}
+                              {product.name}
                             </div>
                           </div>
                         </td>
                         <td className="text-cldark p-4 border-b whitespace-nowrap">
-                          {product.category}
+                          {product.username}
                         </td>
                         <td className="text-cldark p-4 border-b whitespace-nowrap">
-                          00-00-0000
+                          {product.quantity}
                         </td>
                         <td className="text-cldark p-4 border-b whitespace-nowrap">
-                          Paid
+                          ${product.cost}
                         </td>
                         <td className="text-cldark p-4 border-b whitespace-nowrap">
-                          ${product.price}
-                        </td>
-                        <td className="text-cldark p-4 border-b whitespace-nowrap">
-                          <div className="flex gap-2 items-center">
-                            <div className="w-5 h-5 hover:scale-110 transition-all duration-300">
-                              <IconFile fill="hsl(22, 28%, 45%)" />
-                            </div>
-                            <div className="w-6 h-6 hover:scale-110 transition-all duration-300">
-                              <IconEdit fill="hsl(22, 28%, 45%)" />
-                            </div>
-                            <div className="w-7 h-7 hover:scale-110 transition-all duration-300">
-                              <IconDelete fill="hsl(22, 28%, 45%)" />
-                            </div>
+                          <button
+                            onClick={() => statOpen(idx)}
+                            id="dropdownDefaultButton"
+                            data-dropdown-toggle="dropdown"
+                            className="text-center inline-flex items-center p-1 px-2 rounded-full bg-yellow-100 border-2 border-yellow-200 text-yellow-700 font-semibold hover:opacity-70"
+                            type="button"
+                          >
+                            Pending
+                            <svg
+                              className={
+                                state.post.orders[idx].status_drop
+                                  ? "w-4 h-4 ml-2 rotate-180"
+                                  : "w-4 h-4 ml-2"
+                              }
+                              aria-hidden="true"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M19 9l-7 7-7-7"
+                              ></path>
+                            </svg>
+                          </button>
+                          {/* <!-- Dropdown menu --> */}
+                          <div
+                            id="dropdown"
+                            className={
+                              state.post.orders[idx].status_drop
+                                ? "absolute mt-2 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-fit dark:bg-gray-700"
+                                : "hidden"
+                            }
+                          >
+                            <ul
+                              className="py-2 text-gray-700 dark:text-gray-200"
+                              aria-labelledby="dropdownDefaultButton"
+                            >
+                              <li>
+                                <Link
+                                  onClick={() => statOpen(idx)}
+                                  href="#"
+                                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                >
+                                  Pending
+                                </Link>
+                              </li>
+                              <li>
+                                <Link
+                                  onClick={() => statOpen(idx)}
+                                  href="#"
+                                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                >
+                                  Delevering
+                                </Link>
+                              </li>
+                              <li>
+                                <Link
+                                  onClick={() => statOpen(idx)}
+                                  href="#"
+                                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                >
+                                  Delivered
+                                </Link>
+                              </li>
+                              <li>
+                                <Link
+                                  onClick={() => statOpen(idx)}
+                                  href="#"
+                                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                >
+                                  Canceled
+                                </Link>
+                              </li>
+                            </ul>
                           </div>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <td className="py-4">No order found</td>
-                  )} */}
-                  {state.post.tracking ? (
-                    state.post.trackings.map((product, idx) => (
-                      <tr key={idx} className="hover:bg-gray-50 ">
-                        <td className="text-cldark p-4 border-b whitespace-nowrap overflow-hidden">
-                          <div className="flex items-center gap-2 w-48">
-                            <div className="w-16">
-                              <img
-                                src={product.image}
-                                alt="product image"
-                                className="w-full h-10 rounded-md shadow-md object-cover"
-                              />
-                            </div>
-                            <div className="font-semibold w-32 overflow-hidden">
-                              {product.title}
-                            </div>
-                          </div>
-                        </td>
-                        <td className="text-cldark p-4 border-b whitespace-nowrap">
-                          {product.category}
-                        </td>
-                        <td className="text-cldark p-4 border-b whitespace-nowrap">
-                          00-00-0000
-                        </td>
-                        <td className="text-cldark p-4 border-b whitespace-nowrap">
-                          Paid
-                        </td>
-                        <td className="text-cldark p-4 border-b whitespace-nowrap">
-                          ${product.price}
                         </td>
                         <td className="text-cldark p-4 border-b whitespace-nowrap">
                           <div className="flex gap-2 items-center">

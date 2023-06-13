@@ -35,7 +35,7 @@ export const INITIAL_STATE = {
 
   price: "",
 
-  customization: { color: [""], size: [""] },
+  customization: { color: ["#FFFFFF"], size: [""] },
 
   cholder: [
     { type: "red", isColor: true },
@@ -96,7 +96,7 @@ export const addProductReducer = (state, action) => {
     case ACTION_TYPES.RESET_CUSTOMIZATION:
       return {
         ...state,
-        customization: { color: [""], size: [""] },
+        customization: { color: ["#FFFFFF"], size: [""] },
       };
     case ACTION_TYPES.SET_AVAILABILITY:
       return {
