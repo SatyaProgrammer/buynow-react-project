@@ -139,10 +139,22 @@ def register():
 
         db_conn.commit()
 
+        user_id = cursor.lastrowid
+
         verify_token = token_urlsafe(32)
         send_verification_email(email, name, verify_token)
 
-        return {"message": "User created."}, 201, {"Content-Type": "application/json"}
+        rel_key = token_urlsafe(16)
+        Global.tokens[user_id] = rel_key
+
+        return {
+            "uid": user_id,
+            "token": jwt.encode(
+                {"user_id": user_id, "key": rel_key},
+                os.getenv("JWT_KEY"),
+                algorithm="HS256",
+            ),
+        }, 201, {"Content-Type": "application/json"}
     except Exception as e:
         Global.console.print_exception()
         return (

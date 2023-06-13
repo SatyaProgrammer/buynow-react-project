@@ -28,7 +28,8 @@
 
 ```ts
 {
-    "message": string,
+    "uid": number,
+    "token": string
 }
 ```
 
