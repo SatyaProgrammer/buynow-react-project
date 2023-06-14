@@ -16,7 +16,7 @@ def get_trackings(uid):
         db_conn = Global.db_conn
 
         cursor = db_conn.cursor(prepared=True, dictionary=True)
-        cursor.execute("SELECT id FROM trackings WHERE userId = ?", (uid,))
+        cursor.execute("SELECT id, userId, createdAt FROM trackings WHERE userId = ?", (uid,))
         trackings = cursor.fetchall()
         cursor.close()
 
