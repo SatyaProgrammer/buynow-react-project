@@ -125,7 +125,8 @@ const Dashboard = () => {
 
   return (
     <div>
-      <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
+      {/* ml-16 md:ml-64 */}
+      <div className="p-4 sm:ml-16 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
         <p className="text-cldark text-4xl font-bold my-4">Dashboard</p>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="h-48 bg-white shadow-md flex flex-col justify-evenly px-6 hover:-translate-y-1 hover:shadow-none transition-full duration-300">
@@ -250,7 +251,9 @@ const Dashboard = () => {
                       <td className="text-cldark py-2">{product.username}</td>
                       <td className="text-cldark py-2">{product.quantity}</td>
                       <td className="text-cldark py-2">{product.cost}</td>
-                      <td className="text-cldark py-2">{product.trackingNumber}</td>
+                      <td className="text-cldark py-2">
+                        {product.trackingNumber}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

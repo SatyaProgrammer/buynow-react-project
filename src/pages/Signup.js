@@ -30,9 +30,7 @@ const Signup = (props) => {
     document.title = props.title;
     usernameRef.current.focus();
     setMainHeight(mainRef.current.clientHeight);
-    console.log(mainHeight);
     if (windowSize < 587) {
-      console.log("word");
       setIsFull(false);
     } else {
       setIsFull(true);
@@ -42,7 +40,6 @@ const Signup = (props) => {
 
   useEffect(() => {
     setMainHeight(mainRef.current.clientHeight);
-    console.log(mainHeight);
   });
 
   const handleResize = () => {
@@ -111,6 +108,8 @@ const Signup = (props) => {
           headers: { "Content-Type": "application/json" },
         }
       );
+
+      console.log(response)
       dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: true });
       dispatch({ type: ACTION_TYPES.SET_USERNAME, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_PASSWORD, payload: "" });
@@ -536,8 +535,8 @@ const Signup = (props) => {
               </label>
             </div>
             <button
-              // onClick={handleSubmit}
-              onClick={(e) => handleNextPage(e)}
+              onClick={handleSubmit}
+              // onClick={(e) => handleNextPage(e)}
               className="w-full bg-primary4 text-white font-semibold py-2 text-center border border-primary4 hover:bg-white hover:text-primary4 rounded-md transition-all duration-300"
             >
               Submit
