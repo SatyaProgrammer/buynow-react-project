@@ -256,8 +256,8 @@ const AddProduct = () => {
 
   return (
     <>
-      {console.log(state.imageUrl)}
-      <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
+      {/* ml-16 md:ml-64 */}
+      <div className="p-4 sm:ml-16 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
         <p className="text-cldark text-4xl font-bold my-4 text-medium">
           Add Product
         </p>

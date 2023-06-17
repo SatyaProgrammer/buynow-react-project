@@ -32,7 +32,7 @@ function ShopSidebar() {
 
       <aside
         id="sidebar-multi-level-sidebar"
-        className="absolute left-0 z-40 w-64 transition-transform -translate-x-3/4 md:translate-x-0"
+        className="absolute left-0 z-40 w-64 transition-transform -translate-x-full sm:-translate-x-3/4"
         aria-label="Sidebar"
       >
         <div className="h-full overflow-y-auto">
@@ -53,7 +53,7 @@ function ShopSidebar() {
                       <div className="capitalize">{item.name}</div>
                     </div>
                     <div className="">
-                      <div className="w-6 h-6 md:hidden">{item.icon}</div>
+                      <div className="w-6 h-6">{item.icon}</div>
                     </div>
                   </div>
                 </NavLink>
