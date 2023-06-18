@@ -95,7 +95,7 @@ def update_customization(uid):
 
         db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)
-        sql = "UPDATE userscustomization SET theme = %s, image = %s, phone = %s, contact_info = %s WHERE recipientId = %s"
+        sql = "UPDATE userscustomization SET theme = %s, image = %s, phone = %s, contactInfo = %s WHERE recipientId = %s"
         cursor.execute(sql, (theme, image, phone, json.dumps(contact_info), uid))
         db_conn.commit()
 
