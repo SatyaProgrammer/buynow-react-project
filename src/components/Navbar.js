@@ -1,4 +1,5 @@
 import React from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import logo from "../assets/buynowLogo.png";
 import { FaBars } from "react-icons/fa";
@@ -6,8 +7,10 @@ import { Link, NavLink } from "react-router-dom";
 import { links } from "../utils/constants";
 import CartButtons from "./CartButtons";
 import { useProductsContext } from "../context/products_context";
+import { SidebarItems } from "../pages/Shop/utils/Constant";
 
 const Navbar = () => {
+  const [dropDown, setDropDown] = useState(false);
   const { openSidebar } = useProductsContext();
   const refreshPage = () => {
     setTimeout(() => {
@@ -41,14 +44,56 @@ const Navbar = () => {
                     {text}
                   </NavLink>
                 ) : (
-                  <NavLink
-                    to={url}
-                    className={({ isActive }) =>
-                      isActive ? "border-b-2 border-primary4" : ""
-                    }
-                  >
-                    {text}
-                  </NavLink>
+                  <>
+                    {id == 2 ? (
+                      <div
+                        // onMouseOver={() => setDropDown(!dropDown)}
+                        className="relative cursor-pointer group"
+                      >
+                        <NavLink
+                          to={url}
+                          className={({ isActive }) =>
+                            isActive ? "border-b-2 border-primary4" : ""
+                          }
+                        >
+                          {text}
+                        </NavLink>
+                        <div
+                          id="dropdown"
+                          className="z-10 bg-white divide-y divide-gray-100 py-2 rounded-sm shadow w-44 dark:bg-gray-700 absolute left-0 mt-1 hidden group-hover:block"
+                        >
+                          <ul
+                            className="text-sm text-gray-700 dark:text-gray-200"
+                            aria-labelledby="dropdownDefaultButton"
+                          >
+                            {SidebarItems.map((item, i) => (
+                              <li key={i}>
+                                <NavLink
+                                  to={item.link}
+                                  className={({ isActive }) =>
+                                    isActive
+                                      ? "bg-gray-100 flex p-5 text-lg text-cldark"
+                                      : "flex p-5 text-lg text-cldark bg-white"
+                                  }
+                                >
+                                  <li>{item.name}</li>
+                                </NavLink>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    ) : (
+                      <NavLink
+                        to={url}
+                        className={({ isActive }) =>
+                          isActive ? "border-b-2 border-primary4" : ""
+                        }
+                      >
+                        {text}
+                      </NavLink>
+                    )}
+                  </>
                 )}
               </li>
             );
