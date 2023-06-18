@@ -8,11 +8,15 @@ import { IconDelete, IconEdit, IconFile, IconArrowDown } from "../utils/Icons";
 import { Loading } from "../../../components";
 import Table from "../../../components/Table";
 import Cookies from "universal-cookie";
+import { orderStatus } from "../utils/Constant";
+import { useNavigate } from "react-router-dom";
+import Redirecter from "../../../components/Redirecter";
 
 const Order = () => {
   const [state, dispatch] = useReducer(orderReducer, INITIAL_STATE);
   const cookies = new Cookies();
   const token = cookies.get("jwt_authorization");
+  const navigate = new useNavigate();
 
   const handleFetch = async () => {
     dispatch({ type: ACTION_TYPES.FETCH_START });
@@ -39,16 +43,18 @@ const Order = () => {
   };
 
   useEffect(() => {
-    handleFetch();
+    setTimeout(() => {
+      handleFetch();
+    }, "300");
   }, []);
-
-  const statOpen = (idx) => {
+  console.log(state.post);
+  const statOpen = async (idx, orderStatus, trackingNumber) => {
     let inputData = state.post;
     let flag = false;
     inputData.orders.map((order, id) => {
       if (inputData.orders[id].status_drop == true) {
         if (id != idx) {
-          flag = true;  
+          flag = true;
         }
       }
     });
@@ -57,9 +63,33 @@ const Order = () => {
         inputData.orders[id].status_drop = false;
       });
     }
+    console.log(idx);
+    console.log(inputData.orders[0].status_drop);
     inputData.orders[idx].status_drop = !inputData.orders[idx].status_drop;
-    console.log(inputData.orders[idx].status_drop);
     dispatch({ type: ACTION_TYPES.SET_ORDERS, payload: inputData });
+    if (trackingNumber) {
+      try {
+        let data = JSON.stringify({
+          status: orderStatus,
+        });
+        const response = await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}/trackings/${trackingNumber}`,
+          data,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Basic ${token}`,
+            },
+          }
+        );
+        if (response) {
+          navigate("/redirect");
+          console.log(response);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
   };
 
   let toggleShowRow = state.show_row ? "block" : "hidden";
@@ -117,6 +147,7 @@ const Order = () => {
                   {state.post.orders ? (
                     state.post.orders.map((product, idx) => (
                       <tr key={idx} className="hover:bg-gray-50 ">
+                        {console.log("IDX: ", idx)}
                         <td className="text-cldark p-4 border-b whitespace-nowrap overflow-hidden">
                           <div className="flex items-center gap-2 w-48">
                             <div className="w-16">
@@ -141,39 +172,47 @@ const Order = () => {
                           ${product.cost}
                         </td>
                         <td className="text-cldark p-4 border-b whitespace-nowrap">
-                          <button
-                            onClick={() => statOpen(idx)}
-                            id="dropdownDefaultButton"
-                            data-dropdown-toggle="dropdown"
-                            className="capitalize text-center inline-flex items-center p-1 px-2 rounded-full bg-yellow-100 border-2 border-yellow-200 text-yellow-700 font-semibold hover:opacity-70"
-                            type="button"
-                          >
-                            {product.status}
-                            <svg
-                              className={
-                                state.post.orders[idx].status_drop
-                                  ? "w-4 h-4 ml-2 rotate-180"
-                                  : "w-4 h-4 ml-2"
-                              }
-                              aria-hidden="true"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M19 9l-7 7-7-7"
-                              ></path>
-                            </svg>
-                          </button>
+                          {orderStatus.map((stat, id) => (
+                            <div key={id}>
+                              {product.status == stat.status ? (
+                                <button
+                                  onClick={() => statOpen(idx)}
+                                  id="dropdownDefaultButton"
+                                  data-dropdown-toggle="dropdown"
+                                  className={stat.css}
+                                  type="button"
+                                >
+                                  {product.status}
+                                  <svg
+                                    className={
+                                      state.post.orders[idx]?.status_drop
+                                        ? "w-4 h-4 ml-2 rotate-180"
+                                        : "w-4 h-4 ml-2"
+                                    }
+                                    aria-hidden="true"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth="2"
+                                      d="M19 9l-7 7-7-7"
+                                    ></path>
+                                  </svg>
+                                </button>
+                              ) : (
+                                ""
+                              )}
+                            </div>
+                          ))}
                           {/* <!-- Dropdown menu --> */}
                           <div
                             id="dropdown"
                             className={
-                              state.post.orders[idx].status_drop
+                              state.post.orders[idx]?.status_drop
                                 ? "absolute mt-2 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-fit dark:bg-gray-700"
                                 : "hidden"
                             }
@@ -184,7 +223,13 @@ const Order = () => {
                             >
                               <li>
                                 <Link
-                                  onClick={() => statOpen(idx)}
+                                  onClick={() =>
+                                    statOpen(
+                                      idx,
+                                      "pending",
+                                      product.trackingNumber
+                                    )
+                                  }
                                   href="#"
                                   className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                 >
@@ -193,7 +238,13 @@ const Order = () => {
                               </li>
                               <li>
                                 <Link
-                                  onClick={() => statOpen(idx)}
+                                  onClick={() =>
+                                    statOpen(
+                                      idx,
+                                      "delivering",
+                                      product.trackingNumber
+                                    )
+                                  }
                                   href="#"
                                   className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                 >
@@ -202,20 +253,32 @@ const Order = () => {
                               </li>
                               <li>
                                 <Link
-                                  onClick={() => statOpen(idx)}
+                                  onClick={() =>
+                                    statOpen(
+                                      idx,
+                                      "completed",
+                                      product.trackingNumber
+                                    )
+                                  }
                                   href="#"
                                   className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                 >
-                                  Delivered
+                                  Completed
                                 </Link>
                               </li>
                               <li>
                                 <Link
-                                  onClick={() => statOpen(idx)}
+                                  onClick={() =>
+                                    statOpen(
+                                      idx,
+                                      "failed",
+                                      product.trackingNumber
+                                    )
+                                  }
                                   href="#"
                                   className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                 >
-                                  Canceled
+                                  Failed
                                 </Link>
                               </li>
                             </ul>
@@ -238,7 +301,7 @@ const Order = () => {
                     ))
                   ) : (
                     <tr>
-                      <td className="p-4">No order found</td>
+                      <td className="p-4"></td>
                     </tr>
                   )}
                 </tbody>

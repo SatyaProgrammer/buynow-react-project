@@ -66,3 +66,22 @@ export const ProductTableData = [
   "price",
   "price",
 ];
+
+export const orderStatus = [
+  {
+    status: "pending",
+    css: "capitalize text-center inline-flex items-center p-1 px-2 rounded-full bg-yellow-100 border-2 border-yellow-200 text-yellow-700 font-semibold hover:opacity-70",
+  },
+  {
+    status: "delivering",
+    css: "capitalize text-center inline-flex items-center p-1 px-2 rounded-full bg-orange-100 border-2 border-orange-200 text-orange-700 font-semibold hover:opacity-70",
+  },
+  {
+    status: "completed",
+    css: "capitalize text-center inline-flex items-center p-1 px-2 rounded-full bg-green-100 border-2 border-green-200 text-green-700 font-semibold hover:opacity-70",
+  },
+  {
+    status: "failed",
+    css: "capitalize text-center inline-flex items-center p-1 px-2 rounded-full bg-red-100 border-2 border-red-200 text-red-700 font-semibold hover:opacity-70",
+  },
+];

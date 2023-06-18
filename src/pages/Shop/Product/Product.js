@@ -90,7 +90,9 @@ const Product = () => {
   };
 
   useEffect(() => {
-    handleFetch();
+    setTimeout(() => {
+      handleFetch();
+    }, "300");
   }, []);
 
   let toggleShowRow = state.show_row ? "block" : "hidden";

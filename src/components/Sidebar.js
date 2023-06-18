@@ -67,7 +67,7 @@ const Sidebar = () => {
                             >
                               <div className="flex">
                                 <div className="w-8"></div>
-                                <li>{item.name}</li>
+                                {item.name}
                               </div>
                             </Link>
                           </li>
