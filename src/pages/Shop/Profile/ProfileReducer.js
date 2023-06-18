@@ -22,24 +22,12 @@ export const ACTION_TYPES = {
 
 export const INITIAL_STATE = {
   duringSubmit: false,
-  getCategory: [],
 
   name: "",
   nameFocus: false,
 
   description: "",
   descriptionFocus: false,
-
-  category: "",
-  categoryDropdown: false,
-
-  price: "",
-
-  customization: { color: [""], size: [""] },
-
-  cholder: ["red", "small"],
-
-  availability: 0,
 
   deliveryOption: "",
 
@@ -69,36 +57,6 @@ export const addProductReducer = (state, action) => {
     case ACTION_TYPES.SET_DESCRIPTION_FOCUS:
       return {
         descriptionFocus: !state.descriptionFocus,
-      };
-    case ACTION_TYPES.SET_CATEGORY:
-      return {
-        ...state,
-        category: action.payload,
-      };
-    case ACTION_TYPES.SET_PRICE:
-      return {
-        ...state,
-        price: action.payload,
-      };
-    case ACTION_TYPES.ADD_CUSTOMIZATION:
-      return {
-        ...state,
-        customization: [...(state.customization || []), action.payload],
-      };
-    case ACTION_TYPES.SET_CUSTOMIZATION:
-      return {
-        ...state,
-        customElements: action.payload,
-      };
-    case ACTION_TYPES.RESET_CUSTOMIZATION:
-      return {
-        ...state,
-        customization: { color: [""], size: [""] },
-      };
-    case ACTION_TYPES.SET_AVAILABILITY:
-      return {
-        ...state,
-        availability: action.payload,
       };
     case ACTION_TYPES.SET_DELIVERYOPTION:
       return {
@@ -134,16 +92,6 @@ export const addProductReducer = (state, action) => {
       return {
         ...state,
         duringSubmit: action.payload,
-      };
-    case ACTION_TYPES.SET_GET_CATEGORY:
-      return {
-        ...state,
-        getCategory: action.payload,
-      };
-    case ACTION_TYPES.SET_CATEGORY_DROPDOWN:
-      return {
-        ...state,
-        categoryDropdown: !state.categoryDropdown,
       };
 
     default:

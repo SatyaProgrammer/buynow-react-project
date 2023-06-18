@@ -47,6 +47,7 @@ const OrderDetails = () => {
       getTracking(id);
     }, 300);
   }, []);
+  console.log(state.data);
   return (
     <Wrapper>
       <PageHero title="Order History" product="18" />

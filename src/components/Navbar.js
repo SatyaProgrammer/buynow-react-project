@@ -76,7 +76,7 @@ const Navbar = () => {
                                       : "flex p-5 text-lg text-cldark bg-white"
                                   }
                                 >
-                                  <li>{item.name}</li>
+                                  {item.name}
                                 </NavLink>
                               </li>
                             ))}
