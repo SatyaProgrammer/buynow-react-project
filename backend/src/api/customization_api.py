@@ -67,6 +67,9 @@ def update_customization(uid):
         phone = data["phone"]
         contact_info = data["contactInfo"]
 
+        print(contact_info)
+        print(type(contact_info))
+
         if theme not in ["light", "dark"]:
             return (
                 {
@@ -77,7 +80,7 @@ def update_customization(uid):
                 {"Content-Type": "application/json"},
             )
 
-        if validate_json(json.dumps(contact_info)):
+        if not validate_json(json.dumps(contact_info)):
             return (
                 {
                     "error_code": "BX1602",
