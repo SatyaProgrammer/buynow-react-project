@@ -111,25 +111,49 @@ const Signup = (props) => {
           headers: { "Content-Type": "application/json" },
         }
       );
-
+      let pUrl = "";
       try {
         const preset_key = "c003351q";
         const cloud_name = "dlplvjf9l";
         const token = cookies.get("jwt_authorization");
 
-        if (!token) {
-          const file = profile;
-          const formData = new FormData();
-          formData.append("file", file);
-          formData.append("upload_preset", preset_key);
-          await axios
-            .post(
-              `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
-              formData
-            )
-            .then((res) => {
-              setProfileUrl(res.data.secure_url);
-            });
+        const file = profile;
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", preset_key);
+        await axios
+          .post(
+            `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
+            formData
+          )
+          .then((res) => {
+            console.log("resdataurl", res.data.secure_url);
+            setProfileUrl(res.data.secure_url);
+            pUrl = res.data.secure_url;
+          });
+
+        console.log("PURL: ", profileUrl);
+        try {
+          console.log("TOKEN: ", response.data.token);
+          let pData = JSON.stringify({
+            theme: "light",
+            image: pUrl,
+            phone: null,
+            contact_info: null,
+          });
+          console.log("Data: ", pData);
+          await axios.put(
+            `${process.env.REACT_APP_BACKEND_URL}/customization`,
+            pData,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Basic ${response.data.token}`,
+              },
+            }
+          );
+        } catch (e) {
+          console.log(e);
         }
       } catch (error) {
         console.log(error);
@@ -140,7 +164,6 @@ const Signup = (props) => {
       }
 
       console.log(response);
-      console.log("dfds: ", profileUrl);
       setProfile("");
       setProfileUrl("");
       dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: true });
