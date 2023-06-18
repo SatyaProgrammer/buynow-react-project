@@ -252,12 +252,23 @@ WHERE p.pid = %s"""
         db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True)
         cursor.execute(
-            "SELECT COUNT(*) FROM reviews WHERE productId = %s AND authorId = %s", (pid, uid)
+            "SELECT COUNT(*) FROM reviews WHERE productId = %s AND authorId = %s",
+            (pid, uid),
         )
         result = cursor.fetchone()
         cursor.close()
 
         return result[0] != 0
+
+    @staticmethod
+    def owner(pid: str) -> int:
+        db_conn = Global.db_conn
+        cursor = db_conn.cursor(prepared=True)
+        cursor.execute("SELECT owner FROM products WHERE pid = %s", (pid,))
+        result = cursor.fetchone()
+        cursor.close()
+
+        return result[0]
 
     @staticmethod
     def __canonical_name(k: str) -> str:

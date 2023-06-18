@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 
 from backend.src.lib import Global
-from backend.src.lib.validate import base64_valid
+from backend.src.lib.validate import base64_valid, validate_verified
 from backend.src.middleware.auth_middleware import token_required
 from backend.src.middleware.rate_limiter import limiter
 from backend.src.models import Product, User
@@ -41,6 +41,14 @@ def get_reviews(pid: str):
 @token_required
 def add_review(uid, pid):
     try:
+        db_conn = Global.db_conn
+        if not validate_verified(db_conn, uid):
+            return (
+                {"error_code": "BX0002", "error": "Not verified."},
+                400,
+                {"Content-Type": "application/json"},
+            )
+
         data = request.get_json()
         rating = data["rating"]
         comment = data["comment"]
@@ -63,6 +71,13 @@ def add_review(uid, pid):
         if Product.attest_nonexistent(pid):
             return (
                 {"error_code": "BX1206", "error": "Product doesn't exist."},
+                400,
+                {"Content-Type": "application/json"},
+            )
+
+        if Product.owner(pid) == uid:
+            return (
+                {"error_code": "BX1208", "error": "You can't review your own product."},
                 400,
                 {"Content-Type": "application/json"},
             )

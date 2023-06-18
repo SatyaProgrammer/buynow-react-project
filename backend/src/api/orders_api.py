@@ -4,6 +4,7 @@ from flask import Blueprint, request
 from backend.src.lib import Global
 from backend.src.middleware.auth_middleware import token_required
 from backend.src.middleware.rate_limiter import limiter
+from backend.src.lib.validate import validate_verified
 
 orders_api = Blueprint("orders_api", __name__)
 
@@ -16,7 +17,9 @@ def get_trackings(uid):
         db_conn = Global.db_conn
 
         cursor = db_conn.cursor(prepared=True, dictionary=True)
-        cursor.execute("SELECT id, userId, createdAt FROM trackings WHERE userId = ?", (uid,))
+        cursor.execute(
+            "SELECT id, userId, createdAt FROM trackings WHERE userId = ?", (uid,)
+        )
         trackings = cursor.fetchall()
         cursor.close()
 
@@ -36,6 +39,13 @@ def get_trackings(uid):
 def create_tracking(uid):
     try:
         db_conn = Global.db_conn
+        if not validate_verified(db_conn, uid):
+            return (
+                {"error_code": "BX0002", "error": "Not verified."},
+                403,
+                {"Content-Type": "application/json"},
+            )
+
         order_data = request.get_json()
         orders = order_data["orders"]
 
@@ -59,11 +69,22 @@ def create_tracking(uid):
             pid = order["pid"]
 
             cursor.execute(
-                "SELECT id, availability FROM products WHERE pid = ?", (pid,)
+                "SELECT id, availability, owner FROM products WHERE pid = ?", (pid,)
             )
             item = cursor.fetchone()
             iid = item["id"]
             stock = item["availability"]
+            owner = item["owner"]
+
+            if owner == uid:
+                return (
+                    {
+                        "error_code": "BX0101",
+                        "error": "You cannot order your own product.",
+                    },
+                    400,
+                    {"Content-Type": "application/json"},
+                )
 
             if stock < order["quantity"]:
                 return (
