@@ -32,7 +32,6 @@ const HistoryContent = () => {
           },
         }
       );
-      console.log(response);
       const data = response.data.trackings;
       console.log(data);
       dispatch({ type: "TRACKINGS", payload: { data } });

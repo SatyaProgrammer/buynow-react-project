@@ -12,30 +12,35 @@ import { useNavigate, Navigate, useLocation } from "react-router-dom";
 import logo from "../../../assets/hero-bcg.jpeg";
 
 const ProfilePage = () => {
+  const cookies = new Cookies();
+  const token = cookies.get("jwt_authorization");
+
+  const getProfile = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/customization`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Basic ${token}`,
+          },
+        }
+      );
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getProfile();
+  }, []);
+
   const [state, dispatch] = useReducer(addProductReducer, INITIAL_STATE);
   const nameRef = useRef();
   const imageRef = useRef();
-  const cookies = new Cookies();
   const location = useLocation();
   const navigate = useNavigate();
-
-  const handleAddSubCustom = (key) => {
-    let inputData = state.customization;
-    inputData[key].push("");
-    dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
-  };
-
-  const handleChangeSubCustom = (onChangeValue, key, idx) => {
-    let inputData = state.customization;
-    inputData[key][idx] = onChangeValue.target.value;
-    dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
-  };
-
-  const handleRemoveSubCustom = (key, idx) => {
-    let inputData = state.customization;
-    inputData[key].splice(idx, 1);
-    dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
-  };
 
   const handleAddImage = () => {
     let inputData = state.image;
@@ -55,33 +60,12 @@ const ProfilePage = () => {
     dispatch({ type: ACTION_TYPES.SET_IMAGE, payload: inputData });
   };
 
-  const handleFetch = async () => {
-    try {
-      const response = await axios.get(
-        "${process.env.REACT_APP_BACKEND_URL}/categories"
-      );
-
-      if (response && response.data) {
-        dispatch({
-          type: ACTION_TYPES.SET_GET_CATEGORY,
-          payload: response.data,
-        });
-      }
-    } catch (err) {
-      console.log(err.response);
-    }
-  };
-
   useEffect(() => {
-    handleFetch();
     if (state.image.length <= 0) {
       dispatch({ type: ACTION_TYPES.ADD_IMAGE, payload: "" });
     }
     dispatch({ type: ACTION_TYPES.SET_NAME, payload: "" });
     dispatch({ type: ACTION_TYPES.SET_DESCRIPTION, payload: "" });
-    dispatch({ type: ACTION_TYPES.SET_CATEGORY, payload: "" });
-    dispatch({ type: ACTION_TYPES.SET_PRICE, payload: "" });
-    dispatch({ type: ACTION_TYPES.RESET_CUSTOMIZATION });
     dispatch({ type: ACTION_TYPES.SET_AVAILABILITY, payload: 0 });
     dispatch({ type: ACTION_TYPES.SET_DELIVERYOPTION, payload: "" });
     dispatch({ type: ACTION_TYPES.SET_IMAGE, payload: [""] });
@@ -93,9 +77,6 @@ const ProfilePage = () => {
   }, [
     state.name,
     state.description,
-    state.category,
-    state.price,
-    state.customization,
     state.availability,
     state.deliveryOption,
     state.image,
@@ -156,9 +137,6 @@ const ProfilePage = () => {
     let data = JSON.stringify({
       name: state.name,
       images: state.imageUrl,
-      category: state.category,
-      price: state.price,
-      customization: state.customization,
       description: state.description,
       availability: state.availability,
       deliveryOption: state.deliveryOption,
@@ -178,9 +156,6 @@ const ProfilePage = () => {
       dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: true });
       dispatch({ type: ACTION_TYPES.SET_NAME, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_DESCRIPTION, payload: "" });
-      dispatch({ type: ACTION_TYPES.SET_CATEGORY, payload: "" });
-      dispatch({ type: ACTION_TYPES.SET_PRICE, payload: "" });
-      dispatch({ type: ACTION_TYPES.RESET_CUSTOMIZATION });
       dispatch({ type: ACTION_TYPES.SET_AVAILABILITY, payload: 0 });
       dispatch({ type: ACTION_TYPES.SET_DELIVERYOPTION, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_IMAGE, payload: [""] });
@@ -212,7 +187,7 @@ const ProfilePage = () => {
       <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
         <p className="text-cldark text-4xl font-bold my-4 text-medium flex flex-col gap-4 items-center justify-center">
           <img src={logo} alt="" className="w-52 h-52 rounded-full" />
-          <h2>Name</h2>
+          <p>Name</p>
         </p>
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col gap-4">
@@ -286,202 +261,8 @@ const ProfilePage = () => {
                 />
               </div>
             </div>
-            <div className="bg-white p-4 shadow-lg rounded-md flex flex-col gap-4">
-              <div className="flex flex-col gap-2">
-                <div className="text-xl font-semibold text-cldark">
-                  Category
-                </div>
-
-                <button
-                  onClick={() =>
-                    dispatch({
-                      type: ACTION_TYPES.SET_CATEGORY_DROPDOWN,
-                    })
-                  }
-                  id="dropdownDefaultButton"
-                  data-dropdown-toggle="dropdown"
-                  className={
-                    state.category
-                      ? "text-cldark border border-gray-300 w-full p-3 rounded-lg font-normal focus:outline focus:outline-1"
-                      : "text-gray-400 border border-gray-300 w-full p-3 rounded-lg font-normal focus:outline focus:outline-1"
-                  }
-                  type="button"
-                >
-                  <div className="flex justify-between items-center w-full">
-                    {state.category ? state.category : "Product category"}
-                    <svg
-                      className="w-4 h-4 ml-2"
-                      aria-hidden="true"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M19 9l-7 7-7-7"
-                      ></path>
-                    </svg>
-                  </div>
-                </button>
-                <div
-                  id="dropdown"
-                  className={
-                    state.categoryDropdown
-                      ? "z-10 bg-white divide-y h-44 overflow-scroll dropdown-scrolling divide-gray-100 rounded-lg shadow w-full dark:bg-gray-700"
-                      : "hidden"
-                  }
-                >
-                  <ul
-                    className="py-2 text-md text-gray-700 dark:text-gray-200"
-                    aria-labelledby="dropdownDefaultButton"
-                  >
-                    {state.getCategory.categories
-                      ? state.getCategory.categories.map((category, idx) => (
-                          <li
-                            key={idx}
-                            onClick={() => {
-                              dispatch({
-                                type: ACTION_TYPES.SET_CATEGORY,
-                                payload: category.name,
-                              });
-                              dispatch({
-                                type: ACTION_TYPES.SET_CATEGORY_DROPDOWN,
-                              });
-                            }}
-                            className="cursor-pointer"
-                          >
-                            <div className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                              {category.name}
-                            </div>
-                          </li>
-                        ))
-                      : ""}
-                  </ul>
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <div className="text-xl font-semibold text-cldark">Price</div>
-                <input
-                  type="number"
-                  required
-                  onFocus={() =>
-                    dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: "" })
-                  }
-                  placeholder="Product price"
-                  onChange={(e) =>
-                    dispatch({
-                      type: ACTION_TYPES.SET_PRICE,
-                      payload: e.target.value,
-                    })
-                  }
-                  name="price"
-                  value={state.price}
-                  className="border border-gray-300 w-full p-3 rounded-lg text-cldark focus:outline focus:outline-1"
-                />
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <div className="text-xl font-semibold text-cldark">
-                  Color & Size
-                </div>
-                {Object.keys(state.customization).map((key, id) => (
-                  <div key={id} className="flex flex-col gap-1">
-                    <div className="grid grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-3">
-                      <div className="col-span-2 md:col-span-1">
-                        <div className="flex gap-2 items-center">
-                          <div className="flex items-center  border rounded-lg  border-gray-300 focus-within:outline focus-within:outline-1 w-full">
-                            <div className="w-full p-3 rounded-lg  text-cldark text-center">
-                              {key}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col gap-3 col-span-4 md:col-span-5 lg:col-span-7 xl:col-span-9">
-                        {state.customization[key].map((data, idx) => (
-                          <div key={idx}>
-                            <div>
-                              <div className="flex gap-2 items-center">
-                                <div className="flex items-center border rounded-lg w-full  border-gray-300 focus-within:outline focus-within:outline-1">
-                                  <input
-                                    type="text"
-                                    placeholder={state.cholder[id]}
-                                    required
-                                    onFocus={() =>
-                                      dispatch({
-                                        type: ACTION_TYPES.SET_SUCCESS,
-                                        payload: "",
-                                      })
-                                    }
-                                    onChange={(e) =>
-                                      handleChangeSubCustom(e, key, idx)
-                                    }
-                                    value={data}
-                                    name="subCustom"
-                                    className="focus:outline-none w-full p-3 rounded-lg text-cldark"
-                                  />
-                                  <div
-                                    onClick={() => handleAddSubCustom(key, idx)}
-                                    className="p-2 hover:scale-110 transition-full duration-300"
-                                  >
-                                    <div className="w-4 h-4 cursor-pointer">
-                                      <IconPlus fill="#222" />
-                                    </div>
-                                  </div>
-                                </div>
-                                {state.customization[key].length > 1 ? (
-                                  <div
-                                    onClick={() =>
-                                      handleRemoveSubCustom(key, idx)
-                                    }
-                                    className="w-5 h-5 hover:scale-110 duration-300 transition-all cursor-pointer"
-                                  >
-                                    <IconBin fill="#222" />
-                                  </div>
-                                ) : (
-                                  ""
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
 
             <div className="bg-white p-4 shadow-lg rounded-md flex flex-col gap-4">
-              <div className="flex flex-col gap-2">
-                <div className="text-xl font-semibold text-cldark">
-                  Quantity
-                </div>
-                <div>
-                  <input
-                    id="availability"
-                    type="number"
-                    name="availability"
-                    placeholder="Product quantity"
-                    value={state.availability}
-                    required
-                    className="border border-gray-300 w-full p-3 rounded-lg text-cldark focus:outline focus:outline-1"
-                    onFocus={() =>
-                      dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: "" })
-                    }
-                    onChange={(e) => {
-                      let input = e.target.value;
-                      dispatch({
-                        type: ACTION_TYPES.SET_AVAILABILITY,
-                        payload: input,
-                      });
-                    }}
-                  />
-                </div>
-              </div>
               <div className="flex flex-col gap-2">
                 <div className="text-xl font-semibold text-cldark">
                   Delivery Option
@@ -587,7 +368,7 @@ const ProfilePage = () => {
               {state.duringSubmit ? (
                 <div className="btn text-center">Submitting...</div>
               ) : (
-                <button className="btn outline-none">Submit</button>
+                <button className="btn outline-none">Update Profile</button>
               )}
             </div>
           </div>
