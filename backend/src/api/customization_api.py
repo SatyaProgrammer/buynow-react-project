@@ -17,7 +17,7 @@ def get_customization(uid):
         db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         sql = """\
-SELECT u.id, u.username, c.theme, c.image, c.phone, c.contact_info
+SELECT u.id, u.username, c.theme, c.image, c.phone, c.contactInfo
 FROM users as u
 INNER JOIN userscustomization as c ON u.id = c.recipientId
 WHERE u.id = ?;
@@ -41,8 +41,8 @@ WHERE u.id = ?;
             result = cursor.fetchone()
             cursor.close()
 
-        if result["contact_info"]:
-            result["contact_info"] = json.loads(result["contact_info"])
+        if result["contactInfo"]:
+            result["contactInfo"] = json.loads(result["contactInfo"])
 
         return {"customization": result}, 200, {"Content-Type": "application/json"}
 
@@ -65,7 +65,7 @@ def update_customization(uid):
         theme = data["theme"]
         image = data["image"]
         phone = data["phone"]
-        contact_info = data["contact_info"]
+        contact_info = data["contactInfo"]
 
         if theme not in ["light", "dark"]:
             return (
@@ -95,7 +95,7 @@ def update_customization(uid):
 
         db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)
-        sql = "UPDATE userscustomization SET theme = %s, image = %s, phone = %s, contact_info = %s WHERE recipientId = %s"
+        sql = "UPDATE userscustomization SET theme = %s, image = %s, phone = %s, contactInfo = %s WHERE recipientId = %s"
         cursor.execute(sql, (theme, image, phone, json.dumps(contact_info), uid))
         db_conn.commit()
 
