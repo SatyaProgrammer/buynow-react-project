@@ -5,6 +5,7 @@ import reducer from "../reducers/detail_reducer";
 import { Link } from "react-router-dom";
 
 const CartItem = ({ id, status }) => {
+  console.log(status);
   return (
     <Wrapper>
       <h5>{id}</h5>

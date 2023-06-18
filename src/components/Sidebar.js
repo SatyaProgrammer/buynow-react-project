@@ -6,9 +6,14 @@ import { FaTimes } from "react-icons/fa";
 import { links } from "../utils/constants";
 import styled from "styled-components";
 import CartButtons from "./CartButtons";
+import { NavLink } from "react-router-dom";
+import { SidebarItems } from "../pages/Shop/utils/Constant";
+import { useState } from "react";
+import { IconArrowDown } from "../pages/Shop/utils/Icons";
 
 const Sidebar = () => {
   const { isSidebarOpen, closeSidebar } = useProductsContext();
+  const [dropDown, setDropDown] = useState(false)
   return (
     <SidebarContainer>
       <aside
@@ -24,9 +29,57 @@ const Sidebar = () => {
           {links.map(({ id, text, url }) => {
             return (
               <li key={id}>
-                <Link to={url} onClick={closeSidebar}>
-                  {text}
-                </Link>
+                {id == 2 ? (
+                  <div
+                    onClick={() => setDropDown(!dropDown)}
+                    className="relative cursor-pointer"
+                  >
+                    <Link to={url}>
+                      <div className="flex justify-between items-center">
+                        {text}
+                        <div
+                          className={
+                            dropDown ? "w-6 h-6 rotate-180" : "w-6 h-6"
+                          }
+                        >
+                          <IconArrowDown />
+                        </div>
+                      </div>
+                    </Link>
+                    <div
+                      id="dropdown"
+                      className={
+                        dropDown
+                          ? "bg-white py-2"
+                          : "hidden"
+                      }
+                    >
+                      <ul
+                        className="text-sm text-gray-700 dark:text-gray-200"
+                        aria-labelledby="dropdownDefaultButton"
+                      >
+                        {SidebarItems.map((item, i) => (
+                          <li key={i}>
+                            <Link
+                              onClick={closeSidebar}
+                              to={item.link}
+                              className="flex p-2 text-lg text-cldark bg-white"
+                            >
+                              <div className="flex">
+                                <div className="w-8"></div>
+                                <li>{item.name}</li>
+                              </div>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                ) : (
+                  <Link to={url} onClick={closeSidebar}>
+                    {text}
+                  </Link>
+                )}
               </li>
             );
           })}

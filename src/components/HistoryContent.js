@@ -32,7 +32,9 @@ const HistoryContent = () => {
           },
         }
       );
+      console.log(response);
       const data = response.data.trackings;
+      console.log(data);
       dispatch({ type: "TRACKINGS", payload: { data } });
     } catch (error) {
       if (error?.response?.data?.error_code == "BX0001") {

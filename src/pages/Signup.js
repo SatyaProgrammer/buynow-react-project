@@ -8,6 +8,7 @@ import axios from "axios";
 import { API_CALL } from "./Shop/utils/Constant";
 import { Link } from "react-router-dom";
 import { IconAlert, IconCheck } from "./Shop/utils/Icons";
+import Cookies from "universal-cookie";
 
 const USERNAME_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PASSWORD_REGEX =
@@ -25,14 +26,14 @@ const Signup = (props) => {
   const mainRef = useRef();
   const [nextPage, setNextPage] = useState(false);
   const [profile, setProfile] = useState();
+  const [profileUrl, setProfileUrl] = useState();
+  const cookies = new Cookies();
 
   useEffect(() => {
     document.title = props.title;
     usernameRef.current.focus();
     setMainHeight(mainRef.current.clientHeight);
-    console.log(mainHeight);
     if (windowSize < 587) {
-      console.log("word");
       setIsFull(false);
     } else {
       setIsFull(true);
@@ -42,7 +43,6 @@ const Signup = (props) => {
 
   useEffect(() => {
     setMainHeight(mainRef.current.clientHeight);
-    console.log(mainHeight);
   });
 
   const handleResize = () => {
@@ -111,17 +111,53 @@ const Signup = (props) => {
           headers: { "Content-Type": "application/json" },
         }
       );
+
+      try {
+        const preset_key = "c003351q";
+        const cloud_name = "dlplvjf9l";
+        const token = cookies.get("jwt_authorization");
+
+        if (!token) {
+          const file = profile;
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("upload_preset", preset_key);
+          await axios
+            .post(
+              `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
+              formData
+            )
+            .then((res) => {
+              setProfileUrl(res.data.secure_url);
+            });
+        }
+      } catch (error) {
+        console.log(error);
+        dispatch({
+          type: ACTION_TYPES.SET_ERROR,
+          payload: "Image upload fail",
+        });
+      }
+
+      console.log(response);
+      console.log("dfds: ", profileUrl);
+      setProfile("");
+      setProfileUrl("");
       dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: true });
       dispatch({ type: ACTION_TYPES.SET_USERNAME, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_PASSWORD, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_EMAIL, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_CONFIRM_PASSWORD, payload: "" });
+      setNextPage(!nextPage);
+      setIsFull(!isFull);
       window.scrollTo(0, 0);
       dispatch({
         type: ACTION_TYPES.SET_SUCCESS,
         payload: "Signup successful",
       });
     } catch (err) {
+      setNextPage(!nextPage);
+      setIsFull(!isFull);
       dispatch({
         type: ACTION_TYPES.SET_ERROR,
         payload: err?.response.data.error,
@@ -132,8 +168,21 @@ const Signup = (props) => {
 
   const handleNextPage = (e) => {
     e.preventDefault();
-    setNextPage(!nextPage);
-    setIsFull(!isFull);
+    if (
+      state.validUsername &&
+      state.validEmail &&
+      state.validPassword &&
+      state.validConfirmPassword
+    ) {
+      setNextPage(!nextPage);
+      setIsFull(!isFull);
+    } else {
+      dispatch({
+        type: ACTION_TYPES.SET_ERROR,
+        payload: "Please fill in correct information",
+      });
+      window.scrollTo(0, 0);
+    }
   };
 
   return (
@@ -223,12 +272,16 @@ const Signup = (props) => {
                           payload: e.target.value,
                         })
                       }
-                      onFocus={() =>
+                      onFocus={() => {
                         dispatch({
                           type: ACTION_TYPES.SET_USERNAME_FOCUS,
                           payload: true,
-                        })
-                      }
+                        });
+                        dispatch({
+                          type: ACTION_TYPES.SET_SUCCESS,
+                          payload: "",
+                        });
+                      }}
                       onBlur={() =>
                         dispatch({
                           type: ACTION_TYPES.SET_USERNAME_FOCUS,
@@ -297,12 +350,16 @@ const Signup = (props) => {
                           payload: e.target.value,
                         })
                       }
-                      onFocus={() =>
+                      onFocus={() => {
                         dispatch({
                           type: ACTION_TYPES.SET_EMAIL_FOCUS,
                           payload: true,
-                        })
-                      }
+                        });
+                        dispatch({
+                          type: ACTION_TYPES.SET_SUCCESS,
+                          payload: "",
+                        });
+                      }}
                       onBlur={() =>
                         dispatch({
                           type: ACTION_TYPES.SET_EMAIL_FOCUS,
@@ -365,12 +422,16 @@ const Signup = (props) => {
                           payload: e.target.value,
                         })
                       }
-                      onFocus={() =>
+                      onFocus={() => {
                         dispatch({
                           type: ACTION_TYPES.SET_PASSWORD_FOCUS,
                           payload: true,
-                        })
-                      }
+                        });
+                        dispatch({
+                          type: ACTION_TYPES.SET_SUCCESS,
+                          payload: "",
+                        });
+                      }}
                       onBlur={() =>
                         dispatch({
                           type: ACTION_TYPES.SET_PASSWORD_FOCUS,
@@ -441,12 +502,16 @@ const Signup = (props) => {
                           payload: e.target.value,
                         })
                       }
-                      onFocus={() =>
+                      onFocus={() => {
                         dispatch({
                           type: ACTION_TYPES.SET_CONFIRM_PASSWORD_FOCUS,
                           payload: true,
-                        })
-                      }
+                        });
+                        dispatch({
+                          type: ACTION_TYPES.SET_SUCCESS,
+                          payload: "",
+                        });
+                      }}
                       onBlur={() =>
                         dispatch({
                           type: ACTION_TYPES.SET_CONFIRM_PASSWORD_FOCUS,
@@ -510,12 +575,12 @@ const Signup = (props) => {
                   <img
                     className="w-full h-full rounded-full object-cover"
                     alt="preview image"
-                    src={profile}
+                    src={URL.createObjectURL(profile)}
                   />
                 ) : (
                   <img
                     className="w-full h-full rounded-full object-cover"
-                    src="assets/images/emptyProfile.png"
+                    src="assets/images/emptyProfile.jpg"
                     alt="Image"
                   />
                 )}
@@ -527,17 +592,15 @@ const Signup = (props) => {
                 <input
                   id="profile"
                   type="file"
-                  onChange={(event) =>
-                    setProfile(URL.createObjectURL(event.target.files[0]))
-                  }
+                  onChange={(event) => setProfile(event.target.files[0])}
                   className="hidden"
                 />
                 Add profile image
               </label>
             </div>
             <button
-              // onClick={handleSubmit}
-              onClick={(e) => handleNextPage(e)}
+              onClick={handleSubmit}
+              // onClick={(e) => handleNextPage(e)}
               className="w-full bg-primary4 text-white font-semibold py-2 text-center border border-primary4 hover:bg-white hover:text-primary4 rounded-md transition-all duration-300"
             >
               Submit
