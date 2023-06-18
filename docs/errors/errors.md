@@ -20,6 +20,7 @@
 | ------ | ---------------------------- |
 | BX0000 | Unknown error                |
 | BX0001 | Not authorized/Missing token |
+| BX0002 | Not verified                 |
 
 ### BX01xx: Login errors
 

@@ -40,9 +40,23 @@ def validate_json(js: str) -> bool:
         return False
     return True
 
+
 def validate_phone(phone: str) -> bool:
     if len(phone) > 20:
         return False
     if not re.match(r"^\+?[0-9]+$", phone):
         return False
     return True
+
+
+def validate_verified(db_conn, uid: str | int) -> bool:
+    cursor = db_conn.cursor(prepared=True, dictionary=True)
+    query = "SELECT verified FROM users WHERE id = ?;"
+    cursor.execute(query, (uid,))
+    result = cursor.fetchone()
+    cursor.close()
+
+    if result is None:
+        return False
+
+    return result["verified"] == 1

@@ -4,7 +4,7 @@ from flask import Blueprint, request
 
 from backend.src.lib import Global
 from backend.src.lib.passwd import make_product_id
-from backend.src.lib.validate import base64_valid, validate_json
+from backend.src.lib.validate import base64_valid, validate_json, validate_verified
 from backend.src.middleware.auth_middleware import token_required
 from backend.src.middleware.rate_limiter import limiter
 from backend.src.models import Category, Product, User
@@ -108,6 +108,14 @@ def get_matching_products():
 @token_required
 def add_products(uid):
     try:
+        db_conn = Global.db_conn
+        if not validate_verified(db_conn, uid):
+            return (
+                {"error_code": "BX0002", "error": "Not verified."},
+                403,
+                {"Content-Type": "application/json"},
+            )
+
         user_id = uid
 
         request_data = request.get_json()
