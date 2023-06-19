@@ -44,26 +44,26 @@ const CartButtons = () => {
           </div>
           <div
             id="dropdown"
-            class={
+            className={
               dropDown
                 ? "z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute right-0 mt-1"
                 : "hidden"
             }
           >
             <ul
-              class="text-sm text-gray-700 dark:text-gray-200"
+              className="text-sm text-gray-700 dark:text-gray-200"
               aria-labelledby="dropdownDefaultButton"
             >
               <li>
                 <Link
-                  class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                   to="/profile"
                 >
                   View Profile
                 </Link>
                 {/* <a
                   href=
-                  class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                 >
                   View Profile
                 </a> */}
@@ -71,7 +71,7 @@ const CartButtons = () => {
               <li>
                 <a
                   href="#"
-                  class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                   onClick={logout}
                 >
                   Logout

@@ -138,7 +138,6 @@ const Signup = (props) => {
         }
 
         try {
-          console.log("TOKEN: ", response.data.token);
           let pData = JSON.stringify({
             theme: "light",
             image: pUrl,

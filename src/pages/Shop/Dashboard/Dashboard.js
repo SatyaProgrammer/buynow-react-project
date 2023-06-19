@@ -120,7 +120,9 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    handleFetch();
+    setTimeout(() => {
+      handleFetch();
+    }, "300");
   }, []);
 
   return (

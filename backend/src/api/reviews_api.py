@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 
 from backend.src.lib import Global
-from backend.src.lib.validate import base64_valid
+from backend.src.lib.validate import base64_valid, validate_verified
 from backend.src.middleware.auth_middleware import token_required
 from backend.src.middleware.rate_limiter import limiter
 from backend.src.models import Product, User
@@ -17,10 +17,11 @@ def get_reviews(pid: str):
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         cursor.execute(
             """\
-    SELECT r.id, u.username, r.rating, r.comment
-    FROM reviews
-    LEFT JOIN users AS u ON u.id = r.authorId
-    WHERE r.productId = %s""",
+SELECT r.id, u.username, r.rating, r.comment
+FROM reviews as r
+LEFT JOIN users AS u ON u.id = r.authorId
+LEFT JOIN products AS p ON p.id = r.productId
+WHERE p.pid = %s""",
             (pid,),
         )
         result = cursor.fetchall()
@@ -41,6 +42,14 @@ def get_reviews(pid: str):
 @token_required
 def add_review(uid, pid):
     try:
+        db_conn = Global.db_conn
+        if not validate_verified(db_conn, uid):
+            return (
+                {"error_code": "BX0002", "error": "Not verified."},
+                400,
+                {"Content-Type": "application/json"},
+            )
+
         data = request.get_json()
         rating = data["rating"]
         comment = data["comment"]
@@ -63,6 +72,13 @@ def add_review(uid, pid):
         if Product.attest_nonexistent(pid):
             return (
                 {"error_code": "BX1206", "error": "Product doesn't exist."},
+                400,
+                {"Content-Type": "application/json"},
+            )
+
+        if Product.owner(pid) == uid:
+            return (
+                {"error_code": "BX1208", "error": "You can't review your own product."},
                 400,
                 {"Content-Type": "application/json"},
             )
@@ -106,21 +122,29 @@ def add_review(uid, pid):
         db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         sql = """\
-    INSERT INTO reviews (productId, authorId, rating, comment)
-    VALUES (%s, %s, %s, %s)"""
+SELECT id
+FROM products
+WHERE pid = %s"""
+        cursor.execute(sql, (pid,))
+        result = cursor.fetchone()
+        cursor.close()
 
-        cursor.execute(sql, (pid, uid, rating, comment))
+        if result is None:
+            return (
+                {"error_code": "BX1206", "error": "Product doesn't exist."},
+                400,
+                {"Content-Type": "application/json"},
+            )
+
+        iid = result["id"]
+
+        sql = """\
+INSERT INTO reviews (productId, authorId, rating, comment)
+VALUES (%s, %s, %s, %s)"""
+
+        cursor.execute(sql, (iid, uid, rating, comment))
         db_conn.commit()
 
-        # update product rating
-        sql = """\
-UPDATE products
-SET rating = (
-    SELECT AVG(rating)
-    FROM reviews
-    WHERE productId = %s
-)
-WHERE id = %s"""
         return {"message": "Review added."}, 201, {"Content-Type": "application/json"}
     except Exception as e:
         Global.console.print_exception()
