@@ -1,5 +1,4 @@
 from backend.src.utils.test import Test
-from backend.src.lib.db import create_connection
 import os
 from requests import Session
 from dotenv import load_dotenv
