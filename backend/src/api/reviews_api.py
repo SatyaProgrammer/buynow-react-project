@@ -176,7 +176,8 @@ def get_my_review(uid, pid):
             """\
     SELECT r.id, r.rating, r.comment
     FROM reviews AS r
-    WHERE r.productId = %s AND r.authorId = %s""",
+    INNER JOIN products AS p ON p.id = r.productId
+    WHERE p.pid = %s AND r.authorId = %s""",
             (pid, uid),
         )
         result = cursor.fetchone()
