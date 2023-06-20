@@ -127,7 +127,6 @@ FROM products
 WHERE pid = %s"""
         cursor.execute(sql, (pid,))
         result = cursor.fetchone()
-        cursor.close()
 
         if result is None:
             return (
@@ -143,6 +142,7 @@ INSERT INTO reviews (productId, authorId, rating, comment)
 VALUES (%s, %s, %s, %s)"""
 
         cursor.execute(sql, (iid, uid, rating, comment))
+        cursor.close()
         db_conn.commit()
 
         return {"message": "Review added."}, 201, {"Content-Type": "application/json"}

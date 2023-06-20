@@ -327,7 +327,7 @@ class Table:
 );
 """
 
-        print(f"Trying: {sql}")
+        # print(f"Trying: {sql}")
         try:
             cursor.execute(sql)
         except msc.Error as e:
@@ -364,7 +364,7 @@ class Table:
 
             seed_sql += ";"
 
-            print(f"Executing seed: {seed_sql}")
+            # print(f"Executing seed: {seed_sql}")
 
             try:
                 cursor.execute(seed_sql)
