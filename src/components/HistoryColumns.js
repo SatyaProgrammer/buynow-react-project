@@ -6,7 +6,7 @@ const HistoryColumns = () => {
     <Wrapper>
       <div className="content">
         <h5>Tracking Number</h5>
-        <h5>Status</h5>
+        <h5>Order date</h5>
         <h5>Detail</h5>
       </div>
       <hr />

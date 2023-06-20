@@ -26,7 +26,7 @@ const Signup = (props) => {
   const mainRef = useRef();
   const [nextPage, setNextPage] = useState(false);
   const [profile, setProfile] = useState();
-  const [profileUrl, setProfileUrl] = useState();
+  const [submitting, setSubmitting] = useState(false);
   const cookies = new Cookies();
 
   useEffect(() => {
@@ -90,6 +90,7 @@ const Signup = (props) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
     // if button enabled with JS hack
     const v1 = USERNAME_REGEX.test(state.username);
     const v2 = PASSWORD_REGEX.test(state.password);
@@ -117,29 +118,31 @@ const Signup = (props) => {
         const cloud_name = "dlplvjf9l";
         const token = cookies.get("jwt_authorization");
 
-        const file = profile;
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("upload_preset", preset_key);
-        await axios
-          .post(
-            `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
-            formData
-          )
-          .then((res) => {
-            console.log("resdataurl", res.data.secure_url);
-            setProfileUrl(res.data.secure_url);
-            pUrl = res.data.secure_url;
-          });
+        if (profile) {
+          const file = profile;
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("upload_preset", preset_key);
+          await axios
+            .post(
+              `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
+              formData
+            )
+            .then((res) => {
+              console.log("resdataurl", res.data.secure_url);
+              pUrl = res.data.secure_url;
+            });
+        } else {
+          pUrl =
+            "https://res.cloudinary.com/dlplvjf9l/image/upload/v1687078004/lwum3hs5emhzjm9rrfha.jpg";
+        }
 
-        console.log("PURL: ", profileUrl);
         try {
-          console.log("TOKEN: ", response.data.token);
           let pData = JSON.stringify({
             theme: "light",
             image: pUrl,
             phone: null,
-            contact_info: null,
+            contactInfo: {},
           });
           console.log("Data: ", pData);
           await axios.put(
@@ -165,7 +168,6 @@ const Signup = (props) => {
 
       console.log(response);
       setProfile("");
-      setProfileUrl("");
       dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: true });
       dispatch({ type: ACTION_TYPES.SET_USERNAME, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_PASSWORD, payload: "" });
@@ -178,6 +180,7 @@ const Signup = (props) => {
         type: ACTION_TYPES.SET_SUCCESS,
         payload: "Signup successful",
       });
+      setSubmitting(false);
     } catch (err) {
       setNextPage(!nextPage);
       setIsFull(!isFull);
@@ -186,6 +189,7 @@ const Signup = (props) => {
         payload: err?.response.data.error,
       });
       window.scrollTo(0, 0);
+      setSubmitting(false);
     }
   };
 
@@ -621,13 +625,19 @@ const Signup = (props) => {
                 Add profile image
               </label>
             </div>
-            <button
-              onClick={handleSubmit}
-              // onClick={(e) => handleNextPage(e)}
-              className="w-full bg-primary4 text-white font-semibold py-2 text-center border border-primary4 hover:bg-white hover:text-primary4 rounded-md transition-all duration-300"
-            >
-              Submit
-            </button>
+            {submitting ? (
+              <div className="w-full bg-primary4 text-white font-semibold py-2 text-center border border-primary4 hover:bg-white hover:text-primary4 rounded-md transition-all duration-300">
+                Submitting...
+              </div>
+            ) : (
+              <button
+                onClick={handleSubmit}
+                // onClick={(e) => handleNextPage(e)}
+                className="w-full bg-primary4 text-white font-semibold py-2 text-center border border-primary4 hover:bg-white hover:text-primary4 rounded-md transition-all duration-300"
+              >
+                Submit
+              </button>
+            )}
           </div>
         </div>
       </div>
