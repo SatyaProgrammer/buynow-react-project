@@ -2,7 +2,7 @@ from flask import Blueprint, request
 
 from backend.src.lib import Global
 from backend.src.lib.validate import base64_valid, validate_verified
-from backend.src.middleware.auth_middleware import token_required
+from backend.src.middleware.auth_middleware import token_required, maybe_token_required
 from backend.src.middleware.rate_limiter import limiter
 from backend.src.models import Product, User
 
@@ -11,9 +11,23 @@ reviews_api = Blueprint("reviews_api", __name__)
 
 @reviews_api.get("/reviews/<pid>")
 @limiter.limit("10/minute")
-def get_reviews(pid: str):
+@maybe_token_required
+def get_reviews(uid, pid: str):
     try:
         db_conn = Global.db_conn
+        cursor = db_conn.curosr(prepared=True, dictionary=True):
+        cursor.execute(
+            """\
+SELECT r.id, u.username, r.rating, r.comment
+FROM reviews as r
+LEFT JOIN users AS u ON u.id = r.authorId
+LEFT JOIN products AS p ON p.id = r.productId
+WHERE p.pid = %s AND r.authorId = %s""",
+            (pid, uid),
+        )
+
+        res_one = cursor.fetchone()
+
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         cursor.execute(
             """\
@@ -21,11 +35,14 @@ SELECT r.id, u.username, r.rating, r.comment
 FROM reviews as r
 LEFT JOIN users AS u ON u.id = r.authorId
 LEFT JOIN products AS p ON p.id = r.productId
-WHERE p.pid = %s""",
-            (pid,),
+WHERE p.pid = %s AND r.authorId != %s""",
+            (pid, uid),
         )
         result = cursor.fetchall()
         cursor.close()
+
+        if res_one is not None:
+            result.insert(0, res_one)
 
         return {"reviews": result}, 200, {"Content-Type": "application/json"}
     except Exception as e:
