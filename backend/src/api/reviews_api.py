@@ -15,7 +15,7 @@ reviews_api = Blueprint("reviews_api", __name__)
 def get_reviews(uid, pid: str):
     try:
         db_conn = Global.db_conn
-        cursor = db_conn.curosr(prepared=True, dictionary=True)
+        cursor = db_conn.cursor(prepared=True, dictionary=True)
         cursor.execute(
             """\
 SELECT r.id, u.username, r.rating, r.comment
