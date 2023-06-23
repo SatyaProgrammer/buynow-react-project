@@ -30,5 +30,13 @@ def seed() -> list[dict]:
         {
             "recipientId": 1,
             "theme": "light",
-        }
+        },
+        {
+            "recipientId": 2,
+            "theme": "light",
+        },
+        {
+            "recipientId": 3,
+            "theme": "light",
+        },
     ]
