@@ -9,7 +9,7 @@ from backend.src.lib import Global, give_connection
 from backend.src.lib.mailing import send_forgot_password_email, send_verification_email
 from backend.src.lib.passwd import make_password, safe_compare
 from backend.src.lib.validate import validate_email, validate_password
-from backend.src.middleware.auth_middleware import token_required
+from backend.src.middleware.auth_middleware import token_required, maybe_token_required
 from backend.src.middleware.rate_limiter import limiter
 
 auth_api = Blueprint("auth_api", __name__)
@@ -263,10 +263,16 @@ def test_auth_api(db_conn, uid):
 
 
 @auth_api.get("/auth/logout")
-@token_required
-@give_connection
-def logout(db_conn, uid):
+@maybe_token_required
+def logout(uid):
     try:
+        if uid is None:
+            return (
+                {"message": "No token anyway."},
+                200,
+                {"Content-Type": "application/json"},
+            )
+
         token = Global.tokens.pop(uid)
         if token is None:
             return (
