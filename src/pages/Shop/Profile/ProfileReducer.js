@@ -1,99 +1,102 @@
 export const ACTION_TYPES = {
-  SET_NAME: "SET_NAME",
-  SET_NAME_FOCUS: "SET_NAME_FOCUS",
-  SET_DESCRIPTION: "SET_DESCRIPTION",
-  SET_DESCRIPTION_FOCUS: "SET_DESCRIPTION_FOCUS",
-  SET_CATEGORY: "SET_CATEGORY",
-  SET_PRICE: "SET_PRICE",
-  ADD_CUSTOMIZATION: "ADD_CUSTOMIZATION",
-  SET_CUSTOMIZATION: "SET_CUSTOMIZATION",
-  RESET_CUSTOMIZATION: "RESET_CUSTOMIZATION",
-  SET_AVAILABILITY: "SET_AVAILABILITY",
-  SET_DELIVERYOPTION: "SET_DELIVERYOPTION",
-  ADD_IMAGE: "ADD_IMAGE",
-  SET_IMAGE: "SET_IMAGE",
-  SET_IMAGE_URL: "SET_IMAGE_URL",
+  SET_PHONE: "SET_PHONE",
+  SET_PHONE_FOCUS: "SET_PHONE_FOUCS",
+  SET_VALID_PHONE: "SET_VALID_PHONE",
+
+  USERNAME: "USERNAME",
+
+  FACEBOOK: "FACEBOOK",
+  INSTAGRAM: "INSTAGRAM",
+  TIKTOK: "TIKTOK",
+  TELEGRAM: "TELEGRAM",
+
+  IMAGE: "IMAGE",
+
+  SET_CONTACTINFO: "SET_CONTACTINFO",
+
   SET_ERROR: "SET_ERROR",
   SET_SUCCESS: "SET_SUCCESS",
-  SET_DURING_SUBMIT: "SET_DURING_SUBMIT",
-  SET_GET_CATEGORY: "SET_GET_CATEGORY",
-  SET_CATEGORY_DROPDOWN: "SET_CATEGORY_DROPDOWN",
 };
 
 export const INITIAL_STATE = {
-  duringSubmit: false,
+  phone: "",
+  validPhone: false,
+  phoneFocus: false,
 
-  name: "",
-  nameFocus: false,
+  image: "",
+  user: "",
 
-  description: "",
-  descriptionFocus: false,
+  customization: [
+    { facebook: [""], instagram: [""], tiktok: [""], telegram: [""] },
+  ],
 
-  deliveryOption: "",
-
-  image: [],
-  imageUrl: { images: [] },
-
-  errMessage: "",
-  sucess: "",
+  errorMsg: "",
+  success: "",
 };
 
-export const addProductReducer = (state, action) => {
+export const profileReducer = (state, action) => {
   switch (action.type) {
-    case ACTION_TYPES.SET_NAME:
+    case ACTION_TYPES.SET_PHONE:
       return {
         ...state,
-        name: action.payload,
+        phone: action.payload,
       };
-    case ACTION_TYPES.SET_NAME_FOCUS:
-      return {
-        nameFocus: !state.nameFocus,
-      };
-    case ACTION_TYPES.SET_DESCRIPTION:
+    case ACTION_TYPES.SET_PHONE_FOCUS:
       return {
         ...state,
-        description: action.payload,
+        phoneFocus: action.payload,
       };
-    case ACTION_TYPES.SET_DESCRIPTION_FOCUS:
-      return {
-        descriptionFocus: !state.descriptionFocus,
-      };
-    case ACTION_TYPES.SET_DELIVERYOPTION:
+    case ACTION_TYPES.SET_VALID_PHONE:
       return {
         ...state,
-        deliveryOption: action.payload,
-      };
-    case ACTION_TYPES.ADD_IMAGE:
-      return {
-        ...state,
-        image: [...(state.image || []), action.payload],
-      };
-    case ACTION_TYPES.SET_IMAGE:
-      return {
-        ...state,
-        image: action.payload,
-      };
-    case ACTION_TYPES.SET_IMAGE_URL:
-      return {
-        ...state,
-        imageUrl: action.payload,
+        validPhone: action.payload,
       };
     case ACTION_TYPES.SET_ERROR:
       return {
         ...state,
-        errMessage: action.payload,
+        errorMsg: action.payload,
       };
     case ACTION_TYPES.SET_SUCCESS:
       return {
         ...state,
         success: action.payload,
       };
-    case ACTION_TYPES.SET_DURING_SUBMIT:
+    case ACTION_TYPES.FACEBOOK:
       return {
         ...state,
-        duringSubmit: action.payload,
+        customization: [
+          { ...state.customization[0], facebook: action.payload },
+        ],
       };
-
+    case ACTION_TYPES.INSTAGRAM:
+      return {
+        ...state,
+        customization: [
+          { ...state.customization[0], instagram: action.payload },
+        ],
+      };
+    case ACTION_TYPES.TIKTOK:
+      return {
+        ...state,
+        customization: [{ ...state.customization[0], tiktok: action.payload }],
+      };
+    case ACTION_TYPES.TELEGRAM:
+      return {
+        ...state,
+        customization: [
+          { ...state.customization[0], telegram: action.payload },
+        ],
+      };
+    case ACTION_TYPES.USERNAME:
+      return {
+        ...state,
+        user: action.payload,
+      };
+    case ACTION_TYPES.IMAGE:
+      return {
+        ...state,
+        image: action.payload,
+      };
     default:
       return state;
   }

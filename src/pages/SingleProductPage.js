@@ -145,20 +145,20 @@ const SingleProductPage = () => {
       }
       setSubmitting(false);
       // openModal(false)
-          Swal.fire({
-            title: "Product rated",
-            text: "Thanks for your feedback",
-            icon: "success",
-            confirmButtonColor: "#936a53",
-            confirmButtonText: "Close",
-          });
+      Swal.fire({
+        title: "Product rated",
+        text: "Thanks for your feedback",
+        icon: "success",
+        confirmButtonColor: "#936a53",
+        confirmButtonText: "Close",
+      });
     } catch (err) {
       console.log(err.response.data);
       if (err?.response.data.error_code == "BX0001") {
         cookies.remove("jwt_authorization");
         navigate("/login", { replace: true });
       }
-      setSubmitting(true);
+      setSubmitting(false);
     }
   };
 
@@ -330,6 +330,21 @@ const SingleProductPage = () => {
             <div className="text-2xl font-semibold text-gray-600 underline text-center">
               User review
             </div>
+            {reivewComment.reviews > 0 ? (
+              reivewComment.reviews.map((review, idx) => (
+                <div key={idx} className="border-2 rounded-lg p-4 py-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="text-lg">{review.username}</div>
+                    <div className="flex items-center justify-center">
+                      <Stars stars={review.rating} />
+                    </div>
+                  </div>
+                  <div className="text-md text-gray-600">{review.comment}</div>
+                </div>
+              ))
+            ) : (
+              <div>No review</div>
+            )}
             {/* {reivewComment?.reviews.map((review, idx) => (
               <div key={idx} className="border-2 rounded-lg p-4 py-2">
                 <div className="flex items-center justify-between gap-2">
@@ -355,17 +370,8 @@ const SingleProductPage = () => {
           <section>
             <div className="flex gap-2">
               <h2>{name}</h2>
-              <Stars stars={rating} reviews={deliveryOption} />
             </div>
-            <div className="flex gap-2 mb-2">
-              <div onClick={() => getCommentModal()} className="btn">
-                View ratings
-              </div>
-
-              <div onClick={() => getModal()} className="btn">
-                Rate product
-              </div>
-            </div>
+            <Stars stars={rating} reviews={deliveryOption} />
             <h5 className="price">{formatPrice(price)}</h5>
             <p className="desc">{description}</p>
             <p className="info">
@@ -384,6 +390,15 @@ const SingleProductPage = () => {
               <span>Delivery option: </span>
               {deliveryOption}
             </p>
+            <div className="flex gap-2">
+              <div onClick={() => getCommentModal()} className="btn">
+                View ratings
+              </div>
+
+              <div onClick={() => getModal()} className="btn">
+                Rate product
+              </div>
+            </div>
             <p className="info"></p>
             <hr />
             {availability > 0 ? (

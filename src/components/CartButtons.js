@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaShoppingCart, FaUserMinus, FaUserPlus } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useProductsContext } from "../context/products_context";
 import { useCartContext } from "../context/cart_context";
 import Cookies from "universal-cookie";
+import axios from "axios";
 
 const CartButtons = () => {
   const cookies = new Cookies();
@@ -12,6 +13,11 @@ const CartButtons = () => {
   const { closeSidebar } = useProductsContext();
   const { total_items } = useCartContext();
   const data = cookies.get("jwt_authorization");
+  const token = cookies.get("jwt_authorization");
+  const [profile, setProfile] = useState();
+  const [name, setName] = useState();
+  const pathname = window.location.pathname;
+  const [currentUrl, setCurrentUrl] = React.useState(pathname);
 
   const logout = () => {
     cookies.remove("jwt_authorization");
@@ -21,6 +27,31 @@ const CartButtons = () => {
   const login = () => {
     navigate("/login");
   };
+
+  const handleFetch = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/customization`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Basic ${token}`,
+          },
+        }
+      );
+      setProfile(response.data.customization.image);
+      setName(response.data.customization.username);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    setCurrentUrl(pathname);
+    setTimeout(() => {
+      handleFetch();
+    }, 500);
+  }, [pathname]);
 
   const [dropDown, setDropDown] = useState(false);
 
@@ -39,8 +70,14 @@ const CartButtons = () => {
           className="relative cursor-pointer"
         >
           <div className="flex gap-2 items-center">
-            <div className="cart-btn">Username</div>
-            <div className="rounded-full w-10 h-10 bg-gray-200"></div>
+            <div className="cart-btn">{name}</div>
+            <div className="w-10 h-10 rounded-full bg-gray-200 border">
+              <img
+                className="w-full h-full rounded-full object-cover"
+                alt="preview image"
+                src={profile}
+              />
+            </div>
           </div>
           <div
             id="dropdown"
@@ -94,7 +131,6 @@ const Wrapper = styled.div`
   grid-template-columns: 1fr 1fr;
   align-items: center;
   width: 225px;
-  gap: 1.5rem;
 
   .cart-btn {
     color: var(--clr-grey-1);
