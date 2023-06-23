@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 const Verify = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  console.log(searchParams.get("token"));
 
   const handleVerify = async (e) => {
     let verifyToken = { token: searchParams.get("token") };

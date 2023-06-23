@@ -64,13 +64,10 @@ const SingleProductPage = () => {
             } else {
               inputData[i] = false;
             }
-            console.log(response.data.rating);
           }
           setProductRating(inputData);
           setComment(response.data.comment);
           setHaveRating(response.data.id);
-          console.log(inputData);
-          console.log("RESPONSE: ", response);
         }
         setOpenModal(true);
       } catch (error) {
@@ -78,7 +75,6 @@ const SingleProductPage = () => {
           navigate("/login");
         }
         setOpenModal(true);
-        console.log(error.response);
       }
     }
   };
@@ -94,9 +90,7 @@ const SingleProductPage = () => {
       if (response && response.data) {
         setReviewComment(response.data);
       }
-      console.log(reivewComment);
     } catch (error) {
-      console.log(error);
     }
   };
 
@@ -117,8 +111,6 @@ const SingleProductPage = () => {
       rating: ratingInput,
       comment: comment,
     });
-    console.log("data");
-    console.log(data);
     try {
       if (haveRating) {
         const response = await axios.patch(
@@ -153,7 +145,6 @@ const SingleProductPage = () => {
         confirmButtonText: "Close",
       });
     } catch (err) {
-      console.log(err.response.data);
       if (err?.response.data.error_code == "BX0001") {
         cookies.remove("jwt_authorization");
         navigate("/login", { replace: true });
@@ -200,8 +191,6 @@ const SingleProductPage = () => {
     owner,
     category,
   } = product;
-
-  console.log(product);
 
   return (
     <Wrapper>
@@ -330,7 +319,7 @@ const SingleProductPage = () => {
             <div className="text-2xl font-semibold text-gray-600 underline text-center">
               User review
             </div>
-            {reivewComment.reviews > 0 ? (
+            {reivewComment.reviews?.length >= 1 ? (
               reivewComment.reviews.map((review, idx) => (
                 <div key={idx} className="border-2 rounded-lg p-4 py-2">
                   <div className="flex items-center justify-between gap-2">
@@ -345,17 +334,6 @@ const SingleProductPage = () => {
             ) : (
               <div>No review</div>
             )}
-            {/* {reivewComment?.reviews.map((review, idx) => (
-              <div key={idx} className="border-2 rounded-lg p-4 py-2">
-                <div className="flex items-center justify-between gap-2">
-                  <div className="text-lg">{review.username}</div>
-                  <div className="flex items-center justify-center">
-                    <Stars stars={review.rating} />
-                  </div>
-                </div>
-                <div className="text-md text-gray-600">{review.comment}</div>
-              </div>
-            ))} */}
           </div>
         </div>
       </div>

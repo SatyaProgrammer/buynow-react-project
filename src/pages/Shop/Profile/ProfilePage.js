@@ -182,7 +182,7 @@ const ProfilePage = () => {
                       {console.log(profile)}
                       <img
                         className="w-full h-full rounded-full object-cover"
-                        alt="preview image"
+                        alt=""
                         src={profile}
                       />
                     </div>

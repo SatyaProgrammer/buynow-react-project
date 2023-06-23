@@ -5,7 +5,13 @@ import {
   INITIAL_STATE,
   ACTION_TYPES,
 } from "./EditProductReducer";
-import { IconPlus, IconBin, IconAlert, IconCheck, IconCross } from "../utils/Icons";
+import {
+  IconPlus,
+  IconBin,
+  IconAlert,
+  IconCheck,
+  IconCross,
+} from "../utils/Icons";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import {
@@ -89,16 +95,6 @@ const EditProduct = () => {
     dispatch({ type: ACTION_TYPES.SET_IS_FILE, payload: inputData });
   };
 
-  // console.log(state.name);
-  // console.log(state.description);
-  // console.log(state.category);
-  // console.log(state.price);
-  // console.log(state.customization);
-  // console.log(state.availability);
-  // console.log(state.deliveryOption);
-  // console.log(state.image);
-  // console.log(state.imageUrl);
-
   const fetchCategory = async () => {
     try {
       const response = await axios.get(
@@ -112,7 +108,10 @@ const EditProduct = () => {
         });
       }
     } catch (err) {
-      console.log(err.response);
+      dispatch({
+        type: ACTION_TYPES.SET_GET_CATEGORY,
+        payload: "something went wrong D:",
+      });
     }
   };
 
@@ -153,9 +152,7 @@ const EditProduct = () => {
         payload: response.data.images.images,
       });
       imageCheck(response.data.images.images);
-    } catch (err) {
-      console.log(err);
-    }
+    } catch (err) {}
 
     try {
       const response = await axios.get(
@@ -168,9 +165,7 @@ const EditProduct = () => {
           payload: response.data,
         });
       }
-    } catch (err) {
-      console.log(err.response);
-    }
+    } catch (err) {}
   };
 
   useEffect(() => {
@@ -221,7 +216,6 @@ const EditProduct = () => {
                 });
               })
               .catch((err) => {
-                console.log(err);
                 dispatch({
                   type: ACTION_TYPES.SET_ERROR,
                   payload: "Image upload fail",
@@ -248,9 +242,6 @@ const EditProduct = () => {
       availability: state.availability,
       deliveryOption: state.deliveryOption,
     });
-
-    console.log("data");
-    console.log(data);
 
     try {
       const response = await axios.post(
@@ -485,7 +476,6 @@ const EditProduct = () => {
                       </div>
 
                       <div className="flex flex-col gap-3 col-span-4 md:col-span-5 lg:col-span-7 xl:col-span-9">
-                        {console.log(state.customization)}
                         {state.customization[key] &&
                         Array.isArray(state.customization[key])
                           ? state.customization[key].map((data, idx) => (

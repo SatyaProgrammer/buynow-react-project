@@ -52,7 +52,7 @@ const AddProduct = () => {
 
   const handleAddSubCustom = (key) => {
     let inputData = state.customization;
-    inputData[key].push("#FFFFFF");
+    inputData[key].push("");
     dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
 
     inputData = colPicker;
@@ -75,14 +75,6 @@ const AddProduct = () => {
     inputData.splice(idx, 1);
     setColPicker(inputData);
   };
-
-  // const handleColPicker = (e, idx) => {
-  //   e.preventDefault();
-  //   let inputData = colPicker;
-  //   inputData[idx] = !inputData[idx];
-  //   console.log(inputData)
-  //   setColPicker(inputData);
-  // };
 
   const handleAddImage = () => {
     let inputData = state.image;
@@ -115,7 +107,10 @@ const AddProduct = () => {
         });
       }
     } catch (err) {
-      console.log(err.response);
+      dispatch({
+        type: ACTION_TYPES.SET_GET_CATEGORY,
+        payload: "Something went wrong D:",
+      });
     }
   };
 
@@ -464,7 +459,6 @@ const AddProduct = () => {
                         </div>
                       </div>
 
-                      {console.log(colPicker)}
                       <div className="flex flex-col gap-3 col-span-4 md:col-span-5 lg:col-span-7 xl:col-span-9">
                         {state.customization[key].map((data, idx) => (
                           <div key={idx}>
