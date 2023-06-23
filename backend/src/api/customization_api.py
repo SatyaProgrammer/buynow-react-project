@@ -2,7 +2,7 @@ import json
 
 from flask import Blueprint, request
 
-from backend.src.lib import Global
+from backend.src.lib import Global, give_connection
 from backend.src.lib.validate import validate_json, validate_phone
 from backend.src.middleware.auth_middleware import token_required
 from backend.src.middleware.rate_limiter import limiter
@@ -12,9 +12,9 @@ cust_api = Blueprint("cust_api", __name__)
 
 @cust_api.get("/customization")
 @token_required
-def get_customization(uid):
+@give_connection
+def get_customization(db_conn, uid):
     try:
-        db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         sql = """\
 SELECT u.id, u.username, c.theme, c.image, c.phone, c.contactInfo
@@ -58,7 +58,8 @@ WHERE u.id = ?;
 @cust_api.put("/customization")
 @token_required
 @limiter.limit("1/second")
-def update_customization(uid):
+@give_connection
+def update_customization(db_conn, uid):
     try:
         data = request.get_json()
 
@@ -96,7 +97,6 @@ def update_customization(uid):
         #         "error": "Invalid phone number",
         #     }, 400, {"Content-Type": "application/json"}
 
-        db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         sql = "UPDATE userscustomization SET theme = %s, image = %s, phone = %s, contactInfo = %s WHERE recipientId = %s"
         cursor.execute(sql, (theme, image, phone, json.dumps(contact_info), uid))
@@ -120,7 +120,8 @@ def update_customization(uid):
 @cust_api.delete("/customization")
 @limiter.limit("1/second")
 @token_required
-def delete_customization(uid):
+@give_connection
+def delete_customization(db_conn, uid):
     try:
         db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)

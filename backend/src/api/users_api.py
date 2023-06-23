@@ -2,7 +2,7 @@ import json
 
 from flask import Blueprint, request
 
-from backend.src.lib import Global
+from backend.src.lib import Global, give_connection
 from backend.src.middleware.auth_middleware import token_required
 from backend.src.middleware.rate_limiter import limiter
 
@@ -11,9 +11,9 @@ users_api = Blueprint("users_api", __name__)
 
 @users_api.get("/users/<uid>")
 @limiter.limit("60/minute")
-def get_user_info(uid):
+@give_connection
+def get_user_info(db_conn, uid):
     try:
-        db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         query = """\
 SELECT u.id, u.username, c.image, c.phone, c.contactInfo
@@ -45,9 +45,9 @@ WHERE u.id = ?;"""
 
 @users_api.get("/users/<uid>/products")
 @limiter.limit("60/minute")
-def get_user_products(uid):
+@give_connection
+def get_user_products(db_conn, uid):
     try:
-        db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         query = """\
 SELECT p.id, p.pid, p.name, p.images, c.name as catName, u.username as ownerName, p.price, p.customization,

@@ -9,6 +9,7 @@ from backend.src.lib import Global
 
 def token_required(f):
     """Decorator function to automatically check for token in request headers."""
+
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
@@ -46,6 +47,36 @@ def token_required(f):
                 500,
                 {"Content-Type": "application/json"},
             )
+
+        return f(user_id, *args, **kwargs)
+
+    return decorated
+
+
+def maybe_token_required(f):
+    """Decorator function to automatically check for token in request headers."""
+
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+        if "Authorization" in request.headers:
+            token = request.headers["Authorization"].split(" ")[1]
+
+        if not token:
+            return f(None, *args, **kwargs)
+
+        try:
+            data = jwt.decode(token, os.getenv("JWT_KEY"), algorithms=["HS256"])
+            user_id = data["user_id"]
+            rel_key = Global.tokens.get(user_id)
+            if rel_key is None:
+                return f(None, *args, **kwargs)
+
+            if rel_key != data["key"]:
+                return f(None, *args, **kwargs)
+        except Exception as e:
+            Global.console.print_exception()
+            return f(None, *args, **kwargs)
 
         return f(user_id, *args, **kwargs)
 

@@ -19,6 +19,7 @@ import { BsStarFill, BsStarHalf, BsStar } from "react-icons/bs";
 import "../components/RatingModal/RatingModal.css";
 import axios from "axios";
 import Cookies from "universal-cookie";
+import Swal from "sweetalert2";
 
 const SingleProductPage = () => {
   const cookies = new Cookies();
@@ -27,8 +28,9 @@ const SingleProductPage = () => {
   const { id } = useParams();
   const history = useNavigate();
   const [openModal, setOpenModal] = useState(false);
+  const [ratingComment, setRatingComment] = useState("");
   const [productRating, setProductRating] = useState([
-    false,
+    true,
     false,
     false,
     false,
@@ -36,11 +38,75 @@ const SingleProductPage = () => {
   ]);
   const [comment, setComment] = useState("");
 
+  const [openCommentModal, setOpenCommentModal] = useState(false);
+  const [myRating, setMyRating] = useState();
+  const [haveRating, setHaveRating] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const getModal = async () => {
+    if (!token) {
+      navigate("/login");
+    } else {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/reviews/${id}/me`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Basic ${token}`,
+            },
+          }
+        );
+        if (response && response.data) {
+          let inputData = productRating;
+          for (let i = 0; i < 5; i++) {
+            if (i < response.data.rating) {
+              inputData[i] = true;
+            } else {
+              inputData[i] = false;
+            }
+            console.log(response.data.rating);
+          }
+          setProductRating(inputData);
+          setComment(response.data.comment);
+          setHaveRating(response.data.id);
+          console.log(inputData);
+          console.log("RESPONSE: ", response);
+        }
+        setOpenModal(true);
+      } catch (error) {
+        if (error.response.data.error_code == "BX0001") {
+          navigate("/login");
+        }
+        setOpenModal(true);
+        console.log(error.response);
+      }
+    }
+  };
+
+  const [reivewComment, setReviewComment] = useState([]);
+  const getCommentModal = async () => {
+    setOpenCommentModal(true);
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/reviews/${id}`
+      );
+
+      if (response && response.data) {
+        setReviewComment(response.data);
+      }
+      console.log(reivewComment);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const onClose = () => {
     setOpenModal(false);
+    setOpenCommentModal(false);
   };
 
   const handleSubmit = async () => {
+    setSubmitting(true);
     let ratingInput = 0;
     for (let i = 0; i < productRating.length; i++) {
       if (productRating[i] === true) {
@@ -53,25 +119,46 @@ const SingleProductPage = () => {
     });
     console.log("data");
     console.log(data);
-    console.log("test");
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/reviews/${id}`,
-        data,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Basic ${token}`,
-          },
-        }
-      );
-      console.log(response);
+      if (haveRating) {
+        const response = await axios.patch(
+          `${process.env.REACT_APP_BACKEND_URL}/reviews/${id}/${haveRating}`,
+          data,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Basic ${token}`,
+            },
+          }
+        );
+      } else {
+        const response = await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}/reviews/${id}`,
+          data,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Basic ${token}`,
+            },
+          }
+        );
+      }
+      setSubmitting(false);
+      // openModal(false)
+          Swal.fire({
+            title: "Product rated",
+            text: "Thanks for your feedback",
+            icon: "success",
+            confirmButtonColor: "#936a53",
+            confirmButtonText: "Close",
+          });
     } catch (err) {
       console.log(err.response.data);
       if (err?.response.data.error_code == "BX0001") {
         cookies.remove("jwt_authorization");
         navigate("/login", { replace: true });
       }
+      setSubmitting(true);
     }
   };
 
@@ -129,7 +216,7 @@ const SingleProductPage = () => {
           <div className="w-full flex justify-end">
             <div
               onClick={onClose}
-              className="w-6 h-6 hover:scale-110 transition-all duration-300"
+              className="w-6 h-6 hover:scale-110 transition-all duration-300 cursor-pointer"
             >
               <IconCross />
             </div>
@@ -194,14 +281,6 @@ const SingleProductPage = () => {
                   </div>
                 ))}
               </div>
-              <div
-                onClick={() =>
-                  setProductRating([false, false, false, false, false])
-                }
-                className="text-sm text-grey4 underline cursor-pointer"
-              >
-                Reset rating
-              </div>
             </div>
             <div className="flex flex-col gap-2">
               <div className="text-xl font-semibold text-cldark">Review</div>
@@ -218,9 +297,50 @@ const SingleProductPage = () => {
             </div>
           </div>
           <div className=" mt-4 w-full flex justify-center">
-            <button onClick={handleSubmit} className="btn">
-              Submit
-            </button>
+            {submitting ? (
+              <div className="btn">Submitting...</div>
+            ) : (
+              <button onClick={handleSubmit} className="btn">
+                Submit
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+      <div
+        onClick={onClose}
+        className={openCommentModal ? "overlay" : "hidden"}
+      >
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          className="modalContainer p-4 flex flex-col "
+        >
+          <div className="w-full flex justify-end">
+            <div
+              onClick={onClose}
+              className="w-6 h-6 hover:scale-110 transition-all duration-300 cursor-pointer"
+            >
+              <IconCross />
+            </div>
+          </div>
+          <div className="w-full h-80 flex flex-col gap-4">
+            {haveRating ? "" : ""}
+            <div className="text-2xl font-semibold text-gray-600 underline text-center">
+              User review
+            </div>
+            {/* {reivewComment?.reviews.map((review, idx) => (
+              <div key={idx} className="border-2 rounded-lg p-4 py-2">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="text-lg">{review.username}</div>
+                  <div className="flex items-center justify-center">
+                    <Stars stars={review.rating} />
+                  </div>
+                </div>
+                <div className="text-md text-gray-600">{review.comment}</div>
+              </div>
+            ))} */}
           </div>
         </div>
       </div>
@@ -233,8 +353,19 @@ const SingleProductPage = () => {
         <div className="product-center">
           <ProductImages images={images} />
           <section>
-            <h2>{name}</h2>
-            <Stars stars={rating} reviews={deliveryOption} />
+            <div className="flex gap-2">
+              <h2>{name}</h2>
+              <Stars stars={rating} reviews={deliveryOption} />
+            </div>
+            <div className="flex gap-2 mb-2">
+              <div onClick={() => getCommentModal()} className="btn">
+                View ratings
+              </div>
+
+              <div onClick={() => getModal()} className="btn">
+                Rate product
+              </div>
+            </div>
             <h5 className="price">{formatPrice(price)}</h5>
             <p className="desc">{description}</p>
             <p className="info">
@@ -263,7 +394,6 @@ const SingleProductPage = () => {
               </h2>
             )}
             {/* {availability > 0 && <AddToCart product={product} />} */}
-            <div onClick={() => setOpenModal(true)}>Rate product</div>
           </section>
         </div>
       </div>

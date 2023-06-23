@@ -2,7 +2,7 @@ import json
 
 from flask import Blueprint, request
 
-from backend.src.lib import Global
+from backend.src.lib import Global, give_connection
 from backend.src.lib.passwd import make_product_id
 from backend.src.lib.validate import base64_valid, validate_json, validate_verified
 from backend.src.middleware.auth_middleware import token_required
@@ -31,6 +31,13 @@ def get_product(product_id: str):
         )
 
     result = Product.pid(product_id)
+    if result is None:
+        return (
+            {"error_code": "BX1102", "error": "No product found."},
+            404,
+            {"Content-Type": "application/json"},
+        )
+
     return (
         {
             "pid": result["pid"],
@@ -75,6 +82,13 @@ def get_matching_products():
             result = Product.fetch_matching(
                 [], search_criteria, offset, limit, sort_newest=True
             )
+            if result == []:
+                return (
+                    {"error_code": "BX1102", "error": "No products found."},
+                    404,
+                    {"Content-Type": "application/json"},
+                )
+
             res = list(
                 map(
                     lambda r: {
@@ -106,9 +120,9 @@ def get_matching_products():
 @prod_api.post("/products/add")
 @limiter.limit("5 per minute")
 @token_required
-def add_products(uid):
+@give_connection
+def add_products(db_conn, uid):
     try:
-        db_conn = Global.db_conn
         if not validate_verified(db_conn, uid):
             return (
                 {"error_code": "BX0002", "error": "Not verified."},
@@ -178,7 +192,7 @@ def add_products(uid):
         )
 
         if res.is_ok():
-            return {"pid": pid}, 200, {"Content-Type": "application/json"}
+            return {"pid": pid}, 201, {"Content-Type": "application/json"}
         else:
             Global.console.print(res.unwrap_err())
             return (

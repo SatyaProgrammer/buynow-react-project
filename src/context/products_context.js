@@ -59,7 +59,9 @@ export const ProductsProvider = ({ children }) => {
       const response = await axios.get(url, {
         headers: { "Content-Type": "application/json" },
       });
+      console.log(response);
       const singleProduct = response.data;
+      console.log("Fetch single: ", singleProduct);
       dispatch({ type: GET_SINGLE_PRODUCT_SUCCESS, payload: singleProduct });
     } catch (error) {
       dispatch({ type: GET_SINGLE_PRODUCT_ERROR });

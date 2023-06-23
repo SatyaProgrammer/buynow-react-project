@@ -10,7 +10,6 @@ from rich.console import Console
 from backend.src.utils.reserved.reserved_keywords import RESERVED
 from backend.src.utils.table import MigratorQueue
 
-load_dotenv(dotenv_path=".env.local")
 console = Console()
 
 
@@ -25,22 +24,22 @@ def create_migration_file(table_name: str):
     if len(table_name) > 32:
         console.print("[red]Not creating migration file.[/red]")
         console.print_exception()
-        return
+        exit(1)
 
     if any(x in table_name for x in ["$", " ", "/", "."]):
         console.print("[red]Not creating migration file.[/red]")
         console.print_exception()
-        return
+        exit(1)
 
     if is_digits(table_name):
         console.print("[red]Not creating migration file.[/red]")
         console.print_exception()
-        return
+        exit(1)
 
     if table_name in RESERVED:
         console.print("[red]Not creating migration file.[/red]")
         console.print_exception()
-        return
+        exit(1)
 
     filename = os.path.join(
         os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
@@ -100,7 +99,7 @@ def rollback_database(db_conn: msc.MySQLConnection) -> None:
     except Exception as e:
         console.print("[red]Failed to rollback database.[/red]")
         console.print_exception()
-        return
+        exit(1)
 
 
 def migrate_database(db_conn: msc.MySQLConnection) -> None:
@@ -123,13 +122,13 @@ def migrate_database(db_conn: msc.MySQLConnection) -> None:
     except Exception as e:
         console.print("[red]Failed to migrate database.[/red]")
         console.print_exception()
-        return
+        exit(1)
 
     result = MigratorQueue.commit(db_conn)
     if result.is_err():
         console.print("[red]Failed to migrate database.[/red]")
         console.print(f"Why: {result.unwrap_err()}")
-        return
+        exit(1)
 
     console.print("[green]Migrated database.[/green]")
 
@@ -147,7 +146,7 @@ def flush_database(db_conn: msc.MySQLConnection) -> None:
     except Exception as e:
         console.print("[red]Failed to flush database.[/red]")
         console.print_exception()
-        return
+        exit(1)
 
 
 def main() -> None:
@@ -167,7 +166,33 @@ def main() -> None:
     ap.add_argument("-n", "--new", action="store", help="create a new migration file")
     ap.add_argument("-r", "--rollback", action="store_true", help="drop the database")
     ap.add_argument("-f", "--flush", action="store_true", help="recreate the database")
+    ap.add_argument("-t", "--test", action="store", help="test the database")
+
     args = vars(ap.parse_args())
+
+    if args["test"]:
+        dsn = args["test"]
+        pattern = r"HOST=([a-zA-Z0-9.-_]+);PORT=([\d]+);DB=([a-zA-Z0-9.-_]+);USER=([a-zA-Z0-9.-_]+);PWD=([a-zA-Z0-9.-_]*)"
+        mch = re.search(pattern, string=dsn)
+        if mch is None:
+            console.print("[red]Invalid DSN.[/red]")
+            exit(code=1)
+
+        host = mch.group(1)
+        port = mch.group(2)
+        db = mch.group(3)
+        user = mch.group(4)
+        pwd = mch.group(5)
+
+        os.environ["DB_HOST"] = host
+        os.environ["DB_PORT"] = str(port)
+        os.environ["DB_NAME"] = db
+        os.environ["DB_USER"] = user
+
+        if pwd != "":
+            os.environ["DB_PASS"] = pwd
+    else:
+        load_dotenv(dotenv_path=".env.local")
 
     try:
         db_conn = msc.connect(
@@ -182,22 +207,22 @@ def main() -> None:
             "[red]Failed to create a database connection, not even trying.[/red]"
         )
         console.print_exception()
-        return
+        exit(1)
 
     if args["new"]:
         create_migration_file(args.get("new").lower())
-        return
+        exit(0)
 
     if args["flush"]:
         flush_database(db_conn)
-        return
+        exit(0)
 
     if args["rollback"]:
         rollback_database(db_conn)
-        return
+        exit(0)
 
     migrate_database(db_conn)
-    pass
+    exit(0)
 
 
 if __name__ == "__main__":

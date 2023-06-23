@@ -13,6 +13,7 @@ from backend.src.lib.graph import Graph, matrix_transpose, topological_sort
 class MigratorQueue:
     queue: list[tuple[str, Table]] = []
 
+    @staticmethod
     def commit(db: msc.MySQLConnection) -> Result[None, str]:
         # check that all tables are unique
         for i in range(len(MigratorQueue.queue)):
@@ -66,8 +67,8 @@ class MigratorQueue:
 
         # starts committing
         for i in top_sort_res.unwrap():
-            table: Table = MigratorQueue.queue[i][1]
-            com_res = table.commit(db)
+            table_r: Table = MigratorQueue.queue[i][1]
+            com_res = table_r.commit(db)
             if com_res.is_err():
                 return Result.Err(com_res.unwrap_err())
 
@@ -95,8 +96,8 @@ PRIMARY KEY (`id`)
         batch_id = last_batch_id + 1
 
         for i, idx in enumerate(top_sort_res.unwrap()):
-            table = MigratorQueue.queue[idx][1]
-            query = f"INSERT INTO `migrations_log` (`name`, `table_name`, `batch_id`, `order_id`) VALUES ('migration_{table.name}', '{table.name}', {batch_id}, {i});"
+            table_r = MigratorQueue.queue[idx][1]
+            query = f"INSERT INTO `migrations_log` (`name`, `table_name`, `batch_id`, `order_id`) VALUES ('migration_{table_r.name}', '{table_r.name}', {batch_id}, {i});"
             cursor.execute(query)
 
         db.commit()
@@ -327,7 +328,7 @@ class Table:
 );
 """
 
-        print(f"Trying: {sql}")
+        # print(f"Trying: {sql}")
         try:
             cursor.execute(sql)
         except msc.Error as e:
@@ -364,7 +365,7 @@ class Table:
 
             seed_sql += ";"
 
-            print(f"Executing seed: {seed_sql}")
+            # print(f"Executing seed: {seed_sql}")
 
             try:
                 cursor.execute(seed_sql)
