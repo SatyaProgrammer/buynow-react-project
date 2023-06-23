@@ -159,10 +159,22 @@ const SingleProductPage = () => {
     fetchSingleProduct,
   } = useProductsContext();
 
-  const fetchVenderInfo = () => {};
+  const fetchVenderInfo = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/users/${product.ownerId}`
+      );
+      if (response) {
+        console.log("URAH: ", response.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     fetchSingleProduct(`${process.env.REACT_APP_BACKEND_URL}/products/${id}`);
+    fetchVenderInfo();
   }, [id]);
 
   useEffect(() => {
@@ -192,8 +204,6 @@ const SingleProductPage = () => {
     owner,
     category,
   } = product;
-
-  console.log(product);
 
   return (
     <Wrapper>
