@@ -14,6 +14,7 @@ from backend.src.api.dashboard_api import dashboard_api
 from backend.src.api.orders_api import orders_api
 from backend.src.api.products_api import prod_api
 from backend.src.api.reviews_api import reviews_api
+from backend.src.api.users_api import users_api
 from backend.src.lib import Global
 from backend.src.lib.db import create_connection, msc
 from backend.src.middleware.rate_limiter import limiter
@@ -60,6 +61,7 @@ app.register_blueprint(cust_api, subdomain="api")
 app.register_blueprint(orders_api, subdomain="api")
 app.register_blueprint(dashboard_api, subdomain="api")
 app.register_blueprint(reviews_api, subdomain="api")
+app.register_blueprint(users_api, subdomain="api")
 
 
 @app.errorhandler(404)

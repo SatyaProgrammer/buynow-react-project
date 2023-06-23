@@ -18,6 +18,7 @@ def get_user_info(db_conn, uid):
         query = """\
 SELECT u.id, u.username, c.image, c.phone, c.contactInfo
 FROM users as u
+INNER JOIN userscustomization as c ON u.id = c.recipientId
 WHERE u.id = ?;"""
 
         cursor.execute(query, (uid,))

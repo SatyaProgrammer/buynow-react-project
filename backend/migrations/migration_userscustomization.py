@@ -26,4 +26,9 @@ def down(db_conn: msc.MySQLConnection):
 # if you need to seed the database
 def seed() -> list[dict]:
     # just return a list of key-value pairs
-    pass
+    return [
+        {
+            "recipientId": 1,
+            "theme": "light",
+        }
+    ]
