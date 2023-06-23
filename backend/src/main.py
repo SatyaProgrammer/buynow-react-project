@@ -1,4 +1,5 @@
 import os
+import sys
 
 from dotenv import load_dotenv
 from flask import Blueprint, Flask, abort
@@ -17,7 +18,14 @@ from backend.src.lib import Global
 from backend.src.lib.db import create_connection, msc
 from backend.src.middleware.rate_limiter import limiter
 
-load_dotenv(dotenv_path=".env.local")
+if len(sys.argv) > 1:
+    if sys.argv[1] == "-t":
+        print("RUNNING IN TEST MODE")
+        load_dotenv(dotenv_path=".env.test")
+    else:
+        load_dotenv(dotenv_path=".env.local")
+else:
+    load_dotenv(dotenv_path=".env.local")
 
 app = Flask(__name__, subdomain_matching=True)
 CORS(app)
@@ -137,8 +145,9 @@ def handle_stupid_error_again(e):
         {"Content-Type": "application/json"},
     )
 
+
 def main() -> None:
-    app.run(host="0.0.0.0")
+    app.run(host="0.0.0.0", debug=True)
     pass
 
 

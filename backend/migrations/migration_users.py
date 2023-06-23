@@ -43,7 +43,7 @@ def seed() -> list[dict]:
             "password": "e55409ff3f9e4c3a8cebb5400e9cca20fffb8a5e4c0bee374e8f712adea63d07e5bd7e63f022282df36b26c46f5eb015d79c13efd22e3a003910b8440aa107f3",  # cspell: disable-line
             "salt": "Myg0FpvDRYIBW3bNpkUivR9iFByD41S5",  # cspell: disable-line
             "verified": 1,
-            "admin": 1,
+            "admin": 0,
         },
         {
             # password is "123"

@@ -5,6 +5,8 @@ from mysql.connector.types import RowType
 
 from backend.src.lib.result import Result
 
+from functools import wraps
+
 
 def create_connection() -> Result[msc.MySQLConnection, Exception]:
     """Create a connection to the database.
@@ -24,6 +26,28 @@ def create_connection() -> Result[msc.MySQLConnection, Exception]:
         return Result.ret(db_conn)
     except Exception as e:
         return Result.Err(e)
+
+
+def give_connection(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        __db_conn = create_connection()
+        if __db_conn.is_err():
+            return (
+                {"error_code": "BX0002", "error": "Failed to connect to the database."},
+                500,
+                {"Content-Type": "application/json"},
+            )
+        else:
+            db_conn = __db_conn.unwrap()
+
+            result = f(db_conn, *args, **kwargs)
+
+            destroy_connection(db_conn)
+
+            return result
+
+    return decorated
 
 
 def execute_query(

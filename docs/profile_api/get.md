@@ -24,7 +24,9 @@
     theme: string,
     image: string | null,
     phone: string | null,
-    contact_info: string | null
+    contact_info: {
+        [key: string]: string | string[] | null
+    }
 }
 ```
 

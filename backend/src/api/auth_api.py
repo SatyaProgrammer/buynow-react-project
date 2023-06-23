@@ -5,7 +5,7 @@ import jwt
 from flask import Blueprint, request
 from werkzeug.exceptions import InternalServerError
 
-from backend.src.lib import Global
+from backend.src.lib import Global, give_connection
 from backend.src.lib.mailing import send_forgot_password_email, send_verification_email
 from backend.src.lib.passwd import make_password, safe_compare
 from backend.src.lib.validate import validate_email, validate_password
@@ -16,7 +16,9 @@ auth_api = Blueprint("auth_api", __name__)
 
 
 @auth_api.post("/auth/login")
-def login():
+@limiter.limit("10/minute")
+@give_connection
+def login(db_conn):
     try:
         request_data = request.get_json()
         name = request_data["username"]
@@ -25,7 +27,6 @@ def login():
         # Global.console.print(f"[green]Username: {name}[/green]")
         # Global.console.print(f"[red]Password: {password}[/red]")
 
-        db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True)
 
         sql = "SELECT id, password, salt FROM users WHERE username = %s"
@@ -74,7 +75,8 @@ def login():
 
 @auth_api.post("/auth/register")
 @limiter.limit("3 per minute")
-def register():
+@give_connection
+def register(db_conn):
     try:
         request_data = request.get_json()
         name = request_data["username"]
@@ -102,14 +104,13 @@ def register():
                 {"Content-Type": "application/json"},
             )
 
-        db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True)
 
         sql = "SELECT id FROM users WHERE username = %s"
 
         cursor.execute(sql, (name,))
-
-        if cursor.fetchone() is not None:
+        result = cursor.fetchone()
+        if result is not None:
             return (
                 {"error_code": "BX0204", "error": "Username already exists."},
                 400,
@@ -119,8 +120,8 @@ def register():
         sql = "SELECT id FROM users WHERE email = %s"
 
         cursor.execute(sql, (email,))
-
-        if cursor.fetchone() is not None:
+        result = cursor.fetchone()
+        if result is not None:
             return (
                 {"error_code": "BX0205", "error": "Email already exists."},
                 400,
@@ -147,14 +148,18 @@ def register():
         rel_key = token_urlsafe(16)
         Global.tokens[user_id] = rel_key
 
-        return {
-            "uid": user_id,
-            "token": jwt.encode(
-                {"user_id": user_id, "key": rel_key},
-                os.getenv("JWT_KEY"),
-                algorithm="HS256",
-            ),
-        }, 201, {"Content-Type": "application/json"}
+        return (
+            {
+                "uid": user_id,
+                "token": jwt.encode(
+                    {"user_id": user_id, "key": rel_key},
+                    os.getenv("JWT_KEY"),
+                    algorithm="HS256",
+                ),
+            },
+            201,
+            {"Content-Type": "application/json"},
+        )
     except Exception as e:
         Global.console.print_exception()
         return (
@@ -166,7 +171,8 @@ def register():
 
 @auth_api.post("/auth/verify")
 @limiter.limit("30 per hour")
-def verify_email():
+@give_connection
+def verify_email(db_conn):
     try:
         data = request.get_json()
 
@@ -217,9 +223,9 @@ def verify_email():
 @auth_api.get("/auth/resend_verify")
 @limiter.limit("1 per 60 seconds")
 @token_required
-def resend_verification_email(uid):
+@give_connection
+def resend_verification_email(db_conn, uid):
     try:
-        db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         sql = "SELECT email, username FROM users WHERE id = %s"
         cursor.execute(sql, (uid,))
@@ -229,6 +235,12 @@ def resend_verification_email(uid):
 
         verify_token = token_urlsafe(32)
         send_verification_email(email, name, verify_token)
+
+        return (
+            {"message": "Verification email sent."},
+            200,
+            {"Content-Type": "application/json"},
+        )
     except Exception as e:
         Global.console.print_exception()
         return (
@@ -241,7 +253,8 @@ def resend_verification_email(uid):
 @auth_api.get("/auth/test")
 @limiter.limit("1 per 10 seconds")
 @token_required
-def test_auth_api(uid):
+@give_connection
+def test_auth_api(db_conn, uid):
     return (
         {"message": f"Test successful: {uid}"},
         200,
@@ -251,7 +264,8 @@ def test_auth_api(uid):
 
 @auth_api.get("/auth/logout")
 @token_required
-def logout(uid):
+@give_connection
+def logout(db_conn, uid):
     try:
         token = Global.tokens.pop(uid)
         if token is None:
@@ -335,7 +349,8 @@ def send_forgot_password():
 
 @auth_api.post("/auth/forgot")
 @limiter.limit("3 per minute")
-def forgot_password():
+@give_connection
+def forgot_password(db_conn):
     try:
         data = request.get_json()
 
@@ -371,7 +386,6 @@ def forgot_password():
                 {"Content-Type": "application/json"},
             )
 
-        db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True)
 
         passwd, salt = make_password(password)
@@ -400,7 +414,8 @@ def forgot_password():
 @auth_api.post("/auth/change_password")
 @limiter.limit("3 per minute")
 @token_required
-def change_password(uid):
+@give_connection
+def change_password(db_conn, uid):
     try:
         data = request.get_json()
 
@@ -414,7 +429,6 @@ def change_password(uid):
                 {"Content-Type": "application/json"},
             )
 
-        db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)
 
         sql = "SELECT password, salt FROM users WHERE id = %s"

@@ -23,24 +23,32 @@ class Test:
         raise Exception(message)
 
     @classmethod
-    def assert_true(cls, condition, message):
+    def assert_true(cls, condition, message: str = None):
         if not condition:
-            raise AssertionError(message)
+            if message:
+                raise AssertionError(message)
+            raise AssertionError()
 
     @classmethod
-    def assert_false(cls, condition, message):
+    def assert_false(cls, condition, message: str = None):
         if condition:
-            raise AssertionError(message)
+            if message:
+                raise AssertionError(message)
+            raise AssertionError()
 
     @classmethod
-    def assert_equal(cls, a, b, message):
+    def assert_equal(cls, a, b, message: str = None):
         if a != b:
-            raise AssertionError(message)
+            if message:
+                raise AssertionError(message)
+            raise AssertionError()
 
     @classmethod
-    def assert_not_equal(cls, a, b, message):
+    def assert_not_equal(cls, a, b, message: str = None):
         if a == b:
-            raise AssertionError(message)
+            if message:
+                raise AssertionError(message)
+            raise AssertionError()
 
     @classmethod
     def run(cls):
@@ -64,9 +72,9 @@ class Test:
                         )
                         getattr(cls, method)()
                         cls.console.print("[bold green]OK[/bold green]")
-                    except AssertionError as e:
+                    except Exception as e:
                         if os.getenv("PYTHON_TEST_VERBOSE", "0") == "1":
-                            cls.console.print_exception()
+                            cls.console.print_exception(show_locals=True)
                         cls.console.print(f"[bold red]AssertionError: {e}[/bold red]")
 
             cls.cleanup()
