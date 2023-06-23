@@ -21,7 +21,7 @@ class Product(Model):
         cond, args = Product.criteria_to_arguments(__cond)
         if len(taking) == 0:
             sb = f"""SELECT p.id, p.pid, p.name, p.images, c.name as catName,
-u.username as ownerName, p.price, p.customization, p.rating, p.availability, p.soldAmount,
+u.id as ownerId, u.username as ownerName, p.price, p.customization, p.rating, p.availability, p.soldAmount,
 p.deliveryOption, p.description, p.createdAt FROM products AS p
 INNER JOIN categories AS c ON p.catId = c.id
 INNER JOIN users as u ON p.owner = u.id
@@ -64,7 +64,7 @@ WHERE {cond}
 
         if len(taking) == 0:
             sb = """SELECT p.id, p.pid, p.name, p.images, c.name as catName,
-u.username as ownerName, p.price, p.customization, p.rating, p.availability, p.soldAmount,
+u.id as ownerId, u.username as ownerName, p.price, p.customization, p.rating, p.availability, p.soldAmount,
 p.deliveryOption, p.description, p.createdAt FROM products AS p
 INNER JOIN categories AS c ON p.catId = c.id
 INNER JOIN users as u ON p.owner = u.id"""
@@ -92,7 +92,7 @@ INNER JOIN users as u ON p.owner = u.id"""
 
         if len(taking) == 0:
             sb = """SELECT p.id, p.pid, p.name, p.images, c.name as catName,
-u.username as ownerName, p.price, p.customization, p.rating, p.availability, p.soldAmount,
+u.id as ownerId, u.username as ownerName, p.price, p.customization, p.rating, p.availability, p.soldAmount,
 p.deliveryOption, p.description, p.createdAt FROM products AS p
 INNER JOIN categories AS c ON p.catId = c.id
 INNER JOIN users as u ON p.owner = u.id
@@ -117,7 +117,7 @@ LIMIT %s OFFSET %s"""
         db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True)
         sql = """SELECT p.id, p.pid, p.name, p.images, c.name as catName,
-u.username as ownerName, p.price, p.customization, p.rating, p.availability, p.soldAmount,
+u.id as ownerId, u.username as ownerName, p.price, p.customization, p.rating, p.availability, p.soldAmount,
 p.deliveryOption, p.description, p.createdAt FROM products AS p
 INNER JOIN categories AS c ON p.catId = c.id
 INNER JOIN users as u ON p.owner = u.id
@@ -136,7 +136,7 @@ WHERE p.id = %s"""
         db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True)
         sql = """SELECT p.id, p.pid, p.name, p.images, c.name as catName,
-u.username as ownerName, p.price, p.customization, p.rating, p.availability, p.soldAmount,
+u.id as ownerId, u.username as ownerName, p.price, p.customization, p.rating, p.availability, p.soldAmount,
 p.deliveryOption, p.description, p.createdAt FROM products AS p
 INNER JOIN categories AS c ON p.catId = c.id
 INNER JOIN users as u ON p.owner = u.id
@@ -162,6 +162,7 @@ WHERE p.pid = %s"""
                 "name",
                 "images",
                 "catName",
+                "ownerId",
                 "ownerName",
                 "price",
                 "customization",
@@ -280,6 +281,8 @@ WHERE p.pid = %s AND r.authorId = %s""",
             return "c.name"
         elif k == "ownerName":
             return "u.username"
+        elif k == "ownerId":
+            return "u.id"
         else:
             return f"p.{k}"
 
