@@ -14,8 +14,26 @@ const ProfilePage = () => {
   const [submitting, setSubmitting] = useState(false);
   const cookies = new Cookies();
   const token = cookies.get("jwt_authorization");
+  const navigate = useNavigate();
 
-  const getProfile = async () => {
+  const handleFacebook = (e) => {
+    let data = e.target.value;
+    dispatch({ type: ACTION_TYPES.FACEBOOK, payload: data });
+  };
+  const handleInstagram = (e) => {
+    let data = e.target.value;
+    dispatch({ type: ACTION_TYPES.INSTAGRAM, payload: data });
+  };
+  const handleTiktok = (e) => {
+    let data = e.target.value;
+    dispatch({ type: ACTION_TYPES.TIKTOK, payload: data });
+  };
+  const handleTelegram = (e) => {
+    let data = e.target.value;
+    dispatch({ type: ACTION_TYPES.TELEGRAM, payload: data });
+  };
+
+  const handleFetch = async () => {
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_BACKEND_URL}/customization`,
@@ -27,14 +45,46 @@ const ProfilePage = () => {
         }
       );
       console.log(response);
-    } catch (error) {
-      console.log(error);
+      dispatch({
+        type: ACTION_TYPES.USERNAME,
+        payload: response.data.customization.username,
+      });
+      console.log(response.data.customization.image);
+      setProfile(response.data.customization.image);
+      dispatch({
+        type: ACTION_TYPES.SET_PHONE,
+        payload: response.data.customization.phone,
+      });
+      dispatch({
+        type: ACTION_TYPES.FACEBOOK,
+        payload: response.data.customization.contactInfo.Facebook,
+      });
+      dispatch({
+        type: ACTION_TYPES.INSTAGRAM,
+        payload: response.data.customization.contactInfo.Instagram,
+      });
+      dispatch({
+        type: ACTION_TYPES.TIKTOK,
+        payload: response.data.customization.contactInfo.Tiktok,
+      });
+      dispatch({
+        type: ACTION_TYPES.TELEGRAM,
+        payload: response.data.customization.contactInfo.Telegram,
+      });
+      dispatch({
+        type: ACTION_TYPES.IMAGE,
+        payload: response.data.customization.image,
+      });
+    } catch (err) {
+      console.log(err);
     }
   };
 
   useEffect(() => {
-    getProfile();
-  }, []);
+    setTimeout(() => {
+      handleFetch();
+    }, 500);
+  }, [state.success]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,9 +95,10 @@ const ProfilePage = () => {
         const preset_key = "c003351q";
         const cloud_name = "dlplvjf9l";
         const token = cookies.get("jwt_authorization");
-
+        console.log(profile);
         if (profile) {
-          const file = profile;
+          let blob = await fetch(profile).then((r) => r.blob());
+          const file = blob;
           const formData = new FormData();
           formData.append("file", file);
           formData.append("upload_preset", preset_key);
@@ -70,8 +121,13 @@ const ProfilePage = () => {
           let pData = JSON.stringify({
             theme: "light",
             image: pUrl,
-            phone: null,
-            contactInfo: {},
+            phone: state.phone,
+            contactInfo: {
+              Facebook: state.customization[0].facebook,
+              Instagram: state.customization[0].instagram,
+              Tiktok: state.customization[0].tiktok,
+              Telegram: state.customization[0].telegram,
+            },
           });
           console.log("Data: ", pData);
           await axios.put(
@@ -94,14 +150,14 @@ const ProfilePage = () => {
           payload: "Image upload fail",
         });
       }
-      setProfile("");
       dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: true });
       dispatch({ type: ACTION_TYPES.SET_USERNAME, payload: "" });
       dispatch({
         type: ACTION_TYPES.SET_SUCCESS,
-        payload: "Signup successful",
+        payload: "Update profile successful",
       });
       setSubmitting(false);
+      navigate("/");
     } catch (err) {
       dispatch({
         type: ACTION_TYPES.SET_ERROR,
@@ -115,79 +171,60 @@ const ProfilePage = () => {
     <>
       <div className="p-4 sm:ml-16 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
         <div className=" bg-white shadow-lg flex flex-col gap-6 rounded-md">
-          <div className="text-3xl font-semibold text-primary4 underline px-8 mt-6">
-            Sign up
-          </div>
           <form>
-            <div className="px-8 pb-8">
+            <div className="px-8 pb-8 mt-8">
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col gap-4">
-                  {state.success ? (
-                    <div className="p-3 px-2 grid gap-1 grid-cols-12 bg-green-50 text-clgreen font-semibold rounded-lg border-2 border-green-200">
-                      <div className=" col-span-1 grid justify-center pt-1">
-                        <div className="w-4 h-4">
-                          <IconCheck fill="#25bb32" />
-                        </div>
-                      </div>
-                      <div className="col-span-11">
-                        {state.success}, verify your account with gmail
-                      </div>
+                  {/* image */}
+                  <div className="flex flex-col justify-center items-center">
+                    <h2>{state.user}</h2>
+                    <div className="w-36 h-36 rounded-full bg-gray-200 border">
+                      {console.log(profile)}
+                      <img
+                        className="w-full h-full rounded-full object-cover"
+                        alt="preview image"
+                        src={profile}
+                      />
                     </div>
-                  ) : (
-                    ""
-                  )}
-                  {state.errorMsg ? (
-                    <div className="p-3 px-2 flex gap-1 items-center bg-red-50 text-cldanger font-semibold rounded-lg border-2 border-red-200">
-                      <div className="w-4 h-4">
-                        <IconAlert fill="#bb2525" />
-                      </div>
-                      <div>{state.errorMsg}</div>
-                    </div>
-                  ) : (
-                    ""
-                  )}
-
+                    <label htmlFor="profile" className="btn mt-4">
+                      <input
+                        id="profile"
+                        type="file"
+                        onChange={(event) =>
+                          setProfile(URL.createObjectURL(event.target.files[0]))
+                        }
+                        className="hidden"
+                      />
+                      Update image
+                    </label>
+                  </div>
+                  {/* phone */}
                   <div className="flex flex-col gap-2">
                     <label
-                      htmlFor="username"
-                      className={
-                        !state.validUsername &&
-                        state.username &&
-                        !state.usernameFocus
-                          ? "text-cldanger font-semibold"
-                          : "text-cldark font-semibold"
-                      }
+                      htmlFor="phone"
+                      className="text-cldark font-semibold"
                     >
                       <div className="flex items-center gap-1">
-                        {!state.validUsername &&
-                        state.username &&
-                        !state.usernameFocus ? (
-                          <div className="h-4 w-4">
-                            <IconAlert fill="#bb2525" />
-                          </div>
-                        ) : (
-                          ""
-                        )}
-                        <div>Username</div>
+                        <div>Phone number</div>
                       </div>
                     </label>
                     <input
-                      type="text"
-                      placeholder="Username"
-                      name="username"
-                      id="username"
-                      value={state.username}
+                      type="number"
+                      placeholder="Phone number"
+                      name="phone"
+                      id="phone"
+                      value={state.phone}
                       required
                       autoComplete="off"
                       onChange={(e) =>
                         dispatch({
-                          type: ACTION_TYPES.SET_USERNAME,
+                          type: ACTION_TYPES.SET_PHONE,
                           payload: e.target.value,
                         })
                       }
                       onFocus={() => {
                         dispatch({
-                          type: ACTION_TYPES.SET_USERNAME_FOCUS,
+                          type: ACTION_TYPES.SET_PHONE_FOCUS,
                           payload: true,
                         });
                         dispatch({
@@ -197,33 +234,127 @@ const ProfilePage = () => {
                       }}
                       onBlur={() =>
                         dispatch({
-                          type: ACTION_TYPES.SET_USERNAME_FOCUS,
+                          type: ACTION_TYPES.SET_PHONE_FOCUS,
                           payload: false,
                         })
                       }
-                      className={
-                        !state.validUsername &&
-                        state.username &&
-                        !state.usernameFocus
-                          ? "border border-cldanger w-full p-3 rounded-lg outline-cldanger caret-cldark text-cldanger focus:outline focus:outline-1 focus:border-none"
-                          : "border border-gray-300 w-full p-3 rounded-lg outline-cldark caret-cldark text-cldark focus:outline focus:outline-1 focus-border-none"
-                      }
+                      className="border border-gray-300 w-full p-3 rounded-lg outline-cldark caret-cldark text-cldark focus:outline focus:outline-1 focus-border-none"
                     />
-                    <div
-                      className={
-                        state.usernameFocus &&
-                        !state.validUsername &&
-                        state.username
-                          ? ""
-                          : "hidden"
-                      }
-                    >
-                      <div className="text-xs font-normal text-cldanger">
-                        4 to 24 characters.
-                        <br />
-                        Must begin with a letter.
-                        <br />
-                        Letters, numbers, underscores, hyphens allowed.
+                  </div>
+                  {/* contact info */}
+                  {console.log(state.customization)}
+                  <div className="flex flex-col gap-2">
+                    <div className="text-xl font-semibold text-cldark">
+                      Contact Info
+                    </div>
+                    <div className="grid grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-3">
+                      <div className="col-span-2 md:col-span-1">
+                        <div className="flex gap-2 items-center">
+                          <div className="flex items-center  border rounded-lg  border-gray-300 focus-within:outline focus-within:outline-1 w-full">
+                            <div className="w-full p-3 rounded-lg  text-cldark text-center">
+                              Facebook
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-3 col-span-4 md:col-span-5 lg:col-span-7 xl:col-span-9">
+                        <div>
+                          <div className="flex gap-2 items-center">
+                            <div className="flex items-center border rounded-lg w-full  border-gray-300 focus-within:outline focus-within:outline-1">
+                              <input
+                                type="text"
+                                placeholder="Facebook"
+                                onChange={(e) => handleFacebook(e)}
+                                value={state.customization[0].facebook}
+                                name="subCustom"
+                                className="focus:outline-none w-full p-3 rounded-lg text-cldark"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="col-span-2 md:col-span-1">
+                        <div className="flex gap-2 items-center">
+                          <div className="flex items-center  border rounded-lg  border-gray-300 focus-within:outline focus-within:outline-1 w-full">
+                            <div className="w-full p-3 rounded-lg  text-cldark text-center">
+                              Instagram
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col gap-3 col-span-4 md:col-span-5 lg:col-span-7 xl:col-span-9">
+                        <div>
+                          <div className="flex gap-2 items-center">
+                            <div className="flex items-center border rounded-lg w-full  border-gray-300 focus-within:outline focus-within:outline-1">
+                              <input
+                                type="text"
+                                placeholder="Instagram"
+                                onChange={(e) => handleInstagram(e)}
+                                value={state.customization[0].instagram}
+                                name="subCustom"
+                                className="focus:outline-none w-full p-3 rounded-lg text-cldark"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-3">
+                      <div className="col-span-2 md:col-span-1">
+                        <div className="flex gap-2 items-center">
+                          <div className="flex items-center  border rounded-lg  border-gray-300 focus-within:outline focus-within:outline-1 w-full">
+                            <div className="w-full p-3 rounded-lg  text-cldark text-center">
+                              Tiktok
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col gap-3 col-span-4 md:col-span-5 lg:col-span-7 xl:col-span-9">
+                        <div>
+                          <div className="flex gap-2 items-center">
+                            <div className="flex items-center border rounded-lg w-full  border-gray-300 focus-within:outline focus-within:outline-1">
+                              <input
+                                type="text"
+                                placeholder="Tiktok"
+                                onChange={(e) => handleTiktok(e)}
+                                value={state.customization[0].tiktok}
+                                name="subCustom"
+                                className="focus:outline-none w-full p-3 rounded-lg text-cldark"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="col-span-2 md:col-span-1">
+                        <div className="flex gap-2 items-center">
+                          <div className="flex items-center  border rounded-lg  border-gray-300 focus-within:outline focus-within:outline-1 w-full">
+                            <div className="w-full p-3 rounded-lg  text-cldark text-center">
+                              Telegram
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col gap-3 col-span-4 md:col-span-5 lg:col-span-7 xl:col-span-9">
+                        <div>
+                          <div className="flex gap-2 items-center">
+                            <div className="flex items-center border rounded-lg w-full  border-gray-300 focus-within:outline focus-within:outline-1">
+                              <input
+                                type="text"
+                                placeholder="Telegram"
+                                onChange={(e) => handleTelegram(e)}
+                                value={state.customization[0].telegram}
+                                name="subCustom"
+                                className="focus:outline-none w-full p-3 rounded-lg text-cldark"
+                              />
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -238,7 +369,7 @@ const ProfilePage = () => {
                       // onClick={(e) => handleNextPage(e)}
                       className="w-full bg-primary4 text-white font-semibold py-2 text-center border border-primary4 hover:bg-white hover:text-primary4 rounded-md transition-all duration-300 mt-2"
                     >
-                      Submit
+                      Update Profile
                     </button>
                   )}
                 </div>
