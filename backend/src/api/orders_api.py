@@ -1,7 +1,7 @@
 import json
 from flask import Blueprint, request
 
-from backend.src.lib import Global
+from backend.src.lib import Global, give_connection
 from backend.src.middleware.auth_middleware import token_required
 from backend.src.middleware.rate_limiter import limiter
 from backend.src.lib.validate import validate_verified
@@ -12,10 +12,9 @@ orders_api = Blueprint("orders_api", __name__)
 @orders_api.get("/trackings")
 @token_required
 @limiter.limit("10/minute")
-def get_trackings(uid):
+@give_connection
+def get_trackings(db_conn, uid):
     try:
-        db_conn = Global.db_conn
-
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         cursor.execute(
             "SELECT id, userId, createdAt FROM trackings WHERE userId = ?", (uid,)
@@ -36,9 +35,9 @@ def get_trackings(uid):
 @orders_api.post("/trackings")
 @token_required
 @limiter.limit("10/minute")
-def create_tracking(uid):
+@give_connection
+def create_tracking(db_conn, uid):
     try:
-        db_conn = Global.db_conn
         if not validate_verified(db_conn, uid):
             return (
                 {"error_code": "BX0002", "error": "Not verified."},
@@ -132,10 +131,9 @@ def create_tracking(uid):
 @orders_api.get("/trackings/<tracking_number>")
 @token_required
 @limiter.limit("10/minute")
-def get_order(uid, tracking_number):
+@give_connection
+def get_order(db_conn, uid, tracking_number):
     try:
-        db_conn = Global.db_conn
-
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         cursor.execute("SELECT userId FROM trackings WHERE id = ?", (tracking_number,))
         tracking = cursor.fetchone()
@@ -219,12 +217,11 @@ WHERE trackingNumber = ? AND p.owner = ?""",
 @orders_api.post("/trackings/<order_id>")
 @token_required
 @limiter.limit("10/minute")
-def update_order_status(uid, order_id):
+@give_connection
+def update_order_status(db_conn, uid, order_id):
     try:
         data = request.get_json()
         status = data["status"]
-
-        db_conn = Global.db_conn
 
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         sql = """\
@@ -277,11 +274,10 @@ WHERE o.id = ?"""
 @orders_api.get("/trackings/vendor")
 @limiter.limit("10/minute")
 @token_required
+@give_connection
 # get all orders that are related to the vendor's products
-def get_orders_from_vendor(uid):
+def get_orders_from_vendor(db_conn, uid):
     try:
-        db_conn = Global.db_conn
-
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         cursor.execute(
             """\

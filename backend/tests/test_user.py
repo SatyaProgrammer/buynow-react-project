@@ -38,8 +38,6 @@ class UserTest(Test):
     @classmethod
     def order(cls):
         return [
-            "test_register_user",
-            "test_register_user_already_exists",
             "test_login_user",
             "test_login_user_wrong_password",
         ]

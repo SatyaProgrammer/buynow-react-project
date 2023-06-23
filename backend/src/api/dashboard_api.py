@@ -1,7 +1,7 @@
 import json
 from flask import Blueprint, request
 
-from backend.src.lib import Global
+from backend.src.lib import Global, give_connection
 from backend.src.middleware.auth_middleware import token_required
 from backend.src.middleware.rate_limiter import limiter
 
@@ -11,9 +11,9 @@ dashboard_api = Blueprint("dashboard_api", __name__)
 @dashboard_api.get("/dashboard/orders_count")
 @limiter.limit("2/second")
 @token_required
-def get_orders_count(uid):
+@give_connection
+def get_orders_count(db_conn, uid):
     try:
-        db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         query = """SELECT COUNT(*) as count
 FROM orders as o
@@ -36,9 +36,9 @@ WHERE p.owner = ?;"""
 @dashboard_api.get("/dashboard/revenue")
 @limiter.limit("2/second")
 @token_required
-def get_revenue(uid):
+@give_connection
+def get_revenue(db_conn, uid):
     try:
-        db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         query = """SELECT SUM(o.cost) as revenue
 FROM orders as o
@@ -65,10 +65,10 @@ WHERE p.owner = ?;"""
 @dashboard_api.get("/dashboard/customers")
 @limiter.limit("2/second")
 @token_required
-def get_customers(uid):
+@give_connection
+def get_customers(db_conn, uid):
     try:
         # get total customers
-        db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         query = """SELECT COUNT(*) as total_count, COUNT(DISTINCT t.userId) as unique_count
 FROM trackings as t
@@ -100,7 +100,8 @@ WHERE p.owner = ?;"""
 @dashboard_api.get("/dashboard/recent_orders")
 @limiter.limit("2/second")
 @token_required
-def get_recent_orders(uid):
+@give_connection
+def get_recent_orders(db_conn, uid):
     try:
         db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)

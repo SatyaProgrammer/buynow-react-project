@@ -17,20 +17,10 @@
 
 ```ts
 {
-  orders: [
-    {
-      pid: string,
-      quantity: number,
-    },
-    {
-      pid: string,
-      quantity: number,
-    },
-    {
-      pid: string,
-      quantity: number,
-    },
-  ];
+  orders: {
+    pid: string,
+    quantity: number,
+  }[];
 }
 ```
 

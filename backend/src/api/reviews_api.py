@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 
-from backend.src.lib import Global
+from backend.src.lib import Global, give_connection
 from backend.src.lib.validate import base64_valid, validate_verified
 from backend.src.middleware.auth_middleware import token_required, maybe_token_required
 from backend.src.middleware.rate_limiter import limiter
@@ -12,9 +12,9 @@ reviews_api = Blueprint("reviews_api", __name__)
 @reviews_api.get("/reviews/<pid>")
 @limiter.limit("10/minute")
 @maybe_token_required
-def get_reviews(uid, pid: str):
+@give_connection
+def get_reviews(db_conn, uid, pid: str):
     try:
-        db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         cursor.execute(
             """\
@@ -57,9 +57,9 @@ WHERE p.pid = %s AND r.authorId != %s""",
 @reviews_api.post("/reviews/<pid>")
 @limiter.limit("10/minute")
 @token_required
-def add_review(uid, pid):
+@give_connection
+def add_review(db_conn, uid, pid):
     try:
-        db_conn = Global.db_conn
         if not validate_verified(db_conn, uid):
             return (
                 {"error_code": "BX0002", "error": "Not verified."},
@@ -136,7 +136,6 @@ def add_review(uid, pid):
                 {"Content-Type": "application/json"},
             )
 
-        db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         sql = """\
 SELECT id
@@ -178,7 +177,8 @@ VALUES (%s, %s, %s, %s)"""
 @reviews_api.get("/reviews/<pid>/me")
 @limiter.limit("10/minute")
 @token_required
-def get_my_review(uid, pid):
+@give_connection
+def get_my_review(db_conn, uid, pid):
     try:
         if len(pid) != 43:
             return (
@@ -187,7 +187,6 @@ def get_my_review(uid, pid):
                 {"Content-Type": "application/json"},
             )
 
-        db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         cursor.execute(
             """\
@@ -220,7 +219,8 @@ def get_my_review(uid, pid):
 @reviews_api.patch("/reviews/<pid>/<rid>")
 @limiter.limit("10/minute")
 @token_required
-def edit_review(uid, pid, rid):
+@give_connection
+def edit_review(db_conn, uid, pid, rid):
     try:
         data = request.get_json()
         rating = data["rating"]
@@ -233,7 +233,6 @@ def edit_review(uid, pid, rid):
                 {"Content-Type": "application/json"},
             )
 
-        db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         cursor.execute("SELECT * FROM reviews WHERE id = %s", (rid,))
         result = cursor.fetchone()
@@ -303,7 +302,8 @@ def edit_review(uid, pid, rid):
 @reviews_api.delete("/reviews/<pid>/<rid>")
 @limiter.limit("10/minute")
 @token_required
-def delete_review(uid, pid, rid):
+@give_connection
+def delete_review(db_conn, uid, pid, rid):
     try:
         if len(pid) != 43:
             return (
@@ -312,7 +312,6 @@ def delete_review(uid, pid, rid):
                 {"Content-Type": "application/json"},
             )
 
-        db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         cursor.execute("SELECT * FROM reviews WHERE id = %s", (rid,))
         result = cursor.fetchone()

@@ -2,7 +2,7 @@ import json
 
 from flask import Blueprint, request
 
-from backend.src.lib import Global
+from backend.src.lib import Global, give_connection
 from backend.src.lib.passwd import make_product_id
 from backend.src.lib.validate import base64_valid, validate_json, validate_verified
 from backend.src.middleware.auth_middleware import token_required
@@ -120,9 +120,9 @@ def get_matching_products():
 @prod_api.post("/products/add")
 @limiter.limit("5 per minute")
 @token_required
-def add_products(uid):
+@give_connection
+def add_products(db_conn, uid):
     try:
-        db_conn = Global.db_conn
         if not validate_verified(db_conn, uid):
             return (
                 {"error_code": "BX0002", "error": "Not verified."},
