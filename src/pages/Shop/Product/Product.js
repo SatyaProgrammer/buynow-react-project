@@ -35,7 +35,6 @@ const Product = () => {
         }
       });
     if (response && response.data) {
-      console.log(response.data.products);
       if (response.data.length >= 1) {
         dispatch({
           type: ACTION_TYPES.FETCH_SUCCESS,
@@ -64,7 +63,6 @@ const Product = () => {
       );
       navigate("/redirect");
     } catch (err) {
-      console.log(err);
       if (err?.response.data.error_code == "BX0001") {
         cookies.remove("jwt_authorization");
         navigate("/sell/product");
@@ -91,7 +89,6 @@ const Product = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      handleFetch();
     }, "300");
   }, []);
 
@@ -121,7 +118,7 @@ const Product = () => {
               </Link>
             </div>
         
-            <div className="overflow-x-auto table-scrolling min-h-96">
+            <div className="overflow-x-auto table-scrolling page">
               <table className="w-full">
                 <thead className="bg-gray-100">
                   <tr>
