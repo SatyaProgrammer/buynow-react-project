@@ -159,22 +159,8 @@ const SingleProductPage = () => {
     fetchSingleProduct,
   } = useProductsContext();
 
-  const fetchVenderInfo = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_URL}/users/${product.ownerId}`
-      );
-      if (response) {
-        console.log("URAH: ", response.data);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
     fetchSingleProduct(`${process.env.REACT_APP_BACKEND_URL}/products/${id}`);
-    fetchVenderInfo();
   }, [id]);
 
   useEffect(() => {
@@ -184,14 +170,6 @@ const SingleProductPage = () => {
       }, 3000);
     }
   }, [error]);
-
-  if (loading) {
-    return <Loading />;
-  }
-
-  if (error) {
-    return <Error />;
-  }
 
   const {
     name,
@@ -203,7 +181,36 @@ const SingleProductPage = () => {
     deliveryOption,
     owner,
     category,
+    ownerId,
   } = product;
+
+  const fetchVenderInfo = async (ownerID) => {
+    console.log("dfd: ", ownerID);
+    if (ownerID) {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/users/${ownerID}`
+        );
+        if (response) {
+          console.log("URAH: ", response.data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchVenderInfo(ownerId);
+  }, [product]);
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (error) {
+    return <Error />;
+  }
 
   return (
     <Wrapper>
