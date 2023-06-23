@@ -90,8 +90,7 @@ const SingleProductPage = () => {
       if (response && response.data) {
         setReviewComment(response.data);
       }
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   const onClose = () => {
@@ -160,6 +159,8 @@ const SingleProductPage = () => {
     fetchSingleProduct,
   } = useProductsContext();
 
+  const fetchVenderInfo = () => {};
+
   useEffect(() => {
     fetchSingleProduct(`${process.env.REACT_APP_BACKEND_URL}/products/${id}`);
   }, [id]);
@@ -191,6 +192,8 @@ const SingleProductPage = () => {
     owner,
     category,
   } = product;
+
+  console.log(product);
 
   return (
     <Wrapper>
@@ -319,21 +322,25 @@ const SingleProductPage = () => {
             <div className="text-2xl font-semibold text-gray-600 underline text-center">
               User review
             </div>
-            {reivewComment.reviews?.length >= 1 ? (
-              reivewComment.reviews.map((review, idx) => (
-                <div key={idx} className="border-2 rounded-lg p-4 py-2">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="text-lg">{review.username}</div>
-                    <div className="flex items-center justify-center">
-                      <Stars stars={review.rating} />
+            <div className=" overflow-y-scroll dropdown-scrolling p-2">
+              {reivewComment.reviews?.length >= 1 ? (
+                reivewComment.reviews.map((review, idx) => (
+                  <div key={idx} className="border-2 rounded-lg p-4 py-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="text-lg">{review.username}</div>
+                      <div className="flex items-center justify-center">
+                        <Stars stars={review.rating} />
+                      </div>
+                    </div>
+                    <div className="text-md text-gray-600">
+                      {review.comment}
                     </div>
                   </div>
-                  <div className="text-md text-gray-600">{review.comment}</div>
-                </div>
-              ))
-            ) : (
-              <div>No review</div>
-            )}
+                ))
+              ) : (
+                <div>No review</div>
+              )}
+            </div>
           </div>
         </div>
       </div>
