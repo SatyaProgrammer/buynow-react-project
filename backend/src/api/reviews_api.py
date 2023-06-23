@@ -16,28 +16,42 @@ reviews_api = Blueprint("reviews_api", __name__)
 def get_reviews(db_conn, uid, pid: str):
     try:
         cursor = db_conn.cursor(prepared=True, dictionary=True)
-        cursor.execute(
-            """\
-SELECT r.id, u.username, r.rating, r.comment
-FROM reviews as r
-LEFT JOIN users AS u ON u.id = r.authorId
-LEFT JOIN products AS p ON p.id = r.productId
-WHERE p.pid = %s AND r.authorId = %s""",
-            (pid, uid),
-        )
-
-        res_one = cursor.fetchone()
+        if uid is not None:
+            cursor.execute(
+                """\
+    SELECT r.id, u.username, r.rating, r.comment
+    FROM reviews as r
+    LEFT JOIN users AS u ON u.id = r.authorId
+    LEFT JOIN products AS p ON p.id = r.productId
+    WHERE p.pid = %s AND r.authorId = %s""",
+                (pid, uid),
+            )
+            res_one = cursor.fetchone()
+        else:
+            res_one = None
 
         cursor = db_conn.cursor(prepared=True, dictionary=True)
-        cursor.execute(
-            """\
-SELECT r.id, u.username, r.rating, r.comment
-FROM reviews as r
-LEFT JOIN users AS u ON u.id = r.authorId
-LEFT JOIN products AS p ON p.id = r.productId
-WHERE p.pid = %s AND r.authorId != %s""",
-            (pid, uid),
-        )
+        if uid is not None:
+            cursor.execute(
+                """\
+    SELECT r.id, u.username, r.rating, r.comment
+    FROM reviews as r
+    LEFT JOIN users AS u ON u.id = r.authorId
+    LEFT JOIN products AS p ON p.id = r.productId
+    WHERE p.pid = %s AND r.authorId != %s""",
+                (pid, uid),
+            )
+        else:
+            cursor.execute(
+                """\
+    SELECT r.id, u.username, r.rating, r.comment
+    FROM reviews as r
+    LEFT JOIN users AS u ON u.id = r.authorId
+    LEFT JOIN products AS p ON p.id = r.productId
+    WHERE p.pid = %s""",
+                (pid,),
+            )
+
         result = cursor.fetchall()
         cursor.close()
 
