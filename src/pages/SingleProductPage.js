@@ -30,7 +30,7 @@ const SingleProductPage = () => {
   const [openModal, setOpenModal] = useState(false);
   const [ratingComment, setRatingComment] = useState("");
   const [productRating, setProductRating] = useState([
-    false,
+    true,
     false,
     false,
     false,
@@ -145,7 +145,13 @@ const SingleProductPage = () => {
       }
       setSubmitting(false);
       // openModal(false)
-      Swal.fire("The Internet?", "That thing is still around?", "success");
+          Swal.fire({
+            title: "Product rated",
+            text: "Thanks for your feedback",
+            icon: "success",
+            confirmButtonColor: "#936a53",
+            confirmButtonText: "Close",
+          });
     } catch (err) {
       console.log(err.response.data);
       if (err?.response.data.error_code == "BX0001") {
@@ -210,7 +216,7 @@ const SingleProductPage = () => {
           <div className="w-full flex justify-end">
             <div
               onClick={onClose}
-              className="w-6 h-6 hover:scale-110 transition-all duration-300"
+              className="w-6 h-6 hover:scale-110 transition-all duration-300 cursor-pointer"
             >
               <IconCross />
             </div>
@@ -275,14 +281,6 @@ const SingleProductPage = () => {
                   </div>
                 ))}
               </div>
-              <div
-                onClick={() =>
-                  setProductRating([false, false, false, false, false])
-                }
-                className="text-sm text-grey4 underline cursor-pointer"
-              >
-                Reset rating
-              </div>
             </div>
             <div className="flex flex-col gap-2">
               <div className="text-xl font-semibold text-cldark">Review</div>
@@ -322,7 +320,7 @@ const SingleProductPage = () => {
           <div className="w-full flex justify-end">
             <div
               onClick={onClose}
-              className="w-6 h-6 hover:scale-110 transition-all duration-300"
+              className="w-6 h-6 hover:scale-110 transition-all duration-300 cursor-pointer"
             >
               <IconCross />
             </div>
@@ -332,7 +330,7 @@ const SingleProductPage = () => {
             <div className="text-2xl font-semibold text-gray-600 underline text-center">
               User review
             </div>
-            {reivewComment?.reviews.map((review, idx) => (
+            {/* {reivewComment?.reviews.map((review, idx) => (
               <div key={idx} className="border-2 rounded-lg p-4 py-2">
                 <div className="flex items-center justify-between gap-2">
                   <div className="text-lg">{review.username}</div>
@@ -342,7 +340,7 @@ const SingleProductPage = () => {
                 </div>
                 <div className="text-md text-gray-600">{review.comment}</div>
               </div>
-            ))}
+            ))} */}
           </div>
         </div>
       </div>
@@ -355,8 +353,19 @@ const SingleProductPage = () => {
         <div className="product-center">
           <ProductImages images={images} />
           <section>
-            <h2>{name}</h2>
-            <Stars stars={rating} reviews={deliveryOption} />
+            <div className="flex gap-2">
+              <h2>{name}</h2>
+              <Stars stars={rating} reviews={deliveryOption} />
+            </div>
+            <div className="flex gap-2 mb-2">
+              <div onClick={() => getCommentModal()} className="btn">
+                View ratings
+              </div>
+
+              <div onClick={() => getModal()} className="btn">
+                Rate product
+              </div>
+            </div>
             <h5 className="price">{formatPrice(price)}</h5>
             <p className="desc">{description}</p>
             <p className="info">
@@ -385,8 +394,6 @@ const SingleProductPage = () => {
               </h2>
             )}
             {/* {availability > 0 && <AddToCart product={product} />} */}
-            <div onClick={() => getModal()}>Rate product</div>
-            <div onClick={() => getCommentModal()}>View comment</div>
           </section>
         </div>
       </div>
