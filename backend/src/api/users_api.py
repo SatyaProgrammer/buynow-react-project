@@ -9,7 +9,7 @@ from backend.src.middleware.rate_limiter import limiter
 users_api = Blueprint("users_api", __name__)
 
 
-@users_api.get("/users/<uid>")
+@users_api.get("/users/<int:uid>")
 @limiter.limit("60/minute")
 @give_connection
 def get_user_info(db_conn, uid):
