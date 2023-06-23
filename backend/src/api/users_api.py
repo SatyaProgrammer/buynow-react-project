@@ -25,6 +25,13 @@ WHERE u.id = ?;"""
         user = cursor.fetchone()
         cursor.close()
 
+        if user is None:
+            return (
+                {"error_code": "BX0000", "error": "User not found."},
+                404,
+                {"Content-Type": "application/json"},
+            )
+
         user["contactInfo"] = json.loads(user["contactInfo"])
 
         return (
