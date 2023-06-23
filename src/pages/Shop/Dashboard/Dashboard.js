@@ -107,7 +107,7 @@ const Dashboard = () => {
       .catch((err) => {
         if (err?.response.data.error_code == "BX0001") {
           cookies.remove("jwt_authorization");
-          navigate("/shop/dashboard");
+          navigate("/sell/dashboard");
         }
       });
     if (recent_order_response && recent_order_response.data) {
@@ -233,7 +233,6 @@ const Dashboard = () => {
                   </tr>
                 </thead>
                 <tbody className="">
-                  {console.log(state.post.recent_order?.orders)}
                   {state.post.recent_order?.orders.map((product, idx) => (
                     <tr key={idx} className="text-left hover:bg-gray-50">
                       <td className="text-cldark py-4 whitespace-nowrap overflow-hidden">

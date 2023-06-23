@@ -129,7 +129,6 @@ const Signup = (props) => {
               formData
             )
             .then((res) => {
-              console.log("resdataurl", res.data.secure_url);
               pUrl = res.data.secure_url;
             });
         } else {
@@ -144,7 +143,6 @@ const Signup = (props) => {
             phone: null,
             contactInfo: {},
           });
-          console.log("Data: ", pData);
           await axios.put(
             `${process.env.REACT_APP_BACKEND_URL}/customization`,
             pData,
@@ -156,17 +154,14 @@ const Signup = (props) => {
             }
           );
         } catch (e) {
-          console.log(e);
         }
       } catch (error) {
-        console.log(error);
         dispatch({
           type: ACTION_TYPES.SET_ERROR,
           payload: "Image upload fail",
         });
       }
 
-      console.log(response);
       setProfile("");
       dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: true });
       dispatch({ type: ACTION_TYPES.SET_USERNAME, payload: "" });
@@ -244,7 +239,7 @@ const Signup = (props) => {
                         </div>
                       </div>
                       <div className="col-span-11">
-                        {state.success}, verify your account with gmail
+                        {state.success}, verify your account with your email
                       </div>
                     </div>
                   ) : (
