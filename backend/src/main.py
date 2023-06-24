@@ -43,7 +43,6 @@ if __db_conn.is_ok():
 else:
     raise Exception("FATAL: Cannot create a database connection")
 
-Global.db_conn = db_conn
 Global.console = Console()
 
 api = Blueprint("api", __name__, subdomain="api")

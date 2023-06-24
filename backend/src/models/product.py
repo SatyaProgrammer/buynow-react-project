@@ -1,6 +1,7 @@
 from json import loads
 
 from backend.src.lib import Global, Result
+from backend.src.lib.db import create_connection
 from backend.src.models.category import Category
 from backend.src.models.model import Model
 from backend.src.models.user import User
@@ -17,7 +18,13 @@ class Product(Model):
         sort_newest: bool = False,
     ) -> list[dict[str]]:
         taking = list(__taking)
-        db_conn = Global.db_conn
+        __db_conn = create_connection()
+        if __db_conn.is_err():
+            Global.console.print(str(__db_conn.unwrap_err()))
+            return []
+
+        db_conn = __db_conn.unwrap()
+
         cond, args = Product.criteria_to_arguments(__cond)
         if len(taking) == 0:
             sb = f"""SELECT p.id, p.pid, p.name, p.images, c.name as catName,
@@ -42,8 +49,6 @@ WHERE {cond}
             if limit != -1:
                 sb += " LIMIT %s OFFSET %s"
 
-        print(sb)
-
         cursor = db_conn.cursor(prepared=True)
 
         # * scuffed code, can't be bothered to fix
@@ -60,7 +65,12 @@ WHERE {cond}
     @classmethod
     def fetch_all(cls, __taking: list[str]) -> list[dict[str]]:
         taking = list(__taking)
-        db_conn = Global.db_conn
+        __db_conn = create_connection()
+        if __db_conn.is_err():
+            Global.console.print(str(__db_conn.unwrap_err()))
+            return []
+
+        db_conn = __db_conn.unwrap()
 
         if len(taking) == 0:
             sb = """SELECT p.id, p.pid, p.name, p.images, c.name as catName,
@@ -88,7 +98,12 @@ INNER JOIN users as u ON p.owner = u.id"""
         __taking: list[str], offset: int = 0, limit: int = 25
     ) -> list[dict[str]]:
         taking = list(__taking)
-        db_conn = Global.db_conn
+        __db_conn = create_connection()
+        if __db_conn.is_err():
+            Global.console.print(str(__db_conn.unwrap_err()))
+            return []
+
+        db_conn = __db_conn.unwrap()
 
         if len(taking) == 0:
             sb = """SELECT p.id, p.pid, p.name, p.images, c.name as catName,
@@ -114,7 +129,13 @@ LIMIT %s OFFSET %s"""
 
     @classmethod
     def id(cls, __id: str | int) -> dict[str]:
-        db_conn = Global.db_conn
+        __db_conn = create_connection()
+        if __db_conn.is_err():
+            Global.console.print(str(__db_conn.unwrap_err()))
+            return []
+
+        db_conn = __db_conn.unwrap()
+
         cursor = db_conn.cursor(prepared=True)
         sql = """SELECT p.id, p.pid, p.name, p.images, c.name as catName,
 u.id as ownerId, u.username as ownerName, p.price, p.customization, p.rating, p.availability, p.soldAmount,
@@ -133,7 +154,13 @@ WHERE p.id = %s"""
 
     @classmethod
     def pid(cls, __pid: str) -> dict[str]:
-        db_conn = Global.db_conn
+        __db_conn = create_connection()
+        if __db_conn.is_err():
+            Global.console.print(str(__db_conn.unwrap_err()))
+            return []
+
+        db_conn = __db_conn.unwrap()
+
         cursor = db_conn.cursor(prepared=True)
         sql = """SELECT p.id, p.pid, p.name, p.images, c.name as catName,
 u.id as ownerId, u.username as ownerName, p.price, p.customization, p.rating, p.availability, p.soldAmount,
@@ -195,7 +222,12 @@ WHERE p.pid = %s"""
             sb += ", ".join(["%s" for _ in range(len(keys_keys))])
             sb += ")"
 
-            db_conn = Global.db_conn
+            __db_conn = create_connection()
+            if __db_conn.is_err():
+                Global.console.print(str(__db_conn.unwrap_err()))
+                return []
+
+            db_conn = __db_conn.unwrap()
             cursor = db_conn.cursor(prepared=True)
             cursor.execute(sb, tuple([keys[key] for key in keys_keys]))
             db_conn.commit()
@@ -214,7 +246,13 @@ WHERE p.pid = %s"""
             sb += ", ".join([f"{key} = %s" for key in keys_keys])
             sb += " WHERE pid = %s"
 
-            db_conn = Global.db_conn
+            __db_conn = create_connection()
+            if __db_conn.is_err():
+                Global.console.print(str(__db_conn.unwrap_err()))
+                return []
+
+            db_conn = __db_conn.unwrap()
+
             cursor = db_conn.cursor(prepared=True)
             cursor.execute(sb, tuple([keys[key] for key in keys_keys] + [pid]))
             db_conn.commit()
@@ -227,7 +265,12 @@ WHERE p.pid = %s"""
     @staticmethod
     def delete(pid: str) -> Result[tuple, str]:
         try:
-            db_conn = Global.db_conn
+            __db_conn = create_connection()
+            if __db_conn.is_err():
+                Global.console.print(str(__db_conn.unwrap_err()))
+                return []
+
+            db_conn = __db_conn.unwrap()
             cursor = db_conn.cursor(prepared=True)
             cursor.execute("DELETE FROM products WHERE pid = %s", (pid,))
             db_conn.commit()
@@ -239,7 +282,13 @@ WHERE p.pid = %s"""
 
     @staticmethod
     def attest_nonexistent(pid: str) -> bool:
-        db_conn = Global.db_conn
+        __db_conn = create_connection()
+        if __db_conn.is_err():
+            Global.console.print(str(__db_conn.unwrap_err()))
+            return []
+
+        db_conn = __db_conn.unwrap()
+
         cursor = db_conn.cursor(prepared=True)
         cursor.execute("SELECT COUNT(*) FROM products WHERE pid = %s", (pid,))
         result = cursor.fetchone()
@@ -250,7 +299,12 @@ WHERE p.pid = %s"""
     @staticmethod
     def attest_reviewed(pid: str, uid: str | int) -> bool:
         uid = int(uid)
-        db_conn = Global.db_conn
+        __db_conn = create_connection()
+        if __db_conn.is_err():
+            Global.console.print(str(__db_conn.unwrap_err()))
+            return []
+
+        db_conn = __db_conn.unwrap()
         cursor = db_conn.cursor(prepared=True)
         cursor.execute(
             """\
@@ -267,7 +321,13 @@ WHERE p.pid = %s AND r.authorId = %s""",
 
     @staticmethod
     def owner(pid: str) -> int:
-        db_conn = Global.db_conn
+        __db_conn = create_connection()
+        if __db_conn.is_err():
+            Global.console.print(str(__db_conn.unwrap_err()))
+            return []
+
+        db_conn = __db_conn.unwrap()
+
         cursor = db_conn.cursor(prepared=True)
         cursor.execute("SELECT owner FROM products WHERE pid = %s", (pid,))
         result = cursor.fetchone()

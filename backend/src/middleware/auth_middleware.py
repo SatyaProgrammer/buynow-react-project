@@ -41,7 +41,7 @@ def token_required(f):
                     {"Content-Type": "application/json"},
                 )
         except Exception as e:
-            Global.console.print_exception()
+            Global.console.print_exception(show_locals=True)
             return (
                 {"error_code": "BX0000", "error": "Something went wrong."},
                 500,

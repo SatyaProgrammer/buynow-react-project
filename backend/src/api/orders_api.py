@@ -52,7 +52,6 @@ def create_tracking(db_conn, uid):
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         cursor.execute("INSERT INTO trackings (userId) VALUES (?)", (uid,))
         tracking_id = cursor.lastrowid
-        print(f"tracking id = {tracking_id}")
 
         if tracking_id is None:
             return (
@@ -93,11 +92,9 @@ def create_tracking(db_conn, uid):
                 )
 
             id_pairs.append((iid, order["quantity"]))
-            print(f"iid = {iid}, quantity = {order['quantity']}")
 
         for item in id_pairs:
             i_id, i_quantity = item
-            print(f"{i_id=}, {i_quantity=}")
             cursor = db_conn.cursor(prepared=True)
 
             cursor.execute(

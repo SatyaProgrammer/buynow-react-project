@@ -17,7 +17,7 @@ def get_customization(db_conn, uid):
     try:
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         sql = """\
-SELECT u.id, u.username, c.theme, c.image, c.phone, c.contactInfo
+SELECT u.id, u.username, u.verified, c.theme, c.image, c.phone, c.contactInfo
 FROM users as u
 INNER JOIN userscustomization as c ON u.id = c.recipientId
 WHERE u.id = ?;
@@ -36,7 +36,10 @@ WHERE u.id = ?;
             cursor.close()
 
             cursor = db_conn.cursor(prepared=True, dictionary=True)
-            sql = """SELECT * FROM userscustomization WHERE recipientId = %s"""
+            sql = """SELECT u.id, u.username, u.verified, c.theme, c.image, c.phone, c.contactInfo
+FROM users as u
+INNER JOIN userscustomization as c ON u.id = c.recipientId
+WHERE u.id = ?;"""
             cursor.execute(sql, (uid,))
             result = cursor.fetchone()
             cursor.close()
@@ -67,9 +70,6 @@ def update_customization(db_conn, uid):
         image = data["image"]
         phone = data["phone"]
         contact_info = data["contactInfo"]
-
-        print(contact_info)
-        print(type(contact_info))
 
         if theme not in ["light", "dark"]:
             return (
@@ -123,7 +123,6 @@ def update_customization(db_conn, uid):
 @give_connection
 def delete_customization(db_conn, uid):
     try:
-        db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         sql = "DELETE FROM userscustomization WHERE recipientId = %s"
         cursor.execute(sql, (uid,))

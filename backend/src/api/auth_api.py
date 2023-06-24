@@ -200,7 +200,6 @@ def verify_email(db_conn):
                 {"Content-Type": "application/json"},
             )
 
-        db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True)
 
         sql = "UPDATE users SET verified = 1 WHERE email = %s"
@@ -296,7 +295,8 @@ def logout(uid):
 
 @auth_api.post("/auth/send_forgot")
 @limiter.limit("3 per minute")
-def send_forgot_password():
+@give_connection
+def send_forgot_password(db_conn):
     try:
         data = request.get_json()
 
@@ -323,7 +323,6 @@ def send_forgot_password():
                 {"Content-Type": "application/json"},
             )
 
-        db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True)
 
         sql = "SELECT id FROM users WHERE email = %s"

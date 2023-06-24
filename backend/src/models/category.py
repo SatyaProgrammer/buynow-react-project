@@ -1,4 +1,5 @@
 from backend.src.lib import Global
+from backend.src.lib.db import create_connection
 from backend.src.models.model import Model
 
 
@@ -8,7 +9,12 @@ class Category(Model):
         cls, __taking: list[str], __cond: dict[str, str]
     ) -> list[dict[str]]:
         taking = list(__taking)
-        db_conn = Global.db_conn
+        __db_conn = create_connection()
+        if __db_conn.is_err():
+            Global.console.print(str(__db_conn.unwrap_err()))
+            return []
+
+        db_conn = __db_conn.unwrap()
 
         sb = "SELECT "
         if len(taking) == 0:
@@ -32,7 +38,12 @@ class Category(Model):
     @classmethod
     def fetch_all(cls, __taking: list[str]) -> list[dict[str]]:
         taking = list(__taking)
-        db_conn = Global.db_conn
+        __db_conn = create_connection()
+        if __db_conn.is_err():
+            Global.console.print(str(__db_conn.unwrap_err()))
+            return []
+
+        db_conn = __db_conn.unwrap()
 
         sb = "SELECT "
         if len(taking) == 0:
@@ -53,7 +64,13 @@ class Category(Model):
 
     @classmethod
     def id(cls, __id: str | int) -> dict[str]:
-        db_conn = Global.db_conn
+        __db_conn = create_connection()
+        if __db_conn.is_err():
+            Global.console.print(str(__db_conn.unwrap_err()))
+            return []
+
+        db_conn = __db_conn.unwrap()
+
         cursor = db_conn.cursor(prepared=True)
         cursor.execute("SELECT * FROM categories WHERE id = %s", (__id,))
         result = cursor.fetchone()
