@@ -63,6 +63,18 @@ app.register_blueprint(reviews_api, subdomain="api")
 app.register_blueprint(users_api, subdomain="api")
 
 
+@app.errorhandler(405)
+def method_not_allowed(e):
+    return (
+        {
+            "error_code": "BX0000",
+            "error": "The method is not allowed for the requested URL.",
+        },
+        405,
+        {"Content-Type": "application/json"},
+    )
+
+
 @app.errorhandler(404)
 def page_not_found(e):
     return (
