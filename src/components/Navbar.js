@@ -170,7 +170,8 @@ const NavContainer = styled.nav`
       }
     }
     .cart-btn-wrapper {
-      display: grid;
+      display: flex;
+      gap: 10%;
     }
   }
 `;

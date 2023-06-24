@@ -7,6 +7,7 @@ import { useNavigate, Navigate, useLocation } from "react-router-dom";
 import logo from "../../../assets/hero-bcg.jpeg";
 import { useState } from "react";
 import { profileReducer, INITIAL_STATE, ACTION_TYPES } from "./ProfileReducer";
+import Swal from "sweetalert2";
 
 const ProfilePage = () => {
   const [state, dispatch] = useReducer(profileReducer, INITIAL_STATE);
@@ -33,6 +34,7 @@ const ProfilePage = () => {
     dispatch({ type: ACTION_TYPES.TELEGRAM, payload: data });
   };
 
+  const [isVerified, setIsVerified] = useState();
   const handleFetch = async () => {
     try {
       const response = await axios.get(
@@ -45,11 +47,11 @@ const ProfilePage = () => {
         }
       );
       console.log(response);
+      setIsVerified(response.data.customization.verified);
       dispatch({
         type: ACTION_TYPES.USERNAME,
         payload: response.data.customization.username,
       });
-      console.log(response.data.customization.image);
       setProfile(response.data.customization.image);
       dispatch({
         type: ACTION_TYPES.SET_PHONE,
@@ -75,9 +77,7 @@ const ProfilePage = () => {
         type: ACTION_TYPES.IMAGE,
         payload: response.data.customization.image,
       });
-    } catch (err) {
-      console.log(err);
-    }
+    } catch (err) {}
   };
 
   useEffect(() => {
@@ -95,7 +95,6 @@ const ProfilePage = () => {
         const preset_key = "c003351q";
         const cloud_name = "dlplvjf9l";
         const token = cookies.get("jwt_authorization");
-        console.log(profile);
         if (profile) {
           let blob = await fetch(profile).then((r) => r.blob());
           const file = blob;
@@ -108,7 +107,6 @@ const ProfilePage = () => {
               formData
             )
             .then((res) => {
-              console.log("resdataurl", res.data.secure_url);
               pUrl = res.data.secure_url;
             });
         } else {
@@ -117,7 +115,6 @@ const ProfilePage = () => {
         }
 
         try {
-          console.log("TOKEN: ", token);
           let pData = JSON.stringify({
             theme: "light",
             image: pUrl,
@@ -129,7 +126,6 @@ const ProfilePage = () => {
               Telegram: state.customization[0].telegram,
             },
           });
-          console.log("Data: ", pData);
           await axios.put(
             `${process.env.REACT_APP_BACKEND_URL}/customization`,
             pData,
@@ -140,11 +136,8 @@ const ProfilePage = () => {
               },
             }
           );
-        } catch (e) {
-          console.log(e);
-        }
+        } catch (e) {}
       } catch (error) {
-        console.log(error);
         dispatch({
           type: ACTION_TYPES.SET_ERROR,
           payload: "Image upload fail",
@@ -167,6 +160,37 @@ const ProfilePage = () => {
     }
   };
 
+  const [verifyLoading, setVerifyLoading] = useState(false);
+  const handleVerify = async () => {
+    setVerifyLoading(true);
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/auth/resend_verify`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Basic ${token}`,
+          },
+        }
+      );
+      if (response) {
+        setVerifyLoading(false);
+        Swal.fire({
+          title: "Please check your email",
+          icon: "success",
+          confirmButtonColor: "#936a53",
+          confirmButtonText: "Close",
+        });
+      }
+    } catch (error) {
+      setVerifyLoading(false);
+      console.log(error);
+      if (error.response.data.error_code == "BX0001") {
+        navigate("/login");
+      }
+    }
+  };
+
   return (
     <>
       <div className="p-4 sm:ml-16 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
@@ -178,8 +202,38 @@ const ProfilePage = () => {
                   {/* image */}
                   <div className="flex flex-col justify-center items-center">
                     <h2>{state.user}</h2>
+                    {!isVerified ? (
+                      <div className="flex gap-1 items-center mb-4 text-yellow-700 group relative hover:cursor-default">
+                        <div className="w-5 h-5">
+                          <IconAlert fill="#b45309" />
+                        </div>
+                        <div className="font-semibold">
+                          Account is not verfied
+                        </div>
+                        <div className="hidden group-hover:block absolute left-full pl-2 w-64">
+                          <div className="shadow-md p-4 rounded-md">
+                            Check your email to verify account.
+                            {verifyLoading ? (
+                              <span
+                                className="ml-2 font-semibold underline"
+                              >
+                                Sending...
+                              </span>
+                            ) : (
+                              <span
+                                onClick={() => handleVerify()}
+                                className="ml-2 font-semibold underline hover:cursor-pointer"
+                              >
+                                Resend verify email
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      ""
+                    )}
                     <div className="w-36 h-36 rounded-full bg-gray-200 border">
-                      {console.log(profile)}
                       <img
                         className="w-full h-full rounded-full object-cover"
                         alt=""
@@ -242,7 +296,6 @@ const ProfilePage = () => {
                     />
                   </div>
                   {/* contact info */}
-                  {console.log(state.customization)}
                   <div className="flex flex-col gap-2">
                     <div className="text-xl font-semibold text-cldark">
                       Contact Info

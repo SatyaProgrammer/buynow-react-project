@@ -38,7 +38,6 @@ export const ProductsProvider = ({ children }) => {
 
   const fetchProducts = async () => {
     dispatch({ type: GET_PRODUCTS_BEGIN });
-    console.log(process.env.REACT_APP_BACKEND_URL);
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_BACKEND_URL}/products/matching?limit=-1`,
@@ -59,9 +58,7 @@ export const ProductsProvider = ({ children }) => {
       const response = await axios.get(url, {
         headers: { "Content-Type": "application/json" },
       });
-      console.log(response);
       const singleProduct = response.data;
-      console.log("Fetch single: ", singleProduct);
       dispatch({ type: GET_SINGLE_PRODUCT_SUCCESS, payload: singleProduct });
     } catch (error) {
       dispatch({ type: GET_SINGLE_PRODUCT_ERROR });

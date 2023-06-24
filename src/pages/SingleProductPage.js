@@ -203,7 +203,6 @@ const SingleProductPage = () => {
           `${process.env.REACT_APP_BACKEND_URL}/users/${ownerID}`
         );
         if (response) {
-          console.log(response.data);
           setVenderInfo(response.data);
         }
       } catch (error) {
@@ -404,7 +403,6 @@ const SingleProductPage = () => {
               <span>Delivery option: </span>
               {deliveryOption}
             </p>
-            {console.log("urah: ", vendorInfo)}
             <div className="info">
               <span className="text-grey3">Contact information: </span>
               <div>

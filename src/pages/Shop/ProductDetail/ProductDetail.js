@@ -67,7 +67,6 @@ const ProductDetail = () => {
       );
       navigate("/sell/product");
     } catch (err) {
-      console.log(err);
       if (err?.response.data.error_code == "BX0001") {
         cookies.remove("jwt_authorization");
         navigate("/sell/product");
@@ -95,8 +94,6 @@ const ProductDetail = () => {
   useEffect(() => {
     handleFetch();
   }, []);
-
-  console.log(state.post.image);
 
   return (
     <>

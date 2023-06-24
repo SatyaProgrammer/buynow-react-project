@@ -101,7 +101,6 @@ const filter_reducer = (state, action) => {
       tempProducts = action.priceAndText.result;
     }
     if (action.priceAndCatAndOwner) {
-      console.log(action.priceAndCatAndOwner);
       tempProducts = action.priceAndCatAndOwner.result;
     }
     if (action.priceAndSearchAndOwner) {

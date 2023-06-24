@@ -176,12 +176,6 @@ export const FilterProvider = ({ children }) => {
           });
         });
       }
-      console.log(
-        state.filters.ownerName,
-        state.filters.catName,
-        state.filters.text,
-        state.filters.price
-      );
       // Filter price
       if (
         state.filters.ownerName === "all" &&
@@ -199,7 +193,6 @@ export const FilterProvider = ({ children }) => {
             return await response.json();
           };
           filterPrice().then((result) => {
-            console.log(result);
             dispatch({
               type: FILTER_PRODUCTS,
               price: { result },
@@ -227,7 +220,6 @@ export const FilterProvider = ({ children }) => {
             return await response.json();
           };
           filterPriceAndVendor().then((result) => {
-            console.log(result);
             dispatch({
               type: FILTER_PRODUCTS,
               priceAndVendor: { result },
@@ -255,7 +247,6 @@ export const FilterProvider = ({ children }) => {
             return await response.json();
           };
           filterPriceAndCategory().then((result) => {
-            console.log(result);
             dispatch({
               type: FILTER_PRODUCTS,
               priceAndCategory: { result },
@@ -283,7 +274,6 @@ export const FilterProvider = ({ children }) => {
             return await response.json();
           };
           filterPriceAndText().then((result) => {
-            console.log(result);
             dispatch({
               type: FILTER_PRODUCTS,
               priceAndText: { result },
@@ -313,7 +303,6 @@ export const FilterProvider = ({ children }) => {
             return await response.json();
           };
           filterPriceAndVendorAndCategory().then((result) => {
-            console.log(result);
             dispatch({
               type: FILTER_PRODUCTS,
               priceAndCatAndOwner: { result },
@@ -341,7 +330,6 @@ export const FilterProvider = ({ children }) => {
             return await response.json();
           };
           filterPriceAndVendorAndSearch().then((result) => {
-            console.log(result);
             dispatch({
               type: FILTER_PRODUCTS,
               priceAndSearchAndOwner: { result },
@@ -369,7 +357,6 @@ export const FilterProvider = ({ children }) => {
             return await response.json();
           };
           filterPriceAndCategoryAndSearch().then((result) => {
-            console.log(result);
             dispatch({
               type: FILTER_PRODUCTS,
               priceAndSearchAndCat: { result },
@@ -397,7 +384,6 @@ export const FilterProvider = ({ children }) => {
             return await response.json();
           };
           filterPriceAndCategoryAndSearchAndVendor().then((result) => {
-            console.log(result);
             dispatch({
               type: FILTER_PRODUCTS,
               priceAndSearchAndCatAndOwner: { result },
@@ -428,7 +414,6 @@ export const FilterProvider = ({ children }) => {
     if (name === "price") {
       value = Number(value);
     }
-    console.log(name, value);
     dispatch({ type: UPDATE_FILTERS, payload: { name, value } });
   };
 
