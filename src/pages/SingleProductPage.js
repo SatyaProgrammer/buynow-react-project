@@ -112,7 +112,7 @@ const SingleProductPage = () => {
     });
     try {
       if (haveRating) {
-        const response = await axios.patch(
+        const response = await axios.put(
           `${process.env.REACT_APP_BACKEND_URL}/reviews/${id}/${haveRating}`,
           data,
           {
