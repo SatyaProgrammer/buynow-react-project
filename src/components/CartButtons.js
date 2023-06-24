@@ -90,7 +90,7 @@ const CartButtons = () => {
             id="dropdown"
             className={
               dropDown
-                ? "z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute right-0 mt-1"
+                ? "p-1 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute right-0 mt-1"
                 : "hidden"
             }
           >
