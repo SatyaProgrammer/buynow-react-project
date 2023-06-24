@@ -2,7 +2,11 @@ import React, { useEffect } from "react";
 import styled from "styled-components";
 import { Filters, ProductList, Sort, PageHero } from "../components";
 
-const ProductsPage = () => {
+const ProductsPage = ({ title }) => {
+  useEffect(() => {
+    document.title = title;
+  });
+
   return (
     <main>
       <PageHero />

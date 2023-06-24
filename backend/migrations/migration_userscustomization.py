@@ -30,13 +30,16 @@ def seed() -> list[dict]:
         {
             "recipientId": 1,
             "theme": "light",
+            "image": "https://res.cloudinary.com/dlplvjf9l/image/upload/v1687078004/lwum3hs5emhzjm9rrfha.jpg",
         },
         {
             "recipientId": 2,
             "theme": "light",
+            "image": "https://res.cloudinary.com/dlplvjf9l/image/upload/v1687078004/lwum3hs5emhzjm9rrfha.jpg",
         },
         {
             "recipientId": 3,
             "theme": "light",
+            "image": "https://res.cloudinary.com/dlplvjf9l/image/upload/v1687078004/lwum3hs5emhzjm9rrfha.jpg",
         },
     ]

@@ -144,11 +144,22 @@ const SingleProductPage = () => {
         confirmButtonText: "Close",
       });
     } catch (err) {
+      console.log(err);
       if (err?.response.data.error_code == "BX0001") {
         cookies.remove("jwt_authorization");
         navigate("/login", { replace: true });
       }
       setSubmitting(false);
+
+      if (err.response.data.error_code == "BX1208") {
+        Swal.fire({
+          title: "Can't rate your own product!",
+          icon: "warning",
+          confirmButtonColor: "#936a53",
+          confirmButtonText: "Close",
+        });
+        setOpenModal(false);
+      }
     }
   };
 
@@ -184,15 +195,16 @@ const SingleProductPage = () => {
     ownerId,
   } = product;
 
+  const [vendorInfo, setVenderInfo] = useState([]);
   const fetchVenderInfo = async (ownerID) => {
-    console.log("dfd: ", ownerID);
     if (ownerID) {
       try {
         const response = await axios.get(
           `${process.env.REACT_APP_BACKEND_URL}/users/${ownerID}`
         );
         if (response) {
-          console.log("URAH: ", response.data);
+          console.log(response.data);
+          setVenderInfo(response.data);
         }
       } catch (error) {
         console.log(error);
@@ -392,7 +404,28 @@ const SingleProductPage = () => {
               <span>Delivery option: </span>
               {deliveryOption}
             </p>
-            <div className="flex gap-2">
+            {console.log("urah: ", vendorInfo)}
+            <div className="info">
+              <span className="text-grey3">Contact information: </span>
+              <div>
+                {vendorInfo.contactInfo
+                  ? Object.keys(vendorInfo.contactInfo).map((keyName, i) => (
+                      <div key={i} className="flex gap-2 text-grey3">
+                        {keyName}:{" "}
+                        <a
+                          target="_blank"
+                          rel="noreferrer"
+                          href={vendorInfo.contactInfo[keyName]}
+                          className="text-blue-500 underline"
+                        >
+                          {vendorInfo.contactInfo[keyName]}
+                        </a>
+                      </div>
+                    ))
+                  : ""}
+              </div>
+            </div>
+            <div className="flex gap-2 mt-4">
               <div onClick={() => getCommentModal()} className="btn">
                 View ratings
               </div>
@@ -406,7 +439,7 @@ const SingleProductPage = () => {
             {availability > 0 ? (
               <AddToCart product={product} />
             ) : (
-              <h2 style={{ marginTop: "2rem", color: "hsl(22, 28%, 45%)" }}>
+              <h2 style={{ marginTop: "2rem", color: "hsl(360, 67%, 44%)" }}>
                 Out of Stock
               </h2>
             )}
@@ -420,7 +453,7 @@ const SingleProductPage = () => {
 
 const Wrapper = styled.main`
   h2 {
-    font-weight: bold;
+    font-weight: 600;
   }
   .product-center {
     display: grid;
@@ -438,7 +471,7 @@ const Wrapper = styled.main`
     text-transform: capitalize;
     width: 400px;
     display: grid;
-    grid-template-columns: 160px 1fr;
+    grid-template-columns: 180px 1fr;
     span {
       font-weight: 700;
     }

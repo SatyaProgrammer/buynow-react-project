@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaShoppingCart, FaUserMinus, FaUserPlus } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, redirect, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useProductsContext } from "../context/products_context";
 import { useCartContext } from "../context/cart_context";
@@ -29,20 +29,27 @@ const CartButtons = () => {
   };
 
   const handleFetch = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_URL}/customization`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Basic ${token}`,
-          },
+    if (data) {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/customization`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Basic ${token}`,
+            },
+          }
+        );
+        setProfile(response.data.customization.image);
+        setName(response.data.customization.username);
+      } catch (err) {
+        if (err.response.data.error_code === "BX0001") {
+          console.log("okkk");
+          cookies.remove("jwt_authorization");
+          navigate("/");
         }
-      );
-      setProfile(response.data.customization.image);
-      setName(response.data.customization.username);
-    } catch (err) {
-      console.log(err);
+        console.log(err);
+      }
     }
   };
 
@@ -74,7 +81,7 @@ const CartButtons = () => {
             <div className="w-10 h-10 rounded-full bg-gray-200 border">
               <img
                 className="w-full h-full rounded-full object-cover"
-                alt="preview image"
+                alt=""
                 src={profile}
               />
             </div>
@@ -83,7 +90,7 @@ const CartButtons = () => {
             id="dropdown"
             className={
               dropDown
-                ? "z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute right-0 mt-1"
+                ? "p-1 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute right-0 mt-1"
                 : "hidden"
             }
           >

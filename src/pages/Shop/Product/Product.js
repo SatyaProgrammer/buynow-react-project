@@ -89,6 +89,7 @@ const Product = () => {
 
   useEffect(() => {
     setTimeout(() => {
+      handleFetch();
     }, "300");
   }, []);
 
@@ -117,7 +118,7 @@ const Product = () => {
                 Add Product
               </Link>
             </div>
-        
+
             <div className="overflow-x-auto table-scrolling page">
               <table className="w-full">
                 <thead className="bg-gray-100">
