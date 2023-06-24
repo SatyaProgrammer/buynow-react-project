@@ -20,6 +20,7 @@ const HistoryContent = () => {
   const navigate = useNavigate();
   const cookies = new Cookies();
   const token = cookies.get("jwt_authorization");
+  console.log(token);
   const [state, dispatch] = useReducer(reducer, initialState);
   const getTrackings = async () => {
     try {
@@ -43,9 +44,7 @@ const HistoryContent = () => {
     }
   };
   useEffect(() => {
-    setTimeout(() => {
-      getTrackings();
-    }, "500");
+    getTrackings();
   }, []);
   console.log(state.trackings);
   return (

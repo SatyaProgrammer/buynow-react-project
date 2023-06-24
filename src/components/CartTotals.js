@@ -52,6 +52,7 @@ const CartTotals = () => {
           },
         }
       );
+      console.log(response);
     } catch (error) {
       if (error?.response.data.error_code == "BX0001") {
         cookies.remove("jwt_authorization");
