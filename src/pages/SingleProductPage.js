@@ -420,7 +420,7 @@ const SingleProductPage = () => {
             {availability > 0 ? (
               <AddToCart product={product} />
             ) : (
-              <h2 style={{ marginTop: "2rem", color: "hsl(22, 28%, 45%)" }}>
+              <h2 style={{ marginTop: "2rem", color: "hsl(360, 67%, 44%)" }}>
                 Out of Stock
               </h2>
             )}
@@ -434,7 +434,7 @@ const SingleProductPage = () => {
 
 const Wrapper = styled.main`
   h2 {
-    font-weight: bold;
+    font-weight: 600;
   }
   .product-center {
     display: grid;

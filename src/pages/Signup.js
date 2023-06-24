@@ -153,8 +153,7 @@ const Signup = (props) => {
               },
             }
           );
-        } catch (e) {
-        }
+        } catch (e) {}
       } catch (error) {
         dispatch({
           type: ACTION_TYPES.SET_ERROR,
