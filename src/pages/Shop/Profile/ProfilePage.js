@@ -176,7 +176,8 @@ const ProfilePage = () => {
       if (response) {
         setVerifyLoading(false);
         Swal.fire({
-          title: "Please check your email",
+          title: "Email sent",
+          text: "Please check your email!",
           icon: "success",
           confirmButtonColor: "#936a53",
           confirmButtonText: "Close",
@@ -202,7 +203,9 @@ const ProfilePage = () => {
                   {/* image */}
                   <div className="flex flex-col justify-center items-center">
                     <h2>{state.user}</h2>
-                    {!isVerified ? (
+                    {isVerified ? (
+                      ""
+                    ) : (
                       <div className="flex gap-1 items-center mb-4 text-yellow-700 group relative hover:cursor-default">
                         <div className="w-5 h-5">
                           <IconAlert fill="#b45309" />
@@ -214,9 +217,7 @@ const ProfilePage = () => {
                           <div className="shadow-md p-4 rounded-md">
                             Check your email to verify account.
                             {verifyLoading ? (
-                              <span
-                                className="ml-2 font-semibold underline"
-                              >
+                              <span className="ml-2 font-semibold">
                                 Sending...
                               </span>
                             ) : (
@@ -230,8 +231,6 @@ const ProfilePage = () => {
                           </div>
                         </div>
                       </div>
-                    ) : (
-                      ""
                     )}
                     <div className="w-36 h-36 rounded-full bg-gray-200 border">
                       <img
