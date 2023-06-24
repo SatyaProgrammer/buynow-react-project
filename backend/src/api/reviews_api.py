@@ -230,7 +230,7 @@ def get_my_review(db_conn, uid, pid):
         )
 
 
-@reviews_api.patch("/reviews/<pid>/<rid>")
+@reviews_api.put("/reviews/<pid>/<rid>")
 @limiter.limit("10/minute")
 @token_required
 @give_connection

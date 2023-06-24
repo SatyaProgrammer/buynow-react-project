@@ -66,8 +66,6 @@ def get_matching_products():
             k: v for k, v in request.args.items() if k != "offset" and k != "limit"
         }
 
-        print(search_criteria)
-
         if len(search_criteria) == 0:
             # return all products, sorted by newest item first
             offset = request.args.get("offset", 0)
