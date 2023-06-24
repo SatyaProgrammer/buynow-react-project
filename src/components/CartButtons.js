@@ -74,7 +74,7 @@ const CartButtons = () => {
             <div className="w-10 h-10 rounded-full bg-gray-200 border">
               <img
                 className="w-full h-full rounded-full object-cover"
-                alt="preview image"
+                alt=""
                 src={profile}
               />
             </div>

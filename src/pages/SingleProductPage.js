@@ -184,15 +184,16 @@ const SingleProductPage = () => {
     ownerId,
   } = product;
 
+  const [vendorInfo, setVenderInfo] = useState([]);
   const fetchVenderInfo = async (ownerID) => {
-    console.log("dfd: ", ownerID);
     if (ownerID) {
       try {
         const response = await axios.get(
           `${process.env.REACT_APP_BACKEND_URL}/users/${ownerID}`
         );
         if (response) {
-          console.log("URAH: ", response.data);
+          console.log(response.data);
+          setVenderInfo(response.data);
         }
       } catch (error) {
         console.log(error);
@@ -392,6 +393,19 @@ const SingleProductPage = () => {
               <span>Delivery option: </span>
               {deliveryOption}
             </p>
+            {console.log("urah: ", vendorInfo)}
+            <p className="info">
+              <span>Contact information: </span>
+              <div>
+                {vendorInfo.contactInfo
+                  ? Object.keys(vendorInfo.contactInfo).map((keyName, i) => (
+                      <div key={i}>
+                        {keyName}: {vendorInfo.contactInfo[keyName]}
+                      </div>
+                    ))
+                  : ""}
+              </div>
+            </p>
             <div className="flex gap-2">
               <div onClick={() => getCommentModal()} className="btn">
                 View ratings
@@ -438,7 +452,7 @@ const Wrapper = styled.main`
     text-transform: capitalize;
     width: 400px;
     display: grid;
-    grid-template-columns: 160px 1fr;
+    grid-template-columns: 180px 1fr;
     span {
       font-weight: 700;
     }
