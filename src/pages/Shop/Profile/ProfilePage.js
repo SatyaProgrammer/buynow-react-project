@@ -52,7 +52,6 @@ const ProfilePage = () => {
         type: ACTION_TYPES.USERNAME,
         payload: response.data.customization.username,
       });
-      console.log(response.data.customization.image);
       setProfile(response.data.customization.image);
       dispatch({
         type: ACTION_TYPES.SET_PHONE,
@@ -78,9 +77,7 @@ const ProfilePage = () => {
         type: ACTION_TYPES.IMAGE,
         payload: response.data.customization.image,
       });
-    } catch (err) {
-      console.log(err);
-    }
+    } catch (err) {}
   };
 
   useEffect(() => {
@@ -98,7 +95,6 @@ const ProfilePage = () => {
         const preset_key = "c003351q";
         const cloud_name = "dlplvjf9l";
         const token = cookies.get("jwt_authorization");
-        console.log(profile);
         if (profile) {
           let blob = await fetch(profile).then((r) => r.blob());
           const file = blob;
@@ -111,7 +107,6 @@ const ProfilePage = () => {
               formData
             )
             .then((res) => {
-              console.log("resdataurl", res.data.secure_url);
               pUrl = res.data.secure_url;
             });
         } else {
@@ -120,7 +115,6 @@ const ProfilePage = () => {
         }
 
         try {
-          console.log("TOKEN: ", token);
           let pData = JSON.stringify({
             theme: "light",
             image: pUrl,
@@ -132,7 +126,6 @@ const ProfilePage = () => {
               Telegram: state.customization[0].telegram,
             },
           });
-          console.log("Data: ", pData);
           await axios.put(
             `${process.env.REACT_APP_BACKEND_URL}/customization`,
             pData,
@@ -143,11 +136,8 @@ const ProfilePage = () => {
               },
             }
           );
-        } catch (e) {
-          console.log(e);
-        }
+        } catch (e) {}
       } catch (error) {
-        console.log(error);
         dispatch({
           type: ACTION_TYPES.SET_ERROR,
           payload: "Image upload fail",
@@ -244,7 +234,6 @@ const ProfilePage = () => {
                       ""
                     )}
                     <div className="w-36 h-36 rounded-full bg-gray-200 border">
-                      {console.log(profile)}
                       <img
                         className="w-full h-full rounded-full object-cover"
                         alt=""
@@ -307,7 +296,6 @@ const ProfilePage = () => {
                     />
                   </div>
                   {/* contact info */}
-                  {console.log(state.customization)}
                   <div className="flex flex-col gap-2">
                     <div className="text-xl font-semibold text-cldark">
                       Contact Info
