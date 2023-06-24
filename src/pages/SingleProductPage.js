@@ -394,18 +394,26 @@ const SingleProductPage = () => {
               {deliveryOption}
             </p>
             {console.log("urah: ", vendorInfo)}
-            <p className="info">
+            <div className="info">
               <span>Contact information: </span>
               <div>
                 {vendorInfo.contactInfo
                   ? Object.keys(vendorInfo.contactInfo).map((keyName, i) => (
-                      <div key={i}>
-                        {keyName}: {vendorInfo.contactInfo[keyName]}
+                      <div key={i} className="flex gap-2">
+                        {keyName}:{" "}
+                        <a
+                          target="_blank"
+                          rel="noreferrer"
+                          href={vendorInfo.contactInfo[keyName]}
+                          className="text-blue-500 underline"
+                        >
+                          {vendorInfo.contactInfo[keyName]}
+                        </a>
                       </div>
                     ))
                   : ""}
               </div>
-            </p>
+            </div>
             <div className="flex gap-2">
               <div onClick={() => getCommentModal()} className="btn">
                 View ratings
