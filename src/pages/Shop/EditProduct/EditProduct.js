@@ -40,7 +40,7 @@ const EditProduct = () => {
 
   const handleAddSubCustom = (key) => {
     let inputData = state.customization;
-    inputData[key].push("#FFFFFF");
+    inputData[key].push("");
     dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
 
     inputData = colPicker;
