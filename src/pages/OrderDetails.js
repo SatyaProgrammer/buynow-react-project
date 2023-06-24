@@ -33,7 +33,6 @@ const OrderDetails = () => {
         }
       );
       const data = response.data.orders;
-      console.log(data);
       dispatch({ type: "TRACKING", payload: { data } });
     } catch (error) {
       if (error?.response?.data?.error_code == "BX0001") {
@@ -47,14 +46,12 @@ const OrderDetails = () => {
       getTracking(id);
     }, 300);
   }, []);
-  console.log(state.data);
   return (
     <Wrapper>
       <PageHero title="Order History" product="18" />
       <div className="section section-center">
         <DetailColumn />
         {state.data.map((product) => {
-          console.log(product);
           return <DetailItem key={product.pid} {...product} />;
         })}
         <div className="link-container">

@@ -37,9 +37,7 @@ const Order = () => {
         });
         dispatch({ type: ACTION_TYPES.FETCH_SUCCESS, payload: response.data });
       }
-    } catch (err) {
-      console.log("Error:", err);
-    }
+    } catch (err) {}
   };
 
   useEffect(() => {
@@ -47,7 +45,6 @@ const Order = () => {
       handleFetch();
     }, "300");
   }, []);
-  console.log(state.post);
   const statOpen = async (idx, orderStatus, trackingNumber) => {
     let inputData = state.post;
     let flag = false;
@@ -63,8 +60,6 @@ const Order = () => {
         inputData.orders[id].status_drop = false;
       });
     }
-    console.log(idx);
-    console.log(inputData.orders[0].status_drop);
     inputData.orders[idx].status_drop = !inputData.orders[idx].status_drop;
     dispatch({ type: ACTION_TYPES.SET_ORDERS, payload: inputData });
     if (trackingNumber) {
@@ -84,11 +79,8 @@ const Order = () => {
         );
         if (response) {
           navigate("/redirect");
-          console.log(response);
         }
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     }
   };
 
@@ -142,12 +134,10 @@ const Order = () => {
                     </th>
                   </tr>
                 </thead>
-                {console.log(state.post.orders)}
                 <tbody className="">
                   {state.post.orders ? (
                     state.post.orders.map((product, idx) => (
                       <tr key={idx} className="hover:bg-gray-50 ">
-                        {console.log("IDX: ", idx)}
                         <td className="text-cldark p-4 border-b whitespace-nowrap overflow-hidden">
                           <div className="flex items-center gap-2 w-48">
                             <div className="w-16">

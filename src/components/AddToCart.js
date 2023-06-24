@@ -8,7 +8,6 @@ import { useCartContext } from "../context/cart_context";
 const AddToCart = ({ product }) => {
   const { addToCart } = useCartContext();
   const { pid, availability, customization } = product;
-  console.log(customization);
   const colors = customization.color;
 
   const [mainColor, setMainColor] = useState(colors[0]);
@@ -38,7 +37,6 @@ const AddToCart = ({ product }) => {
     <Wrapper>
       <div className="colors z-0">
         <span> colors : </span>
-        {console.log(colors)}
         <div>
           {colors.map((color, index) => {
             return (

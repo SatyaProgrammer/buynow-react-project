@@ -20,7 +20,6 @@ const HistoryContent = () => {
   const navigate = useNavigate();
   const cookies = new Cookies();
   const token = cookies.get("jwt_authorization");
-  console.log(token);
   const [state, dispatch] = useReducer(reducer, initialState);
   const getTrackings = async () => {
     try {
@@ -34,7 +33,6 @@ const HistoryContent = () => {
         }
       );
       const data = response.data.trackings;
-      console.log(data);
       dispatch({ type: "TRACKINGS", payload: { data } });
     } catch (error) {
       if (error?.response?.data?.error_code == "BX0001") {
@@ -46,7 +44,6 @@ const HistoryContent = () => {
   useEffect(() => {
     getTrackings();
   }, []);
-  console.log(state.trackings);
   return (
     <Wrapper className="section section-center">
       <HistoryColumns />
