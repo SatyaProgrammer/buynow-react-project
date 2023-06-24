@@ -103,7 +103,6 @@ WHERE p.owner = ?;"""
 @give_connection
 def get_recent_orders(db_conn, uid):
     try:
-        db_conn = Global.db_conn
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         query = """SELECT o.trackingNumber, t.userId, u.username, o.productId, p.name, p.images, o.customization, o.quantity, o.cost, o.status
 FROM orders as o

@@ -1,4 +1,5 @@
 from backend.src.lib import Global, true
+from backend.src.lib.db import create_connection
 from backend.src.models.model import Model
 
 
@@ -8,7 +9,12 @@ class User(Model):
         cls, __taking: list[str], __cond: dict[str, str]
     ) -> list[dict[str]]:
         taking = list(__taking)
-        db_conn = Global.db_conn
+        __db_conn = create_connection()
+        if __db_conn.is_err():
+            Global.console.print(str(__db_conn.unwrap_err()))
+            return []
+
+        db_conn = __db_conn.unwrap()
 
         sb = "SELECT "
         if len(taking) == 0:
@@ -32,7 +38,12 @@ class User(Model):
     @classmethod
     def fetch_all(cls, __taking: list[str]) -> list[dict[str]]:
         taking = list(__taking)
-        db_conn = Global.db_conn
+        __db_conn = create_connection()
+        if __db_conn.is_err():
+            Global.console.print(str(__db_conn.unwrap_err()))
+            return []
+
+        db_conn = __db_conn.unwrap()
 
         sb = "SELECT "
         if len(taking) == 0:
@@ -53,7 +64,12 @@ class User(Model):
 
     @classmethod
     def id(cls, __id: str | int) -> dict[str]:
-        db_conn = Global.db_conn
+        __db_conn = create_connection()
+        if __db_conn.is_err():
+            Global.console.print(str(__db_conn.unwrap_err()))
+            return []
+
+        db_conn = __db_conn.unwrap()
         cursor = db_conn.cursor(prepared=True)
         cursor.execute("SELECT * FROM users WHERE id = %s", (__id,))
         result = cursor.fetchone()
@@ -64,7 +80,12 @@ class User(Model):
     @staticmethod
     def is_admin(uid: str | int) -> bool:
         uid = int(uid)
-        db_conn = Global.db_conn
+        __db_conn = create_connection()
+        if __db_conn.is_err():
+            Global.console.print(str(__db_conn.unwrap_err()))
+            return []
+
+        db_conn = __db_conn.unwrap()
         cursor = db_conn.cursor(prepared=True)
         cursor.execute("SELECT admin FROM users WHERE id = %s", (uid,))
         result = cursor.fetchone()

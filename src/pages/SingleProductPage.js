@@ -144,11 +144,22 @@ const SingleProductPage = () => {
         confirmButtonText: "Close",
       });
     } catch (err) {
+      console.log(err);
       if (err?.response.data.error_code == "BX0001") {
         cookies.remove("jwt_authorization");
         navigate("/login", { replace: true });
       }
       setSubmitting(false);
+
+      if (err.response.data.error_code == "BX1208") {
+        Swal.fire({
+          title: "Can't rate your own product!",
+          icon: "warning",
+          confirmButtonColor: "#936a53",
+          confirmButtonText: "Close",
+        });
+        setOpenModal(false);
+      }
     }
   };
 
@@ -393,11 +404,11 @@ const SingleProductPage = () => {
               {deliveryOption}
             </p>
             <div className="info">
-              <span>Contact information: </span>
+              <span className="text-grey3">Contact information: </span>
               <div>
                 {vendorInfo.contactInfo
                   ? Object.keys(vendorInfo.contactInfo).map((keyName, i) => (
-                      <div key={i} className="flex gap-2">
+                      <div key={i} className="flex gap-2 text-grey3">
                         {keyName}:{" "}
                         <a
                           target="_blank"
@@ -412,7 +423,7 @@ const SingleProductPage = () => {
                   : ""}
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 mt-4">
               <div onClick={() => getCommentModal()} className="btn">
                 View ratings
               </div>

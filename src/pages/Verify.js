@@ -11,14 +11,17 @@ const Verify = () => {
     let verifyToken = { token: searchParams.get("token") };
 
     if (verifyToken) {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/auth/verify`,
-        verifyToken,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-      navigate("/login");
+      try {
+        const response = await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}/auth/verify`,
+          verifyToken,
+          {
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      } catch (error) {
+        console.log(error)
+      }
     } else {
       navigate("/");
     }

@@ -16,10 +16,10 @@ const App = () => {
         <Route path="*" element={<MainLayout />} />
         <Route path="/redirect" element={<Redirecter />} />
         <Route path="/products/:id" element={<SingleProductPage />} />
+        <Route path="/verify" element={<Verify />} />
         <Route element={<LoggedRoute />}>
           <Route path="/login" element={<Login title="BuyNow - Login" />} />
           <Route path="/signup" element={<Signup title="BuyNow - Signup" />} />
-          <Route path="/verify" element={<Verify />} />
         </Route>
       </Routes>
     </Router>

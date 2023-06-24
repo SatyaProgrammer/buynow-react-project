@@ -43,7 +43,6 @@ if __db_conn.is_ok():
 else:
     raise Exception("FATAL: Cannot create a database connection")
 
-Global.db_conn = db_conn
 Global.console = Console()
 
 api = Blueprint("api", __name__, subdomain="api")
@@ -62,6 +61,18 @@ app.register_blueprint(orders_api, subdomain="api")
 app.register_blueprint(dashboard_api, subdomain="api")
 app.register_blueprint(reviews_api, subdomain="api")
 app.register_blueprint(users_api, subdomain="api")
+
+
+@app.errorhandler(405)
+def method_not_allowed(e):
+    return (
+        {
+            "error_code": "BX0000",
+            "error": "The method is not allowed for the requested URL.",
+        },
+        405,
+        {"Content-Type": "application/json"},
+    )
 
 
 @app.errorhandler(404)
