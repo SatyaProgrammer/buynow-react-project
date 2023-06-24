@@ -7,6 +7,7 @@ import { useNavigate, Navigate, useLocation } from "react-router-dom";
 import logo from "../../../assets/hero-bcg.jpeg";
 import { useState } from "react";
 import { profileReducer, INITIAL_STATE, ACTION_TYPES } from "./ProfileReducer";
+import Swal from "sweetalert2";
 
 const ProfilePage = () => {
   const [state, dispatch] = useReducer(profileReducer, INITIAL_STATE);
@@ -33,6 +34,7 @@ const ProfilePage = () => {
     dispatch({ type: ACTION_TYPES.TELEGRAM, payload: data });
   };
 
+  const [isVerified, setIsVerified] = useState();
   const handleFetch = async () => {
     try {
       const response = await axios.get(
@@ -45,6 +47,7 @@ const ProfilePage = () => {
         }
       );
       console.log(response);
+      setIsVerified(response.data.customization.verified);
       dispatch({
         type: ACTION_TYPES.USERNAME,
         payload: response.data.customization.username,
@@ -167,6 +170,37 @@ const ProfilePage = () => {
     }
   };
 
+  const [verifyLoading, setVerifyLoading] = useState(false);
+  const handleVerify = async () => {
+    setVerifyLoading(true);
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/auth/resend_verify`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Basic ${token}`,
+          },
+        }
+      );
+      if (response) {
+        setVerifyLoading(false);
+        Swal.fire({
+          title: "Please check your email",
+          icon: "success",
+          confirmButtonColor: "#936a53",
+          confirmButtonText: "Close",
+        });
+      }
+    } catch (error) {
+      setVerifyLoading(false);
+      console.log(error);
+      if (error.response.data.error_code == "BX0001") {
+        navigate("/login");
+      }
+    }
+  };
+
   return (
     <>
       <div className="p-4 sm:ml-16 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
@@ -178,6 +212,37 @@ const ProfilePage = () => {
                   {/* image */}
                   <div className="flex flex-col justify-center items-center">
                     <h2>{state.user}</h2>
+                    {!isVerified ? (
+                      <div className="flex gap-1 items-center mb-4 text-yellow-700 group relative hover:cursor-default">
+                        <div className="w-5 h-5">
+                          <IconAlert fill="#b45309" />
+                        </div>
+                        <div className="font-semibold">
+                          Account is not verfied
+                        </div>
+                        <div className="hidden group-hover:block absolute left-full pl-2 w-64">
+                          <div className="shadow-md p-4 rounded-md">
+                            Check your email to verify account.
+                            {verifyLoading ? (
+                              <span
+                                className="ml-2 font-semibold underline"
+                              >
+                                Sending...
+                              </span>
+                            ) : (
+                              <span
+                                onClick={() => handleVerify()}
+                                className="ml-2 font-semibold underline hover:cursor-pointer"
+                              >
+                                Resend verify email
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      ""
+                    )}
                     <div className="w-36 h-36 rounded-full bg-gray-200 border">
                       {console.log(profile)}
                       <img

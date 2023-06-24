@@ -19,10 +19,13 @@ const Verify = () => {
             headers: { "Content-Type": "application/json" },
           }
         );
+        if(response) {
+          navigate("/login")
+        }
       } catch (error) {
         console.log(error)
       }
-    } else {
+      } else {
       navigate("/");
     }
   };
