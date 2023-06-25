@@ -48,18 +48,6 @@ def create_tracking(db_conn, uid):
         order_data = request.get_json()
         orders = order_data["orders"]
 
-        # create tracking number
-        cursor = db_conn.cursor(prepared=True, dictionary=True)
-        cursor.execute("INSERT INTO trackings (userId) VALUES (?)", (uid,))
-        tracking_id = cursor.lastrowid
-
-        if tracking_id is None:
-            return (
-                {"error_code": "BX0000", "error": "Something went wrong."},
-                500,
-                {"Content-Type": "application/json"},
-            )
-
         id_pairs = []
 
         for order in orders:
@@ -67,12 +55,15 @@ def create_tracking(db_conn, uid):
             pid = order["pid"]
 
             cursor.execute(
-                "SELECT id, availability, owner FROM products WHERE pid = ?", (pid,)
+                "SELECT id, availability, owner, deleted FROM products WHERE pid = ?",
+                (pid,),
             )
+
             item = cursor.fetchone()
             iid = item["id"]
             stock = item["availability"]
             owner = item["owner"]
+            deleted = item["deleted"]
 
             if owner == uid:
                 return (
@@ -80,6 +71,13 @@ def create_tracking(db_conn, uid):
                         "error_code": "BX0101",
                         "error": "You cannot order your own product.",
                     },
+                    400,
+                    {"Content-Type": "application/json"},
+                )
+
+            if deleted == 1:
+                return (
+                    {"error_code": "BX0103", "error": "Product is deleted."},
                     400,
                     {"Content-Type": "application/json"},
                 )
@@ -92,6 +90,18 @@ def create_tracking(db_conn, uid):
                 )
 
             id_pairs.append((iid, order["quantity"]))
+
+        # create tracking number
+        cursor = db_conn.cursor(prepared=True, dictionary=True)
+        cursor.execute("INSERT INTO trackings (userId) VALUES (?)", (uid,))
+        tracking_id = cursor.lastrowid
+
+        if tracking_id is None:
+            return (
+                {"error_code": "BX0000", "error": "Something went wrong."},
+                500,
+                {"Content-Type": "application/json"},
+            )
 
         for item in id_pairs:
             i_id, i_quantity = item

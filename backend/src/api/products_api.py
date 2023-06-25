@@ -38,6 +38,13 @@ def get_product(product_id: str):
             {"Content-Type": "application/json"},
         )
 
+    if result["deleted"] != 0:
+        return (
+            {"error_code": "BX1102", "error": "No product found."},
+            404,
+            {"Content-Type": "application/json"},
+        )
+
     return (
         {
             "pid": result["pid"],
@@ -89,24 +96,35 @@ def get_matching_products():
                 )
 
             res = list(
-                map(
-                    lambda r: {
-                        "pid": r["pid"],
-                        "name": r["name"],
-                        "images": r["images"],
-                        "category": r["catName"],
-                        "owner": r["ownerName"],
-                        "ownerId": r["ownerId"],
-                        "price": r["price"],
-                        "customization": r["customization"],
-                        "rating": r["rating"],
-                        "description": r["description"],
-                        "availability": r["availability"],
-                        "deliveryOption": r["deliveryOption"],
-                    },
-                    result,
+                filter(
+                    lambda r: r["deleted"] == 0,
+                    map(
+                        lambda r: {
+                            "pid": r["pid"],
+                            "name": r["name"],
+                            "images": r["images"],
+                            "category": r["catName"],
+                            "owner": r["ownerName"],
+                            "ownerId": r["ownerId"],
+                            "price": r["price"],
+                            "customization": r["customization"],
+                            "rating": r["rating"],
+                            "description": r["description"],
+                            "availability": r["availability"],
+                            "deliveryOption": r["deliveryOption"],
+                        },
+                        result,
+                    ),
                 )
             )
+
+            if res == []:
+                return (
+                    {"error_code": "BX1102", "error": "No products found."},
+                    404,
+                    {"Content-Type": "application/json"},
+                )
+
             return (res, 200, {"Content-Type": "application/json"})
     except Exception as e:
         Global.console.print_exception(show_locals=True)
