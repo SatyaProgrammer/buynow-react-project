@@ -31,7 +31,6 @@ const Signup = (props) => {
 
   useEffect(() => {
     document.title = props.title;
-    usernameRef.current.focus();
     if (windowSize < 587) {
       setIsFull(false);
     } else {
@@ -239,8 +238,17 @@ const Signup = (props) => {
   return (
     <>
       {profileSetup ? (
-        <div className="background-gray-100 p-8">
-          <div>
+        <div className="min-h-screen max-h-full bg-gray-100 p-4 grid place-items-center">
+          <div className="bg-white rounded-md shadow-md p-4 w-full flex flex-col gap-4">
+            <button
+              onClick={() => setProfileSetup(false)}
+              className="btn w-fit"
+            >
+              Back
+            </button>
+            <div className="text-3xl font-semibold text-cldark text-center">
+              Setup Contact
+            </div>
             {/* Phone number */}
             <div className="flex flex-col gap-2">
               <label
@@ -267,8 +275,16 @@ const Signup = (props) => {
               <div className="text-xl font-semibold text-cldark">
                 Contact Info
               </div>
-              <div className="flex flex-col gap-2">
-                <div className="text-cldark">Facebook</div>
+              <div className="grid grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-3">
+                <div className="col-span-2 md:col-span-1">
+                  <div className="flex gap-2 items-center">
+                    <div className="flex items-center  border rounded-lg  border-gray-300 focus-within:outline focus-within:outline-1 w-full">
+                      <div className="w-full p-3 rounded-lg  text-cldark text-center">
+                        Facebook
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div className="flex flex-col gap-3 col-span-4 md:col-span-5 lg:col-span-7 xl:col-span-9">
                   <div>
                     <div className="flex gap-2 items-center">
@@ -285,7 +301,15 @@ const Signup = (props) => {
                   </div>
                 </div>
 
-                <div className="text-cldark">Instagram</div>
+                <div className="col-span-2 md:col-span-1">
+                  <div className="flex gap-2 items-center">
+                    <div className="flex items-center  border rounded-lg  border-gray-300 focus-within:outline focus-within:outline-1 w-full">
+                      <div className="w-full p-3 rounded-lg  text-cldark text-center">
+                        Instagram
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div className="flex flex-col gap-3 col-span-4 md:col-span-5 lg:col-span-7 xl:col-span-9">
                   <div>
                     <div className="flex gap-2 items-center">
@@ -303,9 +327,16 @@ const Signup = (props) => {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-2">
-                <div className="text-cldark">Tik Tok</div>
-
+              <div className="grid grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-3">
+                <div className="col-span-2 md:col-span-1">
+                  <div className="flex gap-2 items-center">
+                    <div className="flex items-center  border rounded-lg  border-gray-300 focus-within:outline focus-within:outline-1 w-full">
+                      <div className="w-full p-3 rounded-lg  text-cldark text-center">
+                        Tiktok
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div className="flex flex-col gap-3 col-span-4 md:col-span-5 lg:col-span-7 xl:col-span-9">
                   <div>
                     <div className="flex gap-2 items-center">
@@ -322,7 +353,15 @@ const Signup = (props) => {
                   </div>
                 </div>
 
-                <div className="text-cldark">Telegram</div>
+                <div className="col-span-2 md:col-span-1">
+                  <div className="flex gap-2 items-center">
+                    <div className="flex items-center  border rounded-lg  border-gray-300 focus-within:outline focus-within:outline-1 w-full">
+                      <div className="w-full p-3 rounded-lg  text-cldark text-center">
+                        Telegram
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div className="flex flex-col gap-3 col-span-4 md:col-span-5 lg:col-span-7 xl:col-span-9">
                   <div>
                     <div className="flex gap-2 items-center">
@@ -339,6 +378,21 @@ const Signup = (props) => {
                   </div>
                 </div>
               </div>
+            </div>
+            <div>
+              {submitting ? (
+                <div className="w-full bg-primary4 text-white font-semibold py-2 text-center border border-primary4 hover:bg-white hover:text-primary4 rounded-md transition-all duration-300">
+                  Submitting...
+                </div>
+              ) : (
+                <button
+                  onClick={handleSubmit}
+                  // onClick={(e) => handleNextPage(e)}
+                  className="w-full bg-primary4 text-white font-semibold py-2 text-center border border-primary4 hover:bg-white hover:text-primary4 rounded-md transition-all duration-300"
+                >
+                  Submit
+                </button>
+              )}
             </div>
           </div>
         </div>
