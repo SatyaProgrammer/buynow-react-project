@@ -62,7 +62,17 @@ const Product = () => {
         }
       );
       navigate("/redirect");
+      console.log(response);
     } catch (err) {
+      console.log(err);
+      if (err?.response.status == 500) {
+        Swal.fire({
+          title: "Can't delete product in order",
+          icon: "warning",
+          confirmButtonColor: "#936a53",
+          confirmButtonText: "Close",
+        });
+      }
       if (err?.response.data.error_code == "BX0001") {
         cookies.remove("jwt_authorization");
         navigate("/sell/product");
@@ -181,7 +191,7 @@ const Product = () => {
                             </Link>
                             <div
                               onClick={() => handleDelete(product.pid)}
-                              className="w-7 h-7 hover:scale-110 transition-all duration-300"
+                              className="w-7 h-7 hover:scale-110 transition-all duration-300 hover:cursor-pointer"
                             >
                               <IconDelete fill="hsl(22, 28%, 45%)" />
                             </div>
@@ -191,7 +201,7 @@ const Product = () => {
                     ))
                   ) : (
                     <tr>
-                      <td>No product found</td>
+                      <td></td>
                     </tr>
                   )}
                 </tbody>

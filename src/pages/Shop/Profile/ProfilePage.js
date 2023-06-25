@@ -34,7 +34,7 @@ const ProfilePage = () => {
     dispatch({ type: ACTION_TYPES.TELEGRAM, payload: data });
   };
 
-  const [isVerified, setIsVerified] = useState();
+  const [isVerified, setIsVerified] = useState(true);
   const handleFetch = async () => {
     try {
       const response = await axios.get(
