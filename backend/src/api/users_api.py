@@ -9,6 +9,82 @@ from backend.src.middleware.rate_limiter import limiter
 users_api = Blueprint("users_api", __name__)
 
 
+@users_api.get("/users")
+@limiter.limit("60/minute")
+@token_required
+@give_connection
+def get_users(db_conn, uid):
+    try:
+        cursor = db_conn.cursor(prepared=True, dictionary=True)
+        query = "SELECT admin FROM users WHERE id = ?;"
+        cursor.execute(query, (uid,))
+        result = cursor.fetchone()
+        cursor.close()
+
+        if result is None:
+            return (
+                {"error_code": "BX0000", "error": "User not found."},
+                404,
+                {"Content-Type": "application/json"},
+            )
+
+        if result["admin"] == 0:
+            return (
+                {"error_code": "BX0001", "error": "User not authorized."},
+                403,
+                {"Content-Type": "application/json"},
+            )
+
+        cursor = db_conn.cursor(prepared=True, dictionary=True)
+        query = "SELECT id, username, email, verified, admin as is_admin FROM users;"
+        cursor.execute(query)
+        result = cursor.fetchall()
+        cursor.close()
+
+        return {"users": result}, 200, {"Content-Type": "application/json"}
+    except Exception as e:
+        Global.console.print_exception()
+        return (
+            {"error_code": "BX0000", "error": "Something went wrong."},
+            500,
+            {"Content-Type": "application/json"},
+        )
+
+
+@users_api.get("/users/is_admin")
+@limiter.limit("60/minute")
+@token_required
+@give_connection
+def is_admin(db_conn, uid):
+    try:
+        cursor = db_conn.cursor(prepared=True, dictionary=True)
+        query = "SELECT admin FROM users WHERE id = ?;"
+        cursor.execute(query, (uid,))
+        cursor.close()
+
+        result = cursor.fetchone()
+
+        if result is None:
+            return (
+                {"error_code": "BX0000", "error": "User not found."},
+                404,
+                {"Content-Type": "application/json"},
+            )
+
+        return (
+            {"is_admin": result["admin"]},
+            200,
+            {"Content-Type": "application/json"},
+        )
+    except Exception as e:
+        Global.console.print_exception()
+        return (
+            {"error_code": "BX0000", "error": "Something went wrong."},
+            500,
+            {"Content-Type": "application/json"},
+        )
+
+
 @users_api.get("/users/<int:uid>")
 @limiter.limit("60/minute")
 @give_connection
