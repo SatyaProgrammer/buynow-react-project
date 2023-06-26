@@ -36,7 +36,11 @@ def get_users(db_conn, uid):
             )
 
         cursor = db_conn.cursor(prepared=True, dictionary=True)
-        query = "SELECT id, username, email, verified, admin as is_admin FROM users;"
+        query = """\
+SELECT u.id, u.username, u.email, u.verified, u.admin as is_admin, c.image, c.contactInfo
+FROM users as u
+LEFT JOIN userscustomization as c ON u.id = c.recipientId;"""
+
         cursor.execute(query)
         result = cursor.fetchall()
         cursor.close()
