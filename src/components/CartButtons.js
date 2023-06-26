@@ -111,6 +111,14 @@ const CartButtons = () => {
                 </a> */}
               </li>
               <li>
+                <Link
+                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  to="/change-password"
+                >
+                  Change Password
+                </Link>
+              </li>
+              <li>
                 <a
                   href="#"
                   className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"

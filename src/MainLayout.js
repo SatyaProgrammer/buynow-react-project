@@ -24,6 +24,7 @@ import { PrivateRoutes } from "./utils/ManageRoute";
 import EditProduct from "./pages/Shop/EditProduct/EditProduct";
 import OrderDetails from "./pages/OrderDetails";
 import ProfilePage from "./pages/Shop/Profile/ProfilePage";
+import ChangePasswordPage from "./pages/ChangePasswordPage";
 
 const MainLayout = () => {
   return (
@@ -121,6 +122,16 @@ const MainLayout = () => {
               <>
                 <ShopSidebar />
                 <ProfilePage />
+              </>
+            }
+          />
+
+          <Route
+            path="/change-password"
+            element={
+              <>
+                <ShopSidebar />
+                <ChangePasswordPage />
               </>
             }
           />
