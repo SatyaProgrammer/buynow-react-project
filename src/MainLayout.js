@@ -24,6 +24,7 @@ import { PrivateRoutes } from "./utils/ManageRoute";
 import EditProduct from "./pages/Shop/EditProduct/EditProduct";
 import OrderDetails from "./pages/OrderDetails";
 import ProfilePage from "./pages/Shop/Profile/ProfilePage";
+import AdminDashboard from "./pages/Admin/Dashboard";
 
 const MainLayout = () => {
   return (
@@ -33,7 +34,7 @@ const MainLayout = () => {
       <Routes>
         <Route element={<PrivateRoutes />}>
           <Route path="/checkout" element={<Checkout />} />
-
+          <Route path="/admin" element={<AdminDashboard />}/>
           <Route
             path="/sell/dashboard"
             element={

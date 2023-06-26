@@ -63,7 +63,7 @@ const Dashboard = () => {
       .catch((err) => {
         if (err?.response.data.error_code == "BX0001") {
           cookies.remove("jwt_authorization");
-          navigate("/shop/dashboard");
+          navigate("/sell/dashboard");
         }
       });
     if (order_counts_response && order_counts_response.data) {
@@ -85,7 +85,7 @@ const Dashboard = () => {
       .catch((err) => {
         if (err?.response.data.error_code == "BX0001") {
           cookies.remove("jwt_authorization");
-          navigate("/shop/dashboard");
+          navigate("/sell/dashboard");
         }
       });
     if (revenue_response && revenue_response.data) {
@@ -108,7 +108,7 @@ const Dashboard = () => {
         if (err?.response.data.error_code == "BX0001") {
           cookies.remove("jwt_authorization");
           navigate("/sell/dashboard");
-        }
+        } 
       });
     if (recent_order_response && recent_order_response.data) {
       data["recent_order"] = recent_order_response.data;
@@ -235,7 +235,7 @@ const Dashboard = () => {
                 <tbody className="">
                   {state.post.recent_order?.orders.map((product, idx) => (
                     <tr key={idx} className="text-left hover:bg-gray-50">
-                      <td className="text-cldark py-4 whitespace-nowrap overflow-hidden">
+                      <td className="text-cldark py-4 whitespace-nowrap">
                         <div className="flex items-center gap-2">
                           <div className="w-16">
                             <img
@@ -244,7 +244,7 @@ const Dashboard = () => {
                               className="w-full h-10 rounded-md shadow-md object-cover"
                             />
                           </div>
-                          <div className="font-semibold w-10 overflow-hidden">
+                          <div className="font-semibold overflow-hidden">
                             {product.name}
                           </div>
                         </div>
