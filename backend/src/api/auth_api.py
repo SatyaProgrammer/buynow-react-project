@@ -473,7 +473,7 @@ def change_password(db_conn, uid):
         cursor.execute(sql, (new_passwd, new_salt, uid))
         db_conn.commit()
 
-        token = Global.tokens.pop(uid, None)
+        token = Global.tokens.pop(uid)
         if token is None:
             return {"error_code": "BX9901", "error": "Not logged in. Absurd error."}
 
