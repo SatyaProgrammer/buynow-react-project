@@ -44,11 +44,9 @@ const CartButtons = () => {
         setName(response.data.customization.username);
       } catch (err) {
         if (err.response.data.error_code === "BX0001") {
-          console.log("okkk");
           cookies.remove("jwt_authorization");
           navigate("/");
         }
-        console.log(err);
       }
     }
   };

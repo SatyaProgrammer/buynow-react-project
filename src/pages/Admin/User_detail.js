@@ -13,18 +13,14 @@ const User_detail = () => {
       .then((products) => {
         setProducts(products.data.products);
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => {});
 
     const info_response = axios
       .get(`${process.env.REACT_APP_BACKEND_URL}/users/${uid}`)
       .then((infos) => {
         setInfos(infos.data);
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => {});
 
     return await Promise.all([product_response, info_response]);
   };
@@ -35,8 +31,8 @@ const User_detail = () => {
 
   return (
     <>
-      {console.log(infos)}
-      {console.log(products)}
+      {}
+      {}
       <div className="p-4 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
         <div className="container min-h-screen max-h-full">
           <div className="shadow-md bg-white p-4">
@@ -49,7 +45,9 @@ const User_detail = () => {
                     className="w-full h-32 rounded-full shadow-md object-cover"
                   />
                 </div>
-                <div className="text-cldark text-4xl font-semibold">{infos.username}</div>
+                <div className="text-cldark text-4xl font-semibold">
+                  {infos.username}
+                </div>
               </div>
             </div>
           </div>

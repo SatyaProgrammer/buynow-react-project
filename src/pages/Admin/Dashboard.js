@@ -22,12 +22,9 @@ const Dashboard = () => {
         }
       );
       if (response) {
-        console.log(response.data.users);
         setUsers(response.data.users);
       }
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -53,7 +50,7 @@ const Dashboard = () => {
 
   return (
     <>
-      {console.log(users)}
+      {}
       <div className="p-4 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
         <div className="container min-h-screen max-h-full">
           <div className="shadow-md bg-white">

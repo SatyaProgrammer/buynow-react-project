@@ -62,9 +62,7 @@ const Product = () => {
         }
       );
       navigate("/redirect");
-      console.log(response);
     } catch (err) {
-      console.log(err);
       if (err?.response.status == 500) {
         Swal.fire({
           title: "Can't delete product in order",
