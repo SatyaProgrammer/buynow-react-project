@@ -60,9 +60,8 @@ def is_admin(db_conn, uid):
         cursor = db_conn.cursor(prepared=True, dictionary=True)
         query = "SELECT admin FROM users WHERE id = ?;"
         cursor.execute(query, (uid,))
-        cursor.close()
-
         result = cursor.fetchone()
+        cursor.close()
 
         if result is None:
             return (
