@@ -118,6 +118,7 @@ const ProductDetail = () => {
             <div>
               <div className="grid grid-col-1 lg:grid-cols-5 gap-10 justify-center">
                 <div className="col-span-1 lg:col-span-2 flex flex-col justify-between">
+                  {console.log(state.post.images?.images)}
                   <ProductImages images={state.post.images?.images} />
                   <div className="flex flex-col gap-2">
                     <div className="w-full border">

@@ -8,8 +8,14 @@ import { links } from "../utils/constants";
 import CartButtons from "./CartButtons";
 import { useProductsContext } from "../context/products_context";
 import { SidebarItems } from "../pages/Shop/utils/Constant";
+import { FaShoppingCart, FaUserMinus, FaUserPlus } from "react-icons/fa";
+import Cookies from "universal-cookie";
+import { useNavigate } from "react-router-dom";
 
 const AdminNavbar = () => {
+  const cookies = new Cookies();
+  const navigate = new useNavigate();
+  const token = cookies.get("jwt_authorization");
   const [dropDown, setDropDown] = useState(false);
   const { openSidebar } = useProductsContext();
   const refreshPage = () => {
@@ -17,11 +23,21 @@ const AdminNavbar = () => {
       window.location.reload(false);
     }, 500);
   };
+
+  const logout = () => {
+    cookies.remove("jwt_authorization");
+    cookies.remove("isAdmin");
+    navigate("/login");
+  };
+
+  const login = () => {
+    navigate("/login");
+  };
   return (
     <NavContainer>
       <div className="container flex items-center justify-between">
         <div className="flex nav-header">
-          <Link to="/">
+          <Link to="/admin">
             <img src={logo} alt="buy now" className="logo1" />
           </Link>
           <button type="button" className="nav-toggle" onClick={openSidebar}>
@@ -29,7 +45,15 @@ const AdminNavbar = () => {
           </button>
         </div>
         <div className="flex w-fit">
-          <CartButtons />
+          {token ? (
+            <button type="button" className="auth-btn" onClick={logout}>
+              Logout <FaUserMinus />
+            </button>
+          ) : (
+            <button type="button" className="auth-btn" onClick={login}>
+              Login <FaUserPlus />
+            </button>
+          )}
         </div>
       </div>
     </NavContainer>
@@ -103,6 +127,19 @@ const NavContainer = styled.nav`
     .cart-btn-wrapper {
       display: flex;
       gap: 10%;
+    }
+  }
+  .auth-btn {
+    display: flex;
+    align-items: center;
+    background: transparent;
+    border-color: transparent;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--clr-grey-1);
+    letter-spacing: var(--spacing);
+    svg {
+      margin-left: 5px;
     }
   }
 `;

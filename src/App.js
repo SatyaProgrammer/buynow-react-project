@@ -8,18 +8,20 @@ import Verify from "./pages/Verify";
 import { LoggedRoute } from "./utils/ManageRoute";
 import Redirecter from "./components/Redirecter";
 import SingleProductPage from "./pages/SingleProductPage";
-import { PrivateRoutes } from "./utils/ManageRoute";
+import { AdminRoutes } from "./utils/ManageRoute";
 import AdminDashboard from "./pages/Admin/Dashboard";
 import AdminNavbar from "./components/AdminNavbar";
 import User_detail from "./pages/Admin/User_detail";
 import ForgetPasswordPage from "./pages/ForgetPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import Product_detail from "./pages/Admin/Product_detail";
+import { NormalRoutes } from "./utils/ManageRoute";
 
 const App = () => {
   return (
     <Router>
       <Routes>
-        <Route element={<PrivateRoutes />}>
+        <Route element={<AdminRoutes />}>
           <Route
             path="/admin"
             element={
@@ -38,10 +40,21 @@ const App = () => {
               </>
             }
           />
+          <Route
+            path="/admin/user_product/:uid/:pid"
+            element={
+              <>
+                <AdminNavbar />
+                <Product_detail />
+              </>
+            }
+          />
         </Route>
         <Route path="*" element={<MainLayout />} />
         <Route path="/redirect" element={<Redirecter />} />
-        <Route path="/products/:id" element={<SingleProductPage />} />
+        <Route element={<NormalRoutes />}>
+          <Route path="/products/:id" element={<SingleProductPage />} />
+        </Route>
         <Route path="/verify" element={<Verify />} />
         <Route element={<LoggedRoute />}>
           <Route path="/login" element={<Login title="BuyNow - Login" />} />
