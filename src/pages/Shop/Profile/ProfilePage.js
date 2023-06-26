@@ -46,37 +46,52 @@ const ProfilePage = () => {
           },
         }
       );
-      console.log(response);
       setIsVerified(response.data.customization.verified);
-      dispatch({
-        type: ACTION_TYPES.USERNAME,
-        payload: response.data.customization.username,
-      });
-      setProfile(response.data.customization.image);
-      dispatch({
-        type: ACTION_TYPES.SET_PHONE,
-        payload: response.data.customization.phone,
-      });
-      dispatch({
-        type: ACTION_TYPES.FACEBOOK,
-        payload: response.data.customization.contactInfo.Facebook,
-      });
-      dispatch({
-        type: ACTION_TYPES.INSTAGRAM,
-        payload: response.data.customization.contactInfo.Instagram,
-      });
-      dispatch({
-        type: ACTION_TYPES.TIKTOK,
-        payload: response.data.customization.contactInfo.Tiktok,
-      });
-      dispatch({
-        type: ACTION_TYPES.TELEGRAM,
-        payload: response.data.customization.contactInfo.Telegram,
-      });
-      dispatch({
-        type: ACTION_TYPES.IMAGE,
-        payload: response.data.customization.image,
-      });
+      if (response.data.customization.username) {
+        dispatch({
+          type: ACTION_TYPES.USERNAME,
+          payload: response.data.customization.username,
+        });
+      }
+      if (response.data.customization.image) {
+        setProfile(response.data.customization.image);
+      }
+      if (response.data.customization.phone) {
+        dispatch({
+          type: ACTION_TYPES.SET_PHONE,
+          payload: response.data.customization.phone,
+        });
+      }
+      if (response.data.customization.contactInfo.Facebook) {
+        dispatch({
+          type: ACTION_TYPES.FACEBOOK,
+          payload: response.data.customization.contactInfo.Facebook,
+        });
+      }
+      if (response.data.customization.contactInfo.Instagram) {
+        dispatch({
+          type: ACTION_TYPES.INSTAGRAM,
+          payload: response.data.customization.contactInfo.Instagram,
+        });
+      }
+      if (response.data.customization.contactInfo.Tiktok) {
+        dispatch({
+          type: ACTION_TYPES.TIKTOK,
+          payload: response.data.customization.contactInfo.Tiktok,
+        });
+      }
+      if (response.data.customization.contactInfo.Telegram) {
+        dispatch({
+          type: ACTION_TYPES.TELEGRAM,
+          payload: response.data.customization.contactInfo.Telegram,
+        });
+      }
+      if (response.data.customization.image) {
+        dispatch({
+          type: ACTION_TYPES.IMAGE,
+          payload: response.data.customization.image,
+        });
+      }
     } catch (err) {}
   };
 
