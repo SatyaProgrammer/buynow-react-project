@@ -10,6 +10,7 @@ load_dotenv(dotenv_path=".env.local")
 
 console = Console()
 
+
 def update_ratings():
     try:
         db_conn = create_connection()
@@ -27,6 +28,8 @@ GROUP BY p.id"""
         cursor.execute(sql)
 
         for row in cursor.fetchall():
+            if row["rating"] is None:
+                row["rating"] = 0
             cursor.execute(
                 """\
 UPDATE products
@@ -42,11 +45,12 @@ WHERE id = ?""",
     except Exception as e:
         console.print_exception()
         exit(1)
-        
+
 
 def schedule_stuffs():
     schedule.every(5).minutes.do(update_ratings)
     console.log("[bold green]Scheduled stuffs[/bold green]")
+
 
 def main():
     schedule_stuffs()
@@ -56,6 +60,6 @@ def main():
         schedule.run_pending()
         sleep(1)
 
+
 if __name__ == "__main__":
     main()
-

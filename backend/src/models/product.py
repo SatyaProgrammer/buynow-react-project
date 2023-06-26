@@ -29,7 +29,8 @@ class Product(Model):
         if len(taking) == 0:
             sb = f"""SELECT p.id, p.pid, p.name, p.images, c.name as catName,
 u.id as ownerId, u.username as ownerName, p.price, p.customization, p.rating, p.availability, p.soldAmount,
-p.deliveryOption, p.description, p.createdAt FROM products AS p
+p.deliveryOption, p.description, p.createdAt, p.deleted
+FROM products AS p
 INNER JOIN categories AS c ON p.catId = c.id
 INNER JOIN users as u ON p.owner = u.id
 WHERE {cond}
@@ -75,7 +76,8 @@ WHERE {cond}
         if len(taking) == 0:
             sb = """SELECT p.id, p.pid, p.name, p.images, c.name as catName,
 u.id as ownerId, u.username as ownerName, p.price, p.customization, p.rating, p.availability, p.soldAmount,
-p.deliveryOption, p.description, p.createdAt FROM products AS p
+p.deliveryOption, p.description, p.createdAt, p.deleted
+FROM products AS p
 INNER JOIN categories AS c ON p.catId = c.id
 INNER JOIN users as u ON p.owner = u.id"""
         else:
@@ -108,7 +110,8 @@ INNER JOIN users as u ON p.owner = u.id"""
         if len(taking) == 0:
             sb = """SELECT p.id, p.pid, p.name, p.images, c.name as catName,
 u.id as ownerId, u.username as ownerName, p.price, p.customization, p.rating, p.availability, p.soldAmount,
-p.deliveryOption, p.description, p.createdAt FROM products AS p
+p.deliveryOption, p.description, p.createdAt, p.deleted
+FROM products AS p
 INNER JOIN categories AS c ON p.catId = c.id
 INNER JOIN users as u ON p.owner = u.id
 ORDER BY p.createdAt DESC
@@ -139,7 +142,8 @@ LIMIT %s OFFSET %s"""
         cursor = db_conn.cursor(prepared=True)
         sql = """SELECT p.id, p.pid, p.name, p.images, c.name as catName,
 u.id as ownerId, u.username as ownerName, p.price, p.customization, p.rating, p.availability, p.soldAmount,
-p.deliveryOption, p.description, p.createdAt FROM products AS p
+p.deliveryOption, p.description, p.createdAt, p.deleted
+FROM products AS p
 INNER JOIN categories AS c ON p.catId = c.id
 INNER JOIN users as u ON p.owner = u.id
 WHERE p.id = %s"""
@@ -164,7 +168,8 @@ WHERE p.id = %s"""
         cursor = db_conn.cursor(prepared=True)
         sql = """SELECT p.id, p.pid, p.name, p.images, c.name as catName,
 u.id as ownerId, u.username as ownerName, p.price, p.customization, p.rating, p.availability, p.soldAmount,
-p.deliveryOption, p.description, p.createdAt FROM products AS p
+p.deliveryOption, p.description, p.createdAt, p.deleted
+FROM products AS p
 INNER JOIN categories AS c ON p.catId = c.id
 INNER JOIN users as u ON p.owner = u.id
 WHERE p.pid = %s"""
@@ -199,6 +204,7 @@ WHERE p.pid = %s"""
                 "deliveryOption",
                 "description",
                 "createdAt",
+                "deleted",
             ]
 
         res = {taking[i]: __result[i] for i in range(len(taking))}
@@ -271,11 +277,19 @@ WHERE p.pid = %s"""
                 return []
 
             db_conn = __db_conn.unwrap()
-            cursor = db_conn.cursor(prepared=True)
-            cursor.execute("DELETE FROM products WHERE pid = %s", (pid,))
-            db_conn.commit()
-            cursor.close()
-            return Result.Ok(())
+            try:
+                cursor = db_conn.cursor(prepared=True)
+                cursor.execute("DELETE FROM products WHERE pid = %s", (pid,))
+                db_conn.commit()
+                cursor.close()
+                return Result.Ok(())
+            except Exception as e:
+                # try soft delete instead
+                cursor = db_conn.cursor(prepared=True)
+                cursor.execute("UPDATE products SET deleted = 1 WHERE pid = %s", (pid,))
+                db_conn.commit()
+                return Result.Ok(())
+
         except Exception as e:
             Global.console.print_exception()
             return Result.Err(str(e))

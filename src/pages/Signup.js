@@ -1,8 +1,8 @@
 import React, { useEffect, useReducer, useRef, useState } from "react";
 import {
-  signupReducer,
-  INITIAL_STATE,
-  ACTION_TYPES,
+    signupReducer,
+    INITIAL_STATE,
+    ACTION_TYPES,
 } from "../reducers/signup_reducer";
 import axios from "axios";
 import { API_CALL } from "./Shop/utils/Constant";
@@ -12,228 +12,229 @@ import Cookies from "universal-cookie";
 
 const USERNAME_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PASSWORD_REGEX =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 const EMAIL_REGEX =
-  /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 const Signup = (props) => {
-  const [state, dispatch] = useReducer(signupReducer, INITIAL_STATE);
-  const usernameRef = useRef();
-  const emailRed = useRef();
-  const [windowSize, setWindowSize] = useState(window.innerHeight);
-  const [isFull, setIsFull] = useState(true);
-  const [mainHeight, setMainHeight] = useState();
-  const mainRef = useRef();
-  const [nextPage, setNextPage] = useState(false);
-  const [profile, setProfile] = useState();
-  const [submitting, setSubmitting] = useState(false);
-  const cookies = new Cookies();
+    const [state, dispatch] = useReducer(signupReducer, INITIAL_STATE);
+    const usernameRef = useRef();
+    const emailRed = useRef();
+    const [windowSize, setWindowSize] = useState(window.innerHeight);
+    const [isFull, setIsFull] = useState(true);
+    const [mainHeight, setMainHeight] = useState();
+    const mainRef = useRef();
+    const [nextPage, setNextPage] = useState(false);
+    const [profile, setProfile] = useState();
+    const [submitting, setSubmitting] = useState(false);
+    const cookies = new Cookies();
 
-  useEffect(() => {
-    document.title = props.title;
-    if (windowSize < 587) {
-      setIsFull(false);
-    } else {
-      setIsFull(true);
-    }
-    window.addEventListener("resize", handleResize, false);
-  }, []);
-  const handleResize = () => {
-    setWindowSize(window.innerHeight);
-  };
-
-  React.useEffect(() => {
-    if (mainHeight) {
-      if (windowSize > mainHeight + 20) {
-        setIsFull(true);
-      } else {
+    useEffect(() => {
+      document.title = props.title;
+      if (windowSize < 587) {
         setIsFull(false);
+      } else {
+        setIsFull(true);
       }
-    }
-  }, [windowSize]);
+      window.addEventListener("resize", handleResize, false);
+    }, []);
 
-  useEffect(() => {
-    dispatch({
-      type: ACTION_TYPES.SET_VALID_USERNAME,
-      payload: USERNAME_REGEX.test(state.username),
-    });
-  }, [state.username]);
+    const handleResize = () => {
+        setWindowSize(window.innerHeight);
+    };
 
-  useEffect(() => {
-    dispatch({
-      type: ACTION_TYPES.SET_VALID_EMAIL,
-      payload: EMAIL_REGEX.test(state.email),
-    });
-  }, [state.email]);
-
-  useEffect(() => {
-    dispatch({
-      type: ACTION_TYPES.SET_VALID_PASSWORD,
-      payload: PASSWORD_REGEX.test(state.password),
-    });
-    dispatch({
-      type: ACTION_TYPES.SET_VALID_CONFIRM_PASSWORD,
-      payload: state.password === state.confirmPassword,
-    });
-  }, [state.password, state.confirmPassword]);
-
-  useEffect(() => {
-    dispatch({ type: ACTION_TYPES.SET_ERROR, payload: "" });
-  }, [state.username, state.email, state.password, state.confirmPassword]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSubmitting(true);
-    // if button enabled with JS hack
-    const v1 = USERNAME_REGEX.test(state.username);
-    const v2 = PASSWORD_REGEX.test(state.password);
-    const v3 = EMAIL_REGEX.test(state.email);
-    if (!v1 || !v2 || !v3) {
-      dispatch({
-        type: ACTION_TYPES.SET_ERROR,
-        payload: "Invalid Entry",
-      });
-      return;
-    }
-    let data = JSON.stringify({
-      username: state.username,
-      password: state.password,
-      email: state.email,
-    });
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/auth/register`,
-        data,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-      let pUrl = "";
-      try {
-        const preset_key = "c003351q";
-        const cloud_name = "dlplvjf9l";
-        const token = cookies.get("jwt_authorization");
-
-        if (profile) {
-          const file = profile;
-          const formData = new FormData();
-          formData.append("file", file);
-          formData.append("upload_preset", preset_key);
-          await axios
-            .post(
-              `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
-              formData
-            )
-            .then((res) => {
-              pUrl = res.data.secure_url;
-            });
-        } else {
-          pUrl =
-            "https://res.cloudinary.com/dlplvjf9l/image/upload/v1687078004/lwum3hs5emhzjm9rrfha.jpg";
-        }
-
-        try {
-          let pData = JSON.stringify({
-            theme: "light",
-            image: pUrl,
-            phone: phoneNum,
-            contactInfo: {
-              Facebook: facebook,
-              Instagram: instagram,
-              Tiktok: tiktok,
-              Telegram: telegram,
-            },
-          });
-          await axios.put(
-            `${process.env.REACT_APP_BACKEND_URL}/customization`,
-            pData,
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Basic ${response.data.token}`,
-              },
+    React.useEffect(() => {
+        if (mainHeight) {
+            if (windowSize > mainHeight + 20) {
+                setIsFull(true);
+            } else {
+                setIsFull(false);
             }
-          );
-        } catch (e) {}
-      } catch (error) {
+        }
+    }, [windowSize]);
+
+    useEffect(() => {
         dispatch({
-          type: ACTION_TYPES.SET_ERROR,
-          payload: "Image upload fail",
+            type: ACTION_TYPES.SET_VALID_USERNAME,
+            payload: USERNAME_REGEX.test(state.username),
         });
-      }
+    }, [state.username]);
 
-      setProfile("");
-      dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: true });
-      dispatch({ type: ACTION_TYPES.SET_USERNAME, payload: "" });
-      dispatch({ type: ACTION_TYPES.SET_PASSWORD, payload: "" });
-      dispatch({ type: ACTION_TYPES.SET_EMAIL, payload: "" });
-      dispatch({ type: ACTION_TYPES.SET_CONFIRM_PASSWORD, payload: "" });
-      setNextPage(!nextPage);
-      setIsFull(!isFull);
-      window.scrollTo(0, 0);
-      dispatch({
-        type: ACTION_TYPES.SET_SUCCESS,
-        payload: "Signup successful",
-      });
-      setSubmitting(false);
-      setSkipProfile(false);
-      setProfileSetup(false);
-    } catch (err) {
-      setNextPage(!nextPage);
-      setIsFull(!isFull);
-      setSkipProfile(false);
-      setProfileSetup(false);
-      dispatch({
-        type: ACTION_TYPES.SET_ERROR,
-        payload: err?.response.data.error,
-      });
-      window.scrollTo(0, 0);
-      setSubmitting(false);
-    }
-  };
+    useEffect(() => {
+        dispatch({
+            type: ACTION_TYPES.SET_VALID_EMAIL,
+            payload: EMAIL_REGEX.test(state.email),
+        });
+    }, [state.email]);
 
-  const handleNextPage = (e) => {
-    e.preventDefault();
-    if (
-      state.validUsername &&
-      state.validEmail &&
-      state.validPassword &&
-      state.validConfirmPassword
-    ) {
-      setNextPage(!nextPage);
-      setIsFull(!isFull);
-    } else {
-      dispatch({
-        type: ACTION_TYPES.SET_ERROR,
-        payload: "Please fill in correct information",
-      });
-      window.scrollTo(0, 0);
-    }
-  };
-  const [skipProfile, setSkipProfile] = useState(false);
-  const [profileSetup, setProfileSetup] = useState(false);
+    useEffect(() => {
+        dispatch({
+            type: ACTION_TYPES.SET_VALID_PASSWORD,
+            payload: PASSWORD_REGEX.test(state.password),
+        });
+        dispatch({
+            type: ACTION_TYPES.SET_VALID_CONFIRM_PASSWORD,
+            payload: state.password === state.confirmPassword,
+        });
+    }, [state.password, state.confirmPassword]);
 
-  const [facebook, setFacebook] = useState("");
-  const [instagram, setInstagram] = useState("");
-  const [tiktok, setTiktok] = useState("");
-  const [telegram, setTelegram] = useState("");
-  const [phoneNum, setPhoneNum] = useState("");
-  const handleFacebook = (e) => {
-    let data = e.target.value;
-    setFacebook(data);
-  };
-  const handleInstagram = (e) => {
-    let data = e.target.value;
-    setInstagram(data);
-  };
-  const handleTiktok = (e) => {
-    let data = e.target.value;
-    setTiktok(data);
-  };
-  const handleTelegram = (e) => {
-    let data = e.target.value;
-    setTelegram(data);
-  };
+    useEffect(() => {
+        dispatch({ type: ACTION_TYPES.SET_ERROR, payload: "" });
+    }, [state.username, state.email, state.password, state.confirmPassword]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setSubmitting(true);
+        // if button enabled with JS hack
+        const v1 = USERNAME_REGEX.test(state.username);
+        const v2 = PASSWORD_REGEX.test(state.password);
+        const v3 = EMAIL_REGEX.test(state.email);
+        if (!v1 || !v2 || !v3) {
+            dispatch({
+                type: ACTION_TYPES.SET_ERROR,
+                payload: "Invalid Entry",
+            });
+            return;
+        }
+        let data = JSON.stringify({
+            username: state.username,
+            password: state.password,
+            email: state.email,
+        });
+        try {
+            const response = await axios.post(
+                `${process.env.REACT_APP_BACKEND_URL}/auth/register`,
+                data,
+                {
+                    headers: { "Content-Type": "application/json" },
+                }
+            );
+            let pUrl = "";
+            try {
+                const preset_key = "c003351q";
+                const cloud_name = "dlplvjf9l";
+                const token = cookies.get("jwt_authorization");
+
+                if (profile) {
+                    const file = profile;
+                    const formData = new FormData();
+                    formData.append("file", file);
+                    formData.append("upload_preset", preset_key);
+                    await axios
+                        .post(
+                            `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
+                            formData
+                        )
+                        .then((res) => {
+                            pUrl = res.data.secure_url;
+                        });
+                } else {
+                    pUrl =
+                        "https://res.cloudinary.com/dlplvjf9l/image/upload/v1687078004/lwum3hs5emhzjm9rrfha.jpg";
+                }
+
+                try {
+                    let pData = JSON.stringify({
+                        theme: "light",
+                        image: pUrl,
+                        phone: phoneNum,
+                        contactInfo: {
+                            Facebook: facebook,
+                            Instagram: instagram,
+                            Tiktok: tiktok,
+                            Telegram: telegram,
+                        },
+                    });
+                    await axios.put(
+                        `${process.env.REACT_APP_BACKEND_URL}/customization`,
+                        pData,
+                        {
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `Basic ${response.data.token}`,
+                            },
+                        }
+                    );
+                } catch (e) {}
+            } catch (error) {
+                dispatch({
+                    type: ACTION_TYPES.SET_ERROR,
+                    payload: "Image upload fail",
+                });
+            }
+
+            setProfile("");
+            dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: true });
+            dispatch({ type: ACTION_TYPES.SET_USERNAME, payload: "" });
+            dispatch({ type: ACTION_TYPES.SET_PASSWORD, payload: "" });
+            dispatch({ type: ACTION_TYPES.SET_EMAIL, payload: "" });
+            dispatch({ type: ACTION_TYPES.SET_CONFIRM_PASSWORD, payload: "" });
+            setNextPage(!nextPage);
+            setIsFull(!isFull);
+            window.scrollTo(0, 0);
+            dispatch({
+                type: ACTION_TYPES.SET_SUCCESS,
+                payload: "Signup successful",
+            });
+            setSubmitting(false);
+            setSkipProfile(false);
+            setProfileSetup(false);
+        } catch (err) {
+            setNextPage(!nextPage);
+            setIsFull(!isFull);
+            setSkipProfile(false);
+            setProfileSetup(false);
+            dispatch({
+                type: ACTION_TYPES.SET_ERROR,
+                payload: err?.response.data.error,
+            });
+            window.scrollTo(0, 0);
+            setSubmitting(false);
+        }
+    };
+
+    const handleNextPage = (e) => {
+        e.preventDefault();
+        if (
+            state.validUsername &&
+            state.validEmail &&
+            state.validPassword &&
+            state.validConfirmPassword
+        ) {
+            setNextPage(!nextPage);
+            setIsFull(!isFull);
+        } else {
+            dispatch({
+                type: ACTION_TYPES.SET_ERROR,
+                payload: "Please fill in correct information",
+            });
+            window.scrollTo(0, 0);
+        }
+    };
+    const [skipProfile, setSkipProfile] = useState(false);
+    const [profileSetup, setProfileSetup] = useState(false);
+
+    const [facebook, setFacebook] = useState("");
+    const [instagram, setInstagram] = useState("");
+    const [tiktok, setTiktok] = useState("");
+    const [telegram, setTelegram] = useState("");
+    const [phoneNum, setPhoneNum] = useState("");
+    const handleFacebook = (e) => {
+        let data = e.target.value;
+        setFacebook(data);
+    };
+    const handleInstagram = (e) => {
+        let data = e.target.value;
+        setInstagram(data);
+    };
+    const handleTiktok = (e) => {
+        let data = e.target.value;
+        setTiktok(data);
+    };
+    const handleTelegram = (e) => {
+        let data = e.target.value;
+        setTelegram(data);
+    };
 
   return (
     <>

@@ -401,6 +401,9 @@ def forgot_password(db_conn):
 
         db_conn.commit()
 
+        # invalidate the used token
+        Global.forgot_password_map.pop(token)
+
         return (
             {"message": "Password changed."},
             200,
