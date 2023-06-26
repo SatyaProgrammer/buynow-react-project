@@ -12,6 +12,8 @@ import { PrivateRoutes } from "./utils/ManageRoute";
 import AdminDashboard from "./pages/Admin/Dashboard";
 import AdminNavbar from "./components/AdminNavbar";
 import User_detail from "./pages/Admin/User_detail";
+import ForgetPasswordPage from "./pages/ForgetPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 const App = () => {
   return (
@@ -44,7 +46,15 @@ const App = () => {
         <Route element={<LoggedRoute />}>
           <Route path="/login" element={<Login title="BuyNow - Login" />} />
           <Route path="/signup" element={<Signup title="BuyNow - Signup" />} />
+          <Route
+            path="/forget-password"
+            element={<ForgetPasswordPage title="BuyNow - Forget passoword" />}
+          />
         </Route>
+        <Route
+          path="/reset"
+          element={<ResetPasswordPage title="BuyNow - Reset password" />}
+        />
       </Routes>
     </Router>
   );

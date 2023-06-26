@@ -4,9 +4,9 @@ import { IconAlert } from "./Shop/utils/Icons";
 import axios from "axios";
 import Cookies from "universal-cookie";
 
-const LOGIN_URL = `${process.env.REACT_APP_BACKEND_URL}/auth/login`;
+const LOGIN_URL = `${process.env.REACT_APP_BACKEND_URL}/auth/send_forgot`;
 
-const Login = (props) => {
+const ForgetPassword = (props) => {
   // Initialize cookies
   const cookies = new Cookies();
 
@@ -17,7 +17,6 @@ const Login = (props) => {
   const userRef = useRef();
 
   const [user, setUser] = useState("");
-  const [pwd, setPwd] = useState("");
   const [errMsg, setErrMsg] = useState("");
 
   useEffect(() => {
@@ -27,12 +26,13 @@ const Login = (props) => {
 
   useEffect(() => {
     setErrMsg("");
-  }, [user, pwd]);
+  }, [user]);
 
   let data = {
-    username: user,
-    password: pwd,
+    email: user,
   };
+
+  console.log(data);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,28 +40,11 @@ const Login = (props) => {
       const response = await axios.post(LOGIN_URL, data, {
         headers: { "Content-Type": "application/json" },
       });
+      console.log(response);
       // Set Cookies
-      cookies.set("jwt_authorization", response.data.token);
-      cookies.set("current_user", user);
+      //   cookies.set("jwt_authorization", response.data.token);
+      //   cookies.set("current_user", user);
       setUser("");
-      setPwd("");
-      let checkAdmin = response.data.token;
-      try {
-        const res = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/users/is_admin`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Basic ${checkAdmin}`,
-            },
-          }
-        );
-        if (res.data.is_admin) {
-          navigate("/admin");
-          return false;
-        }
-      } catch (err) {}
-
       navigate(from, { replace: true });
     } catch (error) {
       setErrMsg(error?.response.data.error);
@@ -72,7 +55,7 @@ const Login = (props) => {
     <div className="h-screen bg-gray-100 grid place-items-center">
       <div className="w-80 sm:w-96 bg-white text-primary4 rounded-md shadow-lg flex flex-col gap-8">
         <div className="text-2xl font-semibold underline border-gray-100 mt-8 px-8">
-          Sign In
+          Verify password
         </div>
         <form onSubmit={handleSubmit}>
           <div className="px-8 pb-8">
@@ -89,50 +72,24 @@ const Login = (props) => {
               )}
               <div className="flex flex-col gap-2">
                 <label htmlFor="username" className="text-cldark font-semibold">
-                  Username
+                  Email
                 </label>
                 <input
-                  type="text"
+                  type="email"
                   id="username"
                   ref={userRef}
                   autoComplete="off"
                   onChange={(e) => setUser(e.target.value)}
                   value={user}
                   required
-                  placeholder="Username"
-                  className="border border-gray-300 w-full p-3 rounded-lg outline-cldark caret-cldark text-cldark focus:outline focus:outline-1 focus-border-none"
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <label htmlFor="password" className="text-cldark font-semibold">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  onChange={(e) => setPwd(e.target.value)}
-                  value={pwd}
-                  required
-                  placeholder="Password"
+                  placeholder="Email"
                   className="border border-gray-300 w-full p-3 rounded-lg outline-cldark caret-cldark text-cldark focus:outline focus:outline-1 focus-border-none"
                 />
               </div>
               <button className="w-full bg-primary4 text-white font-semibold py-2 text-center border border-primary4 hover:bg-white hover:text-primary4 rounded-md transition-all duration-300">
-                Sign In
+                Verify
               </button>
             </div>
-            <div className="mt-2">
-              <div className="text-sm underline font-semibold mx-auto">
-                <Link to={"/forget-password"}>Forget password</Link>
-              </div>
-              <span className="text-sm text-cldark">Need an account?</span>
-              <span className="text-sm underline ml-2 font-semibold">
-                <Link to={"/signup"}>Sign up</Link>
-              </span>
-            </div>
-            <Link to={"/"} className="text-sm underline">
-              Home page
-            </Link>
           </div>
         </form>
       </div>
@@ -140,4 +97,4 @@ const Login = (props) => {
   );
 };
 
-export default Login;
+export default ForgetPassword;
