@@ -200,7 +200,6 @@ const ProfilePage = () => {
       }
     } catch (error) {
       setVerifyLoading(false);
-      console.log(error);
       if (error.response.data.error_code == "BX0001") {
         navigate("/login");
       }

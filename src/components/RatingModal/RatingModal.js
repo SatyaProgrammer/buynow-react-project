@@ -6,7 +6,6 @@ import { IconCross } from "../../pages/Shop/utils/Icons";
 import { useEffect } from "react";
 
 const Modal = ({ open, onClose, productRating, setStars }) => {
-    console.log(open)
   const handleRating = (rating) => {
     let inputData = productRating;
     for (let i = 0; i < productRating.length; i++) {
@@ -41,7 +40,7 @@ const Modal = ({ open, onClose, productRating, setStars }) => {
             Rate this product
           </div>
           <div className="w-full flex items-center justify-center gap-4">
-            {console.log(productRating)}
+            {}
             {productRating.map((star, idx) => (
               <div key={idx}>
                 {productRating[idx] ? (

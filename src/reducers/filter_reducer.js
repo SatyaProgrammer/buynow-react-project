@@ -65,15 +65,15 @@ const filter_reducer = (state, action) => {
     // Text
     if (action.text) {
       // tempProducts = action.text.result;
-      // console.log(action.text.result);
+      // ;
       tempProducts = action.text.result;
     }
     if (action.category) {
-      // console.log(action.category.result);
+      // ;
       tempProducts = action.category.result;
     }
     if (action.textAndCategory) {
-      // console.log(action.textAndCategory.result);
+      // ;
       tempProducts = action.textAndCategory.result;
     }
     if (action.ownerName) {

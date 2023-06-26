@@ -38,9 +38,7 @@ const CartTotals = () => {
       return { pid: product.pid, quantity: product.amount };
     });
 
-    console.log(data);
     data = JSON.stringify({ orders: data });
-    console.log(data);
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/trackings`,
@@ -52,7 +50,6 @@ const CartTotals = () => {
           },
         }
       );
-      console.log(response);
     } catch (error) {
       if (error?.response.data.error_code == "BX0001") {
         cookies.remove("jwt_authorization");

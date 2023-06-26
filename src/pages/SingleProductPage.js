@@ -144,7 +144,6 @@ const SingleProductPage = () => {
         confirmButtonText: "Close",
       });
     } catch (err) {
-      console.log(err);
       if (err?.response.data.error_code == "BX0001") {
         cookies.remove("jwt_authorization");
         navigate("/login", { replace: true });
@@ -205,9 +204,7 @@ const SingleProductPage = () => {
         if (response) {
           setVenderInfo(response.data);
         }
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     }
   };
 
