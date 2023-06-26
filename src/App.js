@@ -8,11 +8,25 @@ import Verify from "./pages/Verify";
 import { LoggedRoute } from "./utils/ManageRoute";
 import Redirecter from "./components/Redirecter";
 import SingleProductPage from "./pages/SingleProductPage";
+import { PrivateRoutes } from "./utils/ManageRoute";
+import AdminDashboard from "./pages/Admin/Dashboard";
+import AdminNavbar from "./components/AdminNavbar";
 
 const App = () => {
   return (
     <Router>
       <Routes>
+        <Route element={<PrivateRoutes />}>
+          <Route
+            path="/admin"
+            element={
+              <>
+                <AdminNavbar />
+                <AdminDashboard />
+              </>
+            }
+          />
+        </Route>
         <Route path="*" element={<MainLayout />} />
         <Route path="/redirect" element={<Redirecter />} />
         <Route path="/products/:id" element={<SingleProductPage />} />

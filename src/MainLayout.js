@@ -33,7 +33,6 @@ const MainLayout = () => {
       <Routes>
         <Route element={<PrivateRoutes />}>
           <Route path="/checkout" element={<Checkout />} />
-
           <Route
             path="/sell/dashboard"
             element={

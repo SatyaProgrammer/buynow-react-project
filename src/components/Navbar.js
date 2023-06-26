@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import styled from "styled-components";
 import logo from "../assets/buynowLogo.png";
-import { FaBars } from "react-icons/fa";
+import { FaBars } from "react-icons/fa"; 
 import { Link, NavLink } from "react-router-dom";
 import { links } from "../utils/constants";
 import CartButtons from "./CartButtons";

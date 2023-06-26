@@ -106,7 +106,7 @@ const Order = () => {
 
           <div className="shadow-md bg-white">
             <div className="p-4 flex items-center sm:justify-between sm:flex-row gap-1 flex-col justify-center">
-              <div className="text-2xl font-semibold text-primary4">
+              <div className="text-2xl font-semibold text-cldark">
                 Customer orders
               </div>
             </div>
@@ -128,9 +128,6 @@ const Order = () => {
                     </th>
                     <th className="text-cldark text-left font-semibold text-md p-4 border-y name-row whitespace-nowrap">
                       Status
-                    </th>
-                    <th className="text-cldark text-left font-semibold text-md p-4 border-y name-row whitespace-nowrap">
-                      Action
                     </th>
                   </tr>
                 </thead>
@@ -272,19 +269,6 @@ const Order = () => {
                                 </Link>
                               </li>
                             </ul>
-                          </div>
-                        </td>
-                        <td className="text-cldark p-4 border-b whitespace-nowrap">
-                          <div className="flex gap-2 items-center">
-                            <div className="w-5 h-5 hover:scale-110 transition-all duration-300">
-                              <IconFile fill="hsl(22, 28%, 45%)" />
-                            </div>
-                            <div className="w-6 h-6 hover:scale-110 transition-all duration-300">
-                              <IconEdit fill="hsl(22, 28%, 45%)" />
-                            </div>
-                            <div className="w-7 h-7 hover:scale-110 transition-all duration-300">
-                              <IconDelete fill="hsl(22, 28%, 45%)" />
-                            </div>
                           </div>
                         </td>
                       </tr>
