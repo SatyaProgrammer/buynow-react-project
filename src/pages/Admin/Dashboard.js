@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { IconFile, IconEdit, IconDelete } from "../Shop/utils/Icons";
 import Cookies from "universal-cookie";
 import axios from "axios";
+import Swal from "sweetalert2";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   const cookies = new Cookies();
@@ -31,6 +33,23 @@ const Dashboard = () => {
   useEffect(() => {
     handleFetch();
   }, []);
+
+  const handleDelete = (pid) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // deleteProduct(pid);
+        // Swal.fire("Deleted!", "Your file has been deleted.", "success");
+      }
+    });
+  };
 
   return (
     <>
@@ -71,7 +90,7 @@ const Dashboard = () => {
                         <div className="flex items-center gap-2 w-48">
                           <div className="w-10">
                             <img
-                              src=''
+                              src={user.image}
                               alt="product image"
                               className="w-full h-10 rounded-full shadow-md object-cover"
                             />
@@ -92,13 +111,15 @@ const Dashboard = () => {
                       </td>
                       <td className="text-cldark p-4 border-b whitespace-nowrap">
                         <div className="flex gap-2 items-center">
-                          <div className="w-5 h-5 hover:scale-110 transition-all duration-300 hover:cursor-pointer">
-                            <IconFile fill="hsl(22, 28%, 45%)" />
-                          </div>
-                          <div className="w-6 h-6 hover:scale-110 transition-all duration-300 hover:cursor-pointer">
-                            <IconEdit fill="hsl(22, 28%, 45%)" />
-                          </div>
-                          <div className="w-7 h-7 hover:scale-110 transition-all duration-300 hover:cursor-pointer">
+                          <Link to={`/admin/user/${user.id}`}>
+                            <div className="w-5 h-5 hover:scale-110 transition-all duration-300 hover:cursor-pointer">
+                              <IconFile fill="hsl(22, 28%, 45%)" />
+                            </div>
+                          </Link>
+                          <div
+                            onClick={() => handleDelete(user.id)}
+                            className="w-7 h-7 hover:scale-110 transition-all duration-300 hover:cursor-pointer"
+                          >
                             <IconDelete fill="hsl(22, 28%, 45%)" />
                           </div>
                         </div>

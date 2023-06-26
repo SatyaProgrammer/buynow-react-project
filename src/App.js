@@ -11,6 +11,7 @@ import SingleProductPage from "./pages/SingleProductPage";
 import { PrivateRoutes } from "./utils/ManageRoute";
 import AdminDashboard from "./pages/Admin/Dashboard";
 import AdminNavbar from "./components/AdminNavbar";
+import User_detail from "./pages/Admin/User_detail";
 
 const App = () => {
   return (
@@ -23,6 +24,15 @@ const App = () => {
               <>
                 <AdminNavbar />
                 <AdminDashboard />
+              </>
+            }
+          />
+          <Route
+            path="/admin/user/:id"
+            element={
+              <>
+                <AdminNavbar />
+                <User_detail />
               </>
             }
           />
