@@ -40,6 +40,12 @@ def token_required(f):
                     401,
                     {"Content-Type": "application/json"},
                 )
+        except jwt.InvalidSignatureError as e:
+            return (
+                {"error_code": "BX0001", "error": "Token is invalid."},
+                401,
+                {"Content-Type": "application/json"},
+            )
         except Exception as e:
             Global.console.print_exception(show_locals=True)
             return (
@@ -74,6 +80,13 @@ def maybe_token_required(f):
 
             if rel_key != data["key"]:
                 return f(None, *args, **kwargs)
+
+        except jwt.InvalidSignatureError as e:
+            Global.console.print(
+                f"[red]Invalid token signature was detected: {e}[/red]"
+            )
+            return f(None, *args, **kwargs)
+
         except Exception as e:
             Global.console.print_exception()
             return f(None, *args, **kwargs)

@@ -21,6 +21,7 @@ def up():
     table.int("availability")
     table.int("soldAmount").default("0")
     table.text("deliveryOption")
+    table.boolean("deleted").default("0")
     table.timestamp("createdAt").default("CURRENT_TIMESTAMP")
 
     table.migrate()  # always finish with a call to table.migrate()
