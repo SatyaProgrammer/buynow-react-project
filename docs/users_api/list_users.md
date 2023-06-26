@@ -1,10 +1,10 @@
 # BuyNow API: List Users
 
-| Key      | Value                      |
-| -------- | -------------------------- |
-| Endpoint | `api.localhost/users/list` |
-| Method   | `GET`                      |
-| Auth     | `Yes`                      |
+| Key      | Value                |
+| -------- | -------------------- |
+| Endpoint | `api.localhost/user` |
+| Method   | `GET`                |
+| Auth     | `Yes`                |
 
 ## Headers
 
