@@ -47,7 +47,6 @@ const Login = (props) => {
       setPwd("");
       let checkAdmin = response.data.token;
       try {
-        console.log(checkAdmin);
         const res = await axios.get(
           `${process.env.REACT_APP_BACKEND_URL}/users/is_admin`,
           {
@@ -58,13 +57,10 @@ const Login = (props) => {
           }
         );
         if (res.data.is_admin) {
-          console.log("sdfsd", res);
           navigate("/admin");
           return false;
         }
-      } catch (err) {
-        console.log(err);
-      }
+      } catch (err) {}
 
       navigate(from, { replace: true });
     } catch (error) {
