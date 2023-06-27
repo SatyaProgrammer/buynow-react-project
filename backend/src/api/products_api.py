@@ -112,6 +112,7 @@ def get_matching_products():
                             "description": r["description"],
                             "availability": r["availability"],
                             "deliveryOption": r["deliveryOption"],
+                            "deleted": r["deleted"],
                         },
                         result,
                     ),
