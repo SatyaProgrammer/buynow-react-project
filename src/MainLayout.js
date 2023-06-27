@@ -25,6 +25,7 @@ import EditProduct from "./pages/Shop/EditProduct/EditProduct";
 import OrderDetails from "./pages/OrderDetails";
 import ProfilePage from "./pages/Shop/Profile/ProfilePage";
 import ChangePasswordPage from "./pages/ChangePasswordPage";
+import { NormalRoutes } from "./utils/ManageRoute";
 
 const MainLayout = () => {
   return (
@@ -138,13 +139,14 @@ const MainLayout = () => {
 
           <Route path="/sell" element={<Shop />} />
         </Route>
-
-        <Route path="/" element={<Products title="BuyNow" />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/cart" element={<Cart />} />
-        {/* <Route path="/products" element={<Products />} /> */}
-        {/* <Route path="/products/:id" element={<SingleProduct />} /> */}
-        <Route path="/sell" element={<Shop />} />
+        <Route element={<NormalRoutes />}>
+          <Route path="/" element={<Products title="BuyNow" />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/cart" element={<Cart />} />
+          {/* <Route path="/products" element={<Products />} /> */}
+          {/* <Route path="/products/:id" element={<SingleProduct />} /> */}
+          <Route path="/sell" element={<Shop />} />
+        </Route>
 
         <Route path="*" element={<Error />} />
       </Routes>

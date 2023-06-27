@@ -42,7 +42,7 @@ const Login = (props) => {
       });
       // Set Cookies
       cookies.set("jwt_authorization", response.data.token);
-      cookies.set("current_user", user);
+
       setUser("");
       setPwd("");
       let checkAdmin = response.data.token;
@@ -57,6 +57,7 @@ const Login = (props) => {
           }
         );
         if (res.data.is_admin) {
+          cookies.set("isAdmin", true);
           navigate("/admin");
           return false;
         }
