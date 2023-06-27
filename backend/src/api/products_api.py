@@ -90,7 +90,7 @@ def get_matching_products():
             )
             if result == []:
                 return (
-                    {"error_code": "BX1102", "error": "No products found."},
+                    [],
                     404,
                     {"Content-Type": "application/json"},
                 )
@@ -121,8 +121,8 @@ def get_matching_products():
 
             if res == []:
                 return (
-                    {"error_code": "BX1102", "error": "No products found."},
-                    404,
+                    [],
+                    200,
                     {"Content-Type": "application/json"},
                 )
 

@@ -37,7 +37,7 @@ const CartTotals = () => {
     let data = cart.map((product) => {
       return { pid: product.pid, quantity: product.amount };
     });
-
+    console.log(data);
     data = JSON.stringify({ orders: data });
     try {
       const response = await axios.post(
