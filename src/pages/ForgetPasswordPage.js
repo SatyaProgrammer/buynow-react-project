@@ -55,7 +55,7 @@ const ForgetPassword = (props) => {
     <div className="h-screen bg-gray-100 grid place-items-center">
       <div className="w-80 sm:w-96 bg-white text-primary4 rounded-md shadow-lg flex flex-col gap-8">
         <div className="text-2xl font-semibold underline border-gray-100 mt-8 px-8">
-          Verify password
+          Forget password
         </div>
         <form onSubmit={handleSubmit}>
           <div className="px-8 pb-8">
@@ -87,7 +87,7 @@ const ForgetPassword = (props) => {
                 />
               </div>
               <button className="w-full bg-primary4 text-white font-semibold py-2 text-center border border-primary4 hover:bg-white hover:text-primary4 rounded-md transition-all duration-300">
-                Verify
+                Send
               </button>
             </div>
           </div>
