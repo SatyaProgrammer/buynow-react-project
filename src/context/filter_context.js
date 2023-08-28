@@ -60,7 +60,7 @@ export const FilterProvider = ({ children }) => {
       ) {
         const filterTextAndCategory = async () => {
           const response = await fetch(
-            `http://api.localhost/products/matching?name=m${state.filters.text}&catName=m${state.filters.catName}`
+            `${process.env.REACT_APP_BACKEND_URL}/products/matching?name=m${state.filters.text}&catName=m${state.filters.catName}`
           );
           return await response.json();
         };
@@ -77,7 +77,7 @@ export const FilterProvider = ({ children }) => {
       ) {
         const filterCategory = async () => {
           const response = await fetch(
-            `http://api.localhost/products/matching?catName=m${state.filters.catName}`
+            `${process.env.REACT_APP_BACKEND_URL}/products/matching?catName=m${state.filters.catName}`
           );
           return await response.json();
         };
@@ -94,7 +94,7 @@ export const FilterProvider = ({ children }) => {
       ) {
         const searchProducts = async () => {
           const response = await fetch(
-            `http://api.localhost/products/matching?name=m${state.filters.text}`
+            `${process.env.REACT_APP_BACKEND_URL}/products/matching?name=m${state.filters.text}`
           );
           return await response.json();
         };
@@ -111,7 +111,7 @@ export const FilterProvider = ({ children }) => {
       ) {
         const filterVendor = async () => {
           const response = await fetch(
-            `http://api.localhost/products/matching?ownerName=m${state.filters.ownerName}`
+            `${process.env.REACT_APP_BACKEND_URL}/products/matching?ownerName=m${state.filters.ownerName}`
           );
           return await response.json();
         };
@@ -128,7 +128,7 @@ export const FilterProvider = ({ children }) => {
       ) {
         const filterVendorAndCategory = async () => {
           const response = await fetch(
-            `http://api.localhost/products/matching?catName=m${state.filters.catName}&ownerName=m${state.filters.ownerName}`
+            `${process.env.REACT_APP_BACKEND_URL}/products/matching?catName=m${state.filters.catName}&ownerName=m${state.filters.ownerName}`
           );
           return await response.json();
         };
@@ -145,7 +145,7 @@ export const FilterProvider = ({ children }) => {
       ) {
         const filterVendorAndText = async () => {
           const response = await fetch(
-            `http://api.localhost/products/matching?name=m${state.filters.text}&ownerName=m${state.filters.ownerName}`
+            `${process.env.REACT_APP_BACKEND_URL}/products/matching?name=m${state.filters.text}&ownerName=m${state.filters.ownerName}`
           );
           return await response.json();
         };
@@ -165,7 +165,7 @@ export const FilterProvider = ({ children }) => {
       ) {
         const filterVendorAndTextAndCategory = async () => {
           const response = await fetch(
-            `http://api.localhost/products/matching?name=m${state.filters.text}&ownerName=m${state.filters.ownerName}&catName=m${state.filters.catName}`
+            `${process.env.REACT_APP_BACKEND_URL}/products/matching?name=m${state.filters.text}&ownerName=m${state.filters.ownerName}&catName=m${state.filters.catName}`
           );
           return await response.json();
         };
@@ -176,12 +176,6 @@ export const FilterProvider = ({ children }) => {
           });
         });
       }
-      console.log(
-        state.filters.ownerName,
-        state.filters.catName,
-        state.filters.text,
-        state.filters.price
-      );
       // Filter price
       if (
         state.filters.ownerName === "all" &&
@@ -192,14 +186,13 @@ export const FilterProvider = ({ children }) => {
         if (isFinite(state.filters.price)) {
           const filterPrice = async () => {
             const response = await fetch(
-              `http://api.localhost/products/matching?price=r${0}-${
-                state.filters.price
-              }`
+              `${
+                process.env.REACT_APP_BACKEND_URL
+              }/products/matching?price=r${0}-${state.filters.price}`
             );
             return await response.json();
           };
           filterPrice().then((result) => {
-            console.log(result);
             dispatch({
               type: FILTER_PRODUCTS,
               price: { result },
@@ -218,14 +211,15 @@ export const FilterProvider = ({ children }) => {
         if (isFinite(state.filters.price)) {
           const filterPriceAndVendor = async () => {
             const response = await fetch(
-              `http://api.localhost/products/matching?ownerName=m${
+              `${
+                process.env.REACT_APP_BACKEND_URL
+              }/products/matching?ownerName=m${
                 state.filters.ownerName
               }&price=r${0}-${state.filters.price}`
             );
             return await response.json();
           };
           filterPriceAndVendor().then((result) => {
-            console.log(result);
             dispatch({
               type: FILTER_PRODUCTS,
               priceAndVendor: { result },
@@ -244,14 +238,15 @@ export const FilterProvider = ({ children }) => {
         if (isFinite(state.filters.price)) {
           const filterPriceAndCategory = async () => {
             const response = await fetch(
-              `http://api.localhost/products/matching?catName=m${
+              `${
+                process.env.REACT_APP_BACKEND_URL
+              }/products/matching?catName=m${
                 state.filters.catName
               }&price=r${0}-${state.filters.price}`
             );
             return await response.json();
           };
           filterPriceAndCategory().then((result) => {
-            console.log(result);
             dispatch({
               type: FILTER_PRODUCTS,
               priceAndCategory: { result },
@@ -270,14 +265,15 @@ export const FilterProvider = ({ children }) => {
         if (isFinite(state.filters.price)) {
           const filterPriceAndText = async () => {
             const response = await fetch(
-              `http://api.localhost/products/matching?price=r${0}-${
-                state.filters.price
-              }&name=m${state.filters.text}`
+              `${
+                process.env.REACT_APP_BACKEND_URL
+              }/products/matching?price=r${0}-${state.filters.price}&name=m${
+                state.filters.text
+              }`
             );
             return await response.json();
           };
           filterPriceAndText().then((result) => {
-            console.log(result);
             dispatch({
               type: FILTER_PRODUCTS,
               priceAndText: { result },
@@ -296,7 +292,9 @@ export const FilterProvider = ({ children }) => {
         if (isFinite(state.filters.price)) {
           const filterPriceAndVendorAndCategory = async () => {
             const response = await fetch(
-              `http://api.localhost/products/matching?catName=m${
+              `${
+                process.env.REACT_APP_BACKEND_URL
+              }/products/matching?catName=m${
                 state.filters.catName
               }&ownerName=m${state.filters.ownerName}&price=r${0}-${
                 state.filters.price
@@ -305,7 +303,6 @@ export const FilterProvider = ({ children }) => {
             return await response.json();
           };
           filterPriceAndVendorAndCategory().then((result) => {
-            console.log(result);
             dispatch({
               type: FILTER_PRODUCTS,
               priceAndCatAndOwner: { result },
@@ -324,7 +321,7 @@ export const FilterProvider = ({ children }) => {
         if (isFinite(state.filters.price)) {
           const filterPriceAndVendorAndSearch = async () => {
             const response = await fetch(
-              `http://api.localhost/products/matching?name=m${
+              `${process.env.REACT_APP_BACKEND_URL}/products/matching?name=m${
                 state.filters.text
               }&ownerName=m${state.filters.ownerName}&price=r${0}-${
                 state.filters.price
@@ -333,7 +330,6 @@ export const FilterProvider = ({ children }) => {
             return await response.json();
           };
           filterPriceAndVendorAndSearch().then((result) => {
-            console.log(result);
             dispatch({
               type: FILTER_PRODUCTS,
               priceAndSearchAndOwner: { result },
@@ -352,7 +348,7 @@ export const FilterProvider = ({ children }) => {
         if (isFinite(state.filters.price)) {
           const filterPriceAndCategoryAndSearch = async () => {
             const response = await fetch(
-              `http://api.localhost/products/matching?name=m${
+              `${process.env.REACT_APP_BACKEND_URL}/products/matching?name=m${
                 state.filters.text
               }&catName=m${state.filters.catName}&price=r${0}-${
                 state.filters.price
@@ -361,7 +357,6 @@ export const FilterProvider = ({ children }) => {
             return await response.json();
           };
           filterPriceAndCategoryAndSearch().then((result) => {
-            console.log(result);
             dispatch({
               type: FILTER_PRODUCTS,
               priceAndSearchAndCat: { result },
@@ -380,7 +375,7 @@ export const FilterProvider = ({ children }) => {
         if (isFinite(state.filters.price)) {
           const filterPriceAndCategoryAndSearchAndVendor = async () => {
             const response = await fetch(
-              `http://api.localhost/products/matching?name=m${
+              `${process.env.REACT_APP_BACKEND_URL}/products/matching?name=m${
                 state.filters.text
               }&catName=m${state.filters.catName}&price=r${0}-${
                 state.filters.price
@@ -389,7 +384,6 @@ export const FilterProvider = ({ children }) => {
             return await response.json();
           };
           filterPriceAndCategoryAndSearchAndVendor().then((result) => {
-            console.log(result);
             dispatch({
               type: FILTER_PRODUCTS,
               priceAndSearchAndCatAndOwner: { result },
@@ -420,7 +414,6 @@ export const FilterProvider = ({ children }) => {
     if (name === "price") {
       value = Number(value);
     }
-    console.log(name, value);
     dispatch({ type: UPDATE_FILTERS, payload: { name, value } });
   };
 

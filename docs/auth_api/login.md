@@ -1,15 +1,15 @@
 # Buynow API: Login
 
-| Key | Value |
-| --- | --- |
+| Key      | Value                      |
+| -------- | -------------------------- |
 | Endpoint | `api.localhost/auth/login` |
-| Method | `POST` |
-| Auth | `No` |
+| Method   | `POST`                     |
+| Auth     | `No`                       |
 
 ## Headers
 
-| Key | Value |
-| --- | --- |
+| Key          | Value              |
+| ------------ | ------------------ |
 | Content-Type | `application/json` |
 
 ## Request

@@ -24,11 +24,14 @@ const ProductDetail = () => {
 
   const handleFetch = async () => {
     dispatch({ type: ACTION_TYPES.FETCH_START });
-    const response = await axios.get(`http://api.localhost/products/${pid}`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await axios.get(
+      `${process.env.REACT_APP_BACKEND_URL}/products/${pid}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
     if (response && response.data) {
       dispatch({ type: ACTION_TYPES.FETCH_SUCCESS, payload: response.data });
 
@@ -53,7 +56,7 @@ const ProductDetail = () => {
     });
     try {
       const response = await axios.post(
-        `http://api.localhost/products/delete`,
+        `${process.env.REACT_APP_BACKEND_URL}/products/delete`,
         data,
         {
           headers: {
@@ -62,12 +65,11 @@ const ProductDetail = () => {
           },
         }
       );
-      navigate("/shop/product");
+      navigate("/sell/product");
     } catch (err) {
-      console.log(err);
       if (err?.response.data.error_code == "BX0001") {
         cookies.remove("jwt_authorization");
-        navigate("/shop/product");
+        navigate("/sell/product");
       }
     }
   };
@@ -93,16 +95,16 @@ const ProductDetail = () => {
     handleFetch();
   }, []);
 
-  console.log(state.post.image);
-
   return (
     <>
       {state.loading ? (
-        <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex justify-center items-center transition-full duration-300">
+        //  ml-16 md:ml-64
+        <div className="p-4 sm:ml-16 bg-gray-100 flex justify-center items-center transition-full duration-300">
           <Loading />
         </div>
       ) : (
-        <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
+        //  ml-16 md:ml-64
+        <div className="p-4 sm:ml-16 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
           <p className="text-cldark text-4xl font-bold my-4">Product Detail</p>
           <div className="bg-white shadow-md p-4 flex flex-col gap-4">
             <div>
@@ -116,10 +118,11 @@ const ProductDetail = () => {
             <div>
               <div className="grid grid-col-1 lg:grid-cols-5 gap-10 justify-center">
                 <div className="col-span-1 lg:col-span-2 flex flex-col justify-between">
+                  {console.log(state.post.images?.images)}
                   <ProductImages images={state.post.images?.images} />
                   <div className="flex flex-col gap-2">
                     <div className="w-full border">
-                      <Link to={"/shop/product/edit_product/".concat(pid)}>
+                      <Link to={"/sell/product/edit_product/".concat(pid)}>
                         <div className="w-full text-white bg-primary4 flex justify-center py-1 rounded-sm hover:opacity-80 transition-all duration-300">
                           Edit
                         </div>

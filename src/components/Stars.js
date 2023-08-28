@@ -21,7 +21,7 @@ const Stars = ({ stars, reviews }) => {
   return (
     <Wrapper>
       <div className="stars">{tempStars}</div>
-      <p className="reviews">(Delivery option : {reviews})</p>
+      {/* <p className="reviews">(Delivery option : {reviews})</p> */}
     </Wrapper>
   );
 };
@@ -38,7 +38,6 @@ const Wrapper = styled.div`
     margin-left: 0.5rem;
     margin-bottom: 0;
   }
-  margin-bottom: 0.5rem;
   .stars {
     display: flex;
   }

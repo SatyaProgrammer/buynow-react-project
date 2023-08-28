@@ -37,13 +37,11 @@ const CartTotals = () => {
     let data = cart.map((product) => {
       return { pid: product.pid, quantity: product.amount };
     });
-
     console.log(data);
     data = JSON.stringify({ orders: data });
-    console.log(data);
     try {
       const response = await axios.post(
-        "http://api.localhost/trackings",
+        `${process.env.REACT_APP_BACKEND_URL}/trackings`,
         data,
         {
           headers: {

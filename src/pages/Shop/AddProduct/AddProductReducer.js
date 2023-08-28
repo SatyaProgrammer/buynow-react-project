@@ -35,16 +35,19 @@ export const INITIAL_STATE = {
 
   price: "",
 
-  customization: { color: [""], size: [""] },
+  customization: { color: ["#FFFFFF"], size: [""] },
 
-  cholder: ["red", "small"],
+  cholder: [
+    { type: "red", isColor: true },
+    { type: "small", isColor: false },
+  ],
 
   availability: 0,
 
   deliveryOption: "",
 
   image: [],
-  imageUrl: {images: []},
+  imageUrl: { images: [] },
 
   errMessage: "",
   sucess: "",
@@ -93,7 +96,7 @@ export const addProductReducer = (state, action) => {
     case ACTION_TYPES.RESET_CUSTOMIZATION:
       return {
         ...state,
-        customization: { color: [""], size: [""] },
+        customization: { color: ["#FFFFFF"], size: [""] },
       };
     case ACTION_TYPES.SET_AVAILABILITY:
       return {

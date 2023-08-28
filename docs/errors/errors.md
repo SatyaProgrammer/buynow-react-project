@@ -16,62 +16,63 @@
 
 ### BX00xx: General auth errors
 
-| Code | Message |
-| --- | --- |
-| BX0000 | Unknown error |
+| Code   | Message                      |
+| ------ | ---------------------------- |
+| BX0000 | Unknown error                |
 | BX0001 | Not authorized/Missing token |
+| BX0002 | Not verified                 |
 
 ### BX01xx: Login errors
 
-| Code | Message |
-| --- | --- |
+| Code   | Message                            |
+| ------ | ---------------------------------- |
 | BX0101 | Invalid login username or password |
 
 ### BX02xx: Register errors
 
-| Code | Message |
-| --- | --- |
+| Code   | Message                 |
+| ------ | ----------------------- |
 | BX0201 | Missing required fields |
-| BX0202 | Invalid password |
-| BX0203 | Invalid email |
+| BX0202 | Invalid password        |
+| BX0203 | Invalid email           |
 | BX0204 | Username already exists |
-| BX0205 | Email already exists |
+| BX0205 | Email already exists    |
 
 ### BX03xx: Verify errors
 
-| Code | Message |
-| --- | --- |
+| Code   | Message       |
+| ------ | ------------- |
 | BX0301 | Invalid token |
 
 ## BX1xxx: Product errors
 
 ### BX10xx: General product errors
 
-| Code | Message |
-| --- | --- |
+| Code   | Message       |
+| ------ | ------------- |
 | BX1000 | Unknown error |
 
 ### BX11xx: Fetch product errors
 
-| Code | Message |
-| --- | --- |
+| Code   | Message            |
+| ------ | ------------------ |
 | BX1101 | Invalid product id |
 
 ### BX12xx: General Product Manipulation errors
 
-| Code | Message |
-| --- | --- |
-| BX1201 | Not a vendor |
-| BX1202 | Invalid category |
-| BX1203 | Invalid JSON |
-| BX1204 | Invalid price |
-| BX1205 | Invalid product ID |
-| BX1206 | Product does not exists |
+| Code   | Message                   |
+| ------ | ------------------------- |
+| BX1201 | Not a vendor              |
+| BX1202 | Invalid category          |
+| BX1203 | Invalid JSON              |
+| BX1204 | Invalid price             |
+| BX1205 | Invalid product ID        |
+| BX1206 | Product does not exists   |
 | BX1207 | You don't own the product |
-| BX1299 | Unknown upstream error |
+| BX1299 | Unknown upstream error    |
 
 ## BX99xx: Absurd errors
 
-| Code | Message |
-| --- | --- |
+| Code   | Message       |
+| ------ | ------------- |
 | BX9901 | Not logged in |

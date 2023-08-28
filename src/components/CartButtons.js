@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { FaShoppingCart, FaUserMinus, FaUserPlus } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, redirect, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useProductsContext } from "../context/products_context";
 import { useCartContext } from "../context/cart_context";
 import Cookies from "universal-cookie";
+import axios from "axios";
 
 const CartButtons = () => {
   const cookies = new Cookies();
@@ -12,6 +13,11 @@ const CartButtons = () => {
   const { closeSidebar } = useProductsContext();
   const { total_items } = useCartContext();
   const data = cookies.get("jwt_authorization");
+  const token = cookies.get("jwt_authorization");
+  const [profile, setProfile] = useState();
+  const [name, setName] = useState();
+  const pathname = window.location.pathname;
+  const [currentUrl, setCurrentUrl] = React.useState(pathname);
 
   const logout = () => {
     cookies.remove("jwt_authorization");
@@ -22,8 +28,40 @@ const CartButtons = () => {
     navigate("/login");
   };
 
+  const handleFetch = async () => {
+    if (data) {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/customization`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Basic ${token}`,
+            },
+          }
+        );
+        setProfile(response.data.customization.image);
+        setName(response.data.customization.username);
+      } catch (err) {
+        if (err.response.data.error_code === "BX0001") {
+          cookies.remove("jwt_authorization");
+          navigate("/");
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    setCurrentUrl(pathname);
+    setTimeout(() => {
+      handleFetch();
+    }, 500);
+  }, [pathname]);
+
+  const [dropDown, setDropDown] = useState(false);
+
   return (
-    <Wrapper className="cart-btn-wrapper">
+    <Wrapper className={data ? "cart-btn-wrapper" : "cart-btn-wrapper"}>
       <Link to="/cart" className="cart-btn" onClick={closeSidebar}>
         Cart
         <span className="cart-container">
@@ -32,9 +70,66 @@ const CartButtons = () => {
         </span>
       </Link>
       {data ? (
-        <button type="button" className="auth-btn" onClick={logout}>
-          Logout <FaUserMinus />
-        </button>
+        <div
+          onClick={() => setDropDown(!dropDown)}
+          className="relative cursor-pointer"
+        >
+          <div className="flex gap-2 items-center">
+            <div className="cart-btn">{name}</div>
+            <div className="w-10 h-10 rounded-full bg-gray-200 border">
+              <img
+                className="w-full h-full rounded-full object-cover"
+                alt=""
+                src={profile}
+              />
+            </div>
+          </div>
+          <div
+            id="dropdown"
+            className={
+              dropDown
+                ? "p-1 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute right-0 mt-1"
+                : "hidden"
+            }
+          >
+            <ul
+              className="text-sm text-gray-700 dark:text-gray-200"
+              aria-labelledby="dropdownDefaultButton"
+            >
+              <li>
+                <Link
+                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  to="/profile"
+                >
+                  View Profile
+                </Link>
+                {/* <a
+                  href=
+                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  View Profile
+                </a> */}
+              </li>
+              <li>
+                <Link
+                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  to="/change-password"
+                >
+                  Change Password
+                </Link>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  onClick={logout}
+                >
+                  Logout
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
       ) : (
         <button type="button" className="auth-btn" onClick={login}>
           Login <FaUserPlus />
@@ -56,7 +151,6 @@ const Wrapper = styled.div`
     letter-spacing: var(--spacing);
     color: var(--clr-grey-1);
     display: flex;
-
     align-items: center;
   }
   .cart-container {

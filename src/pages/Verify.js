@@ -6,22 +6,25 @@ import { useNavigate } from "react-router-dom";
 const Verify = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  console.log(searchParams.get("token"));
 
   const handleVerify = async (e) => {
     let verifyToken = { token: searchParams.get("token") };
 
-    if(verifyToken){
-      const response = await axios.post(
-        "http://api.localhost/auth/verify",
-        verifyToken,
-        {
-          headers: { "Content-Type": "application/json" },
+    if (verifyToken) {
+      try {
+        const response = await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}/auth/verify`,
+          verifyToken,
+          {
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+        if (response) {
+          navigate("/login");
         }
-      );
-      navigate("/login");
-    }else {
-      navigate("/")
+      } catch (error) {}
+    } else {
+      navigate("/");
     }
   };
 

@@ -1,15 +1,15 @@
 # BuyNow API: Fetch Matching
 
-| Key | Value |
-| --- | --- |
+| Key      | Value                                   |
+| -------- | --------------------------------------- |
 | Endpoint | `api.localhost/products/matching?[k=v]` |
-| Method | `GET` |
-| Auth | `No` |
+| Method   | `GET`                                   |
+| Auth     | `No`                                    |
 
 ## Headers
 
-| Key | Value |
-| --- | --- |
+| Key          | Value              |
+| ------------ | ------------------ |
 | Content-Type | `application/json` |
 
 ## Query Parameters

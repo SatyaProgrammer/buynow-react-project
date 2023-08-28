@@ -1,5 +1,6 @@
-from backend.src.utils.table import Table
 import mysql.connector as msc
+
+from backend.src.utils.table import Table
 
 # don't change this variable name
 TABLE_NAME = "categories"

@@ -19,6 +19,7 @@ import { BsStarFill, BsStarHalf, BsStar } from "react-icons/bs";
 import "../components/RatingModal/RatingModal.css";
 import axios from "axios";
 import Cookies from "universal-cookie";
+import Swal from "sweetalert2";
 
 const SingleProductPage = () => {
   const cookies = new Cookies();
@@ -27,8 +28,9 @@ const SingleProductPage = () => {
   const { id } = useParams();
   const history = useNavigate();
   const [openModal, setOpenModal] = useState(false);
+  const [ratingComment, setRatingComment] = useState("");
   const [productRating, setProductRating] = useState([
-    false,
+    true,
     false,
     false,
     false,
@@ -36,11 +38,68 @@ const SingleProductPage = () => {
   ]);
   const [comment, setComment] = useState("");
 
+  const [openCommentModal, setOpenCommentModal] = useState(false);
+  const [myRating, setMyRating] = useState();
+  const [haveRating, setHaveRating] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const getModal = async () => {
+    if (!token) {
+      navigate("/login");
+    } else {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/reviews/${id}/me`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Basic ${token}`,
+            },
+          }
+        );
+        if (response && response.data) {
+          let inputData = productRating;
+          for (let i = 0; i < 5; i++) {
+            if (i < response.data.rating) {
+              inputData[i] = true;
+            } else {
+              inputData[i] = false;
+            }
+          }
+          setProductRating(inputData);
+          setComment(response.data.comment);
+          setHaveRating(response.data.id);
+        }
+        setOpenModal(true);
+      } catch (error) {
+        if (error.response.data.error_code == "BX0001") {
+          navigate("/login");
+        }
+        setOpenModal(true);
+      }
+    }
+  };
+
+  const [reivewComment, setReviewComment] = useState([]);
+  const getCommentModal = async () => {
+    setOpenCommentModal(true);
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/reviews/${id}`
+      );
+
+      if (response && response.data) {
+        setReviewComment(response.data);
+      }
+    } catch (error) {}
+  };
+
   const onClose = () => {
     setOpenModal(false);
+    setOpenCommentModal(false);
   };
 
   const handleSubmit = async () => {
+    setSubmitting(true);
     let ratingInput = 0;
     for (let i = 0; i < productRating.length; i++) {
       if (productRating[i] === true) {
@@ -51,22 +110,54 @@ const SingleProductPage = () => {
       rating: ratingInput,
       comment: comment,
     });
-    console.log("data");
-    console.log(data);
-
     try {
-      const response = axios.post(`http://api.localhost/reviews/${id}`, data, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Basic ${token}`,
-        },
+      if (haveRating) {
+        const response = await axios.put(
+          `${process.env.REACT_APP_BACKEND_URL}/reviews/${id}/${haveRating}`,
+          data,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Basic ${token}`,
+            },
+          }
+        );
+      } else {
+        const response = await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}/reviews/${id}`,
+          data,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Basic ${token}`,
+            },
+          }
+        );
+      }
+      setSubmitting(false);
+      // openModal(false)
+      Swal.fire({
+        title: "Product rated",
+        text: "Thanks for your feedback",
+        icon: "success",
+        confirmButtonColor: "#936a53",
+        confirmButtonText: "Close",
       });
-      console.log(response)
     } catch (err) {
-      console.log(err.response.data)
       if (err?.response.data.error_code == "BX0001") {
         cookies.remove("jwt_authorization");
         navigate("/login", { replace: true });
+      }
+      setSubmitting(false);
+
+      if (err.response.data.error_code == "BX1208") {
+        Swal.fire({
+          title: "Can't rate your own product!",
+          icon: "warning",
+          confirmButtonColor: "#936a53",
+          confirmButtonText: "Close",
+        });
+        setOpenModal(false);
       }
     }
   };
@@ -79,7 +170,7 @@ const SingleProductPage = () => {
   } = useProductsContext();
 
   useEffect(() => {
-    fetchSingleProduct(`http://api.localhost/products/${id}`);
+    fetchSingleProduct(`${process.env.REACT_APP_BACKEND_URL}/products/${id}`);
   }, [id]);
 
   useEffect(() => {
@@ -89,14 +180,6 @@ const SingleProductPage = () => {
       }, 3000);
     }
   }, [error]);
-
-  if (loading) {
-    return <Loading />;
-  }
-
-  if (error) {
-    return <Error />;
-  }
 
   const {
     name,
@@ -108,7 +191,34 @@ const SingleProductPage = () => {
     deliveryOption,
     owner,
     category,
+    ownerId,
   } = product;
+
+  const [vendorInfo, setVenderInfo] = useState([]);
+  const fetchVenderInfo = async (ownerID) => {
+    if (ownerID) {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/users/${ownerID}`
+        );
+        if (response) {
+          setVenderInfo(response.data);
+        }
+      } catch (error) {}
+    }
+  };
+
+  useEffect(() => {
+    fetchVenderInfo(ownerId);
+  }, [product]);
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (error) {
+    return <Error />;
+  }
 
   return (
     <Wrapper>
@@ -123,58 +233,74 @@ const SingleProductPage = () => {
           <div className="w-full flex justify-end">
             <div
               onClick={onClose}
-              className="w-6 h-6 hover:scale-110 transition-all duration-300"
+              className="w-6 h-6 hover:scale-110 transition-all duration-300 cursor-pointer"
             >
               <IconCross />
             </div>
           </div>
-          <div className="w-full flex-1 flex flex-col gap-4 mt-4">
+          <div className="w-full flex-1 flex flex-col gap-4">
             <div className="text-center text-lg text-cldark">
               Rate this product
             </div>
-            <div className="w-full flex items-center justify-center gap-4">
-              {productRating.map((star, idx) => (
-                <div key={idx}>
-                  {productRating[idx] ? (
-                    <IconContext.Provider
-                      value={{ color: "hsl(22, 28%, 45%)", size: "50px" }}
-                    >
-                      <BsStarFill
-                        onClick={() => {
-                          let inputData = [false, false, false, false, false];
-                          for (let i = 0; i < inputData.length; i++) {
-                            if (i <= idx) {
-                              inputData[i] = true;
-                            } else inputData[i] = false;
-                          }
-                          setProductRating(inputData);
-                        }}
-                        className="hover:scale-110 transition-all duration-300"
-                      />
-                    </IconContext.Provider>
-                  ) : (
-                    <IconContext.Provider
-                      value={{ color: "hsl(22, 28%, 45%)", size: "50px" }}
-                    >
-                      <BsStar
-                        onClick={() => {
-                          let inputData = [false, false, false, false, false];
-                          for (let i = 0; i < inputData.length; i++) {
-                            if (i <= idx) {
-                              inputData[i] = true;
-                            } else inputData[i] = false;
-                          }
-                          setProductRating(inputData);
-                        }}
-                        className="hover:scale-110 transition-all duration-300"
-                      />
-                    </IconContext.Provider>
-                  )}
-                </div>
-              ))}
+            <div className="flex flex-col items-center justify-center gap-2">
+              <div className="w-full flex items-center justify-center gap-4">
+                {productRating.map((star, idx) => (
+                  <div key={idx}>
+                    <div>
+                      {productRating[idx] ? (
+                        <IconContext.Provider
+                          value={{ color: "hsl(22, 28%, 45%)", size: "50px" }}
+                        >
+                          <BsStarFill
+                            onClick={() => {
+                              let inputData = [
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                              ];
+                              for (let i = 0; i < inputData.length; i++) {
+                                if (i <= idx) {
+                                  inputData[i] = true;
+                                } else inputData[i] = false;
+                              }
+                              setProductRating(inputData);
+                            }}
+                            className="hover:scale-110 transition-all duration-300"
+                          />
+                        </IconContext.Provider>
+                      ) : (
+                        <IconContext.Provider
+                          value={{ color: "hsl(22, 28%, 45%)", size: "50px" }}
+                        >
+                          <BsStar
+                            onClick={() => {
+                              let inputData = [
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                              ];
+                              for (let i = 0; i < inputData.length; i++) {
+                                if (i <= idx) {
+                                  inputData[i] = true;
+                                } else inputData[i] = false;
+                              }
+                              setProductRating(inputData);
+                            }}
+                            className="hover:scale-110 transition-all duration-300"
+                          />
+                        </IconContext.Provider>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
             <div className="flex flex-col gap-2">
-              <div className="text-xl font-semibold text-cldark">Comment</div>
+              <div className="text-xl font-semibold text-cldark">Review</div>
               <textarea
                 type="text"
                 placeholder="Product feedback"
@@ -187,10 +313,59 @@ const SingleProductPage = () => {
               />
             </div>
           </div>
-          <div className=" mt-4"> 
-            <button onClick={handleSubmit} className="btn">
-              Submit
-            </button>
+          <div className=" mt-4 w-full flex justify-center">
+            {submitting ? (
+              <div className="btn">Submitting...</div>
+            ) : (
+              <button onClick={handleSubmit} className="btn">
+                Submit
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+      <div
+        onClick={onClose}
+        className={openCommentModal ? "overlay" : "hidden"}
+      >
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          className="modalContainer p-4 flex flex-col "
+        >
+          <div className="w-full flex justify-end">
+            <div
+              onClick={onClose}
+              className="w-6 h-6 hover:scale-110 transition-all duration-300 cursor-pointer"
+            >
+              <IconCross />
+            </div>
+          </div>
+          <div className="w-full h-80 flex flex-col gap-4">
+            {haveRating ? "" : ""}
+            <div className="text-2xl font-semibold text-gray-600 underline text-center">
+              User review
+            </div>
+            <div className=" overflow-y-scroll dropdown-scrolling p-2">
+              {reivewComment.reviews?.length >= 1 ? (
+                reivewComment.reviews.map((review, idx) => (
+                  <div key={idx} className="border-2 rounded-lg p-4 py-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="text-lg">{review.username}</div>
+                      <div className="flex items-center justify-center">
+                        <Stars stars={review.rating} />
+                      </div>
+                    </div>
+                    <div className="text-md text-gray-600">
+                      {review.comment}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div>No review</div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -203,7 +378,9 @@ const SingleProductPage = () => {
         <div className="product-center">
           <ProductImages images={images} />
           <section>
-            <h2>{name}</h2>
+            <div className="flex gap-2">
+              <h2>{name}</h2>
+            </div>
             <Stars stars={rating} reviews={deliveryOption} />
             <h5 className="price">{formatPrice(price)}</h5>
             <p className="desc">{description}</p>
@@ -219,16 +396,49 @@ const SingleProductPage = () => {
               <span>Vendor : </span>
               {owner}
             </p>
+            <p className="info">
+              <span>Delivery option: </span>
+              {deliveryOption}
+            </p>
+            <div className="info">
+              <span className="text-grey3">Contact information: </span>
+              <div>
+                {vendorInfo.contactInfo
+                  ? Object.keys(vendorInfo.contactInfo).map((keyName, i) => (
+                      <div key={i} className="flex gap-2 text-grey3">
+                        {keyName}:{" "}
+                        <a
+                          target="_blank"
+                          rel="noreferrer"
+                          href={vendorInfo.contactInfo[keyName]}
+                          className="text-blue-500 underline"
+                        >
+                          {vendorInfo.contactInfo[keyName]}
+                        </a>
+                      </div>
+                    ))
+                  : ""}
+              </div>
+            </div>
+            <div className="flex gap-2 mt-4">
+              <div onClick={() => getCommentModal()} className="btn">
+                View ratings
+              </div>
+
+              <div onClick={() => getModal()} className="btn">
+                Rate product
+              </div>
+            </div>
+            <p className="info"></p>
             <hr />
             {availability > 0 ? (
               <AddToCart product={product} />
             ) : (
-              <h2 style={{ marginTop: "2rem", color: "hsl(22, 28%, 45%)" }}>
+              <h2 style={{ marginTop: "2rem", color: "hsl(360, 67%, 44%)" }}>
                 Out of Stock
               </h2>
             )}
             {/* {availability > 0 && <AddToCart product={product} />} */}
-            <div onClick={() => setOpenModal(true)}>Rate product</div>
           </section>
         </div>
       </div>
@@ -238,7 +448,7 @@ const SingleProductPage = () => {
 
 const Wrapper = styled.main`
   h2 {
-    font-weight: bold;
+    font-weight: 600;
   }
   .product-center {
     display: grid;
@@ -254,9 +464,9 @@ const Wrapper = styled.main`
   }
   .info {
     text-transform: capitalize;
-    width: 300px;
+    width: 400px;
     display: grid;
-    grid-template-columns: 125px 1fr;
+    grid-template-columns: 180px 1fr;
     span {
       font-weight: 700;
     }

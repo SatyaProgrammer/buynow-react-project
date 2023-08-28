@@ -1,18 +1,19 @@
+import os
 import smtplib as smtp
 import ssl
-import os
 from typing import Any
-from backend.src.lib import Global
-from backend.src.lib import Result
 
-def send_verification_email(email: str, user: str, token: str) -> Result[Any, Exception]:
+from backend.src.lib import Global, Result
+
+
+def send_verification_email(
+    email: str, user: str, token: str
+) -> Result[Any, Exception]:
     Global.verification_map[token] = email
-    
-    sender = os.getenv('EMAIL_ADDR')
-    receivers = [
-        email
-    ]
-    
+
+    sender = os.getenv("EMAIL_ADDR")
+    receivers = [email]
+
     message = f"""\
 From: BuyNow Team <{sender}>
 To: {email}
@@ -33,7 +34,7 @@ BuyNow Team
     try:
         context = ssl.create_default_context()
         port = 465
-        
+
         with smtp.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
             server.login(sender, os.getenv("EMAIL_APP_PASS"))
             failed = server.sendmail(sender, receivers, message)
@@ -41,16 +42,14 @@ BuyNow Team
             return Result.Ok(failed)
     except Exception as e:
         return Result.Err(e)
-    
-    
+
+
 def send_forgot_password_email(email: str, token: str) -> Result[Any, Exception]:
     Global.forgot_password_map[token] = email
-    
-    sender = os.getenv('EMAIL_ADDR')
-    receivers = [
-        email
-    ]
-    
+
+    sender = os.getenv("EMAIL_ADDR")
+    receivers = [email]
+
     message = f"""\
 From: BuyNow Team <{sender}>
 To: {email}
@@ -71,7 +70,7 @@ BuyNow Team
     try:
         context = ssl.create_default_context()
         port = 465
-        
+
         with smtp.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
             server.login(sender, os.getenv("EMAIL_APP_PASS"))
             failed = server.sendmail(sender, receivers, message)

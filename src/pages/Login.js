@@ -4,9 +4,9 @@ import { IconAlert } from "./Shop/utils/Icons";
 import axios from "axios";
 import Cookies from "universal-cookie";
 
-const LOGIN_URL = "http://api.localhost/auth/login";
+const LOGIN_URL = `${process.env.REACT_APP_BACKEND_URL}/auth/login`;
 
-const Login = () => {
+const Login = (props) => {
   // Initialize cookies
   const cookies = new Cookies();
 
@@ -21,6 +21,7 @@ const Login = () => {
   const [errMsg, setErrMsg] = useState("");
 
   useEffect(() => {
+    document.title = props.title;
     userRef.current.focus();
   }, []);
 
@@ -41,9 +42,27 @@ const Login = () => {
       });
       // Set Cookies
       cookies.set("jwt_authorization", response.data.token);
-      cookies.set("current_user", user);
+
       setUser("");
       setPwd("");
+      let checkAdmin = response.data.token;
+      try {
+        const res = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/users/is_admin`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Basic ${checkAdmin}`,
+            },
+          }
+        );
+        if (res.data.is_admin) {
+          cookies.set("isAdmin", true);
+          navigate("/admin");
+          return false;
+        }
+      } catch (err) {}
+
       navigate(from, { replace: true });
     } catch (error) {
       setErrMsg(error?.response.data.error);
@@ -104,6 +123,9 @@ const Login = () => {
               </button>
             </div>
             <div className="mt-2">
+              <div className="text-sm underline font-semibold mx-auto">
+                <Link to={"/forget-password"}>Forget password</Link>
+              </div>
               <span className="text-sm text-cldark">Need an account?</span>
               <span className="text-sm underline ml-2 font-semibold">
                 <Link to={"/signup"}>Sign up</Link>

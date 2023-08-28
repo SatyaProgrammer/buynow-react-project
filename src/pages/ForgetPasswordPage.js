@@ -1,0 +1,100 @@
+import { useRef, useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { IconAlert } from "./Shop/utils/Icons";
+import axios from "axios";
+import Cookies from "universal-cookie";
+
+const LOGIN_URL = `${process.env.REACT_APP_BACKEND_URL}/auth/send_forgot`;
+
+const ForgetPassword = (props) => {
+  // Initialize cookies
+  const cookies = new Cookies();
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
+
+  const userRef = useRef();
+
+  const [user, setUser] = useState("");
+  const [errMsg, setErrMsg] = useState("");
+
+  useEffect(() => {
+    document.title = props.title;
+    userRef.current.focus();
+  }, []);
+
+  useEffect(() => {
+    setErrMsg("");
+  }, [user]);
+
+  let data = {
+    email: user,
+  };
+
+  console.log(data);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(LOGIN_URL, data, {
+        headers: { "Content-Type": "application/json" },
+      });
+      console.log(response);
+      // Set Cookies
+      //   cookies.set("jwt_authorization", response.data.token);
+      //   cookies.set("current_user", user);
+      setUser("");
+      navigate(from, { replace: true });
+    } catch (error) {
+      setErrMsg(error?.response.data.error);
+    }
+  };
+
+  return (
+    <div className="h-screen bg-gray-100 grid place-items-center">
+      <div className="w-80 sm:w-96 bg-white text-primary4 rounded-md shadow-lg flex flex-col gap-8">
+        <div className="text-2xl font-semibold underline border-gray-100 mt-8 px-8">
+          Verify password
+        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="px-8 pb-8">
+            <div className="flex flex-col gap-6">
+              {errMsg ? (
+                <div className="p-3 px-2 flex gap-1 items-center bg-red-50 text-cldanger font-semibold rounded-lg border-2 border-red-200">
+                  <div className="w-4 h-4">
+                    <IconAlert fill="#bb2525" />
+                  </div>
+                  <div>{errMsg}</div>
+                </div>
+              ) : (
+                ""
+              )}
+              <div className="flex flex-col gap-2">
+                <label htmlFor="username" className="text-cldark font-semibold">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="username"
+                  ref={userRef}
+                  autoComplete="off"
+                  onChange={(e) => setUser(e.target.value)}
+                  value={user}
+                  required
+                  placeholder="Email"
+                  className="border border-gray-300 w-full p-3 rounded-lg outline-cldark caret-cldark text-cldark focus:outline focus:outline-1 focus-border-none"
+                />
+              </div>
+              <button className="w-full bg-primary4 text-white font-semibold py-2 text-center border border-primary4 hover:bg-white hover:text-primary4 rounded-md transition-all duration-300">
+                Verify
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default ForgetPassword;

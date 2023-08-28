@@ -1,11 +1,17 @@
 import React from "react";
-import { useReducer, useEffect, useRef } from "react";
+import { useReducer, useEffect, useRef, useState } from "react";
 import {
   editProductReducer,
   INITIAL_STATE,
   ACTION_TYPES,
 } from "./EditProductReducer";
-import { IconPlus, IconBin, IconAlert, IconCheck } from "../utils/Icons";
+import {
+  IconPlus,
+  IconBin,
+  IconAlert,
+  IconCheck,
+  IconCross,
+} from "../utils/Icons";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import {
@@ -15,6 +21,7 @@ import {
   useParams,
   Link,
 } from "react-router-dom";
+import { SketchPicker } from "react-color";
 
 const EditProduct = () => {
   const [state, dispatch] = useReducer(editProductReducer, INITIAL_STATE);
@@ -24,11 +31,21 @@ const EditProduct = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const pid = useParams().id;
+  const [colPicker, setColPicker] = useState([false]);
+  const handleColor = (color, idx) => {
+    let inputData = state.customization;
+    inputData.color[idx] = color;
+    dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: inputData });
+  };
 
   const handleAddSubCustom = (key) => {
     let inputData = state.customization;
     inputData[key].push("");
     dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
+
+    inputData = colPicker;
+    inputData.push(false);
+    setColPicker(inputData);
   };
 
   const handleChangeSubCustom = (onChangeValue, key, idx) => {
@@ -37,11 +54,14 @@ const EditProduct = () => {
     dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
   };
 
-
   const handleRemoveSubCustom = (key, idx) => {
     let inputData = state.customization;
     inputData[key].splice(idx, 1);
     dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
+
+    inputData = colPicker;
+    inputData.splice(idx, 1);
+    setColPicker(inputData);
   };
 
   const handleAddImage = () => {
@@ -75,19 +95,11 @@ const EditProduct = () => {
     dispatch({ type: ACTION_TYPES.SET_IS_FILE, payload: inputData });
   };
 
-  // console.log(state.name);
-  // console.log(state.description);
-  // console.log(state.category);
-  // console.log(state.price);
-  // console.log(state.customization);
-  // console.log(state.availability);
-  // console.log(state.deliveryOption);
-  // console.log(state.image);
-  // console.log(state.imageUrl);
-
   const fetchCategory = async () => {
     try {
-      const response = await axios.get("http://api.localhost/categories");
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/categories`
+      );
 
       if (response && response.data) {
         dispatch({
@@ -96,17 +108,23 @@ const EditProduct = () => {
         });
       }
     } catch (err) {
-      console.log(err.response);
+      dispatch({
+        type: ACTION_TYPES.SET_GET_CATEGORY,
+        payload: "something went wrong D:",
+      });
     }
   };
 
   const handleFetch = async () => {
     try {
-      const response = await axios.get(`http://api.localhost/products/${pid}`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/products/${pid}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       dispatch({ type: ACTION_TYPES.SET_NAME, payload: response.data.name });
       dispatch({
         type: ACTION_TYPES.SET_DESCRIPTION,
@@ -134,12 +152,12 @@ const EditProduct = () => {
         payload: response.data.images.images,
       });
       imageCheck(response.data.images.images);
-    } catch (err) {
-      console.log(err);
-    }
+    } catch (err) {}
 
     try {
-      const response = await axios.get("http://api.localhost/categories");
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/categories`
+      );
 
       if (response && response.data) {
         dispatch({
@@ -147,9 +165,7 @@ const EditProduct = () => {
           payload: response.data,
         });
       }
-    } catch (err) {
-      console.log(err.response);
-    }
+    } catch (err) {}
   };
 
   useEffect(() => {
@@ -200,7 +216,6 @@ const EditProduct = () => {
                 });
               })
               .catch((err) => {
-                console.log(err);
                 dispatch({
                   type: ACTION_TYPES.SET_ERROR,
                   payload: "Image upload fail",
@@ -228,12 +243,9 @@ const EditProduct = () => {
       deliveryOption: state.deliveryOption,
     });
 
-    console.log("data");
-    console.log(data);
-
     try {
       const response = await axios.post(
-        "http://api.localhost/products/update",
+        `${process.env.REACT_APP_BACKEND_URL}/products/update`,
         data,
         {
           headers: {
@@ -266,7 +278,8 @@ const EditProduct = () => {
 
   return (
     <>
-      <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
+      {/* ml-16 md:ml-64 */}
+      <div className="p-4 sm:ml-16 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
         <p className="text-cldark text-4xl font-bold my-4 text-medium">
           Edit Product
         </p>
@@ -423,23 +436,6 @@ const EditProduct = () => {
                       : ""}
                   </ul>
                 </div>
-                {/* <input
-                  type="text"
-                  placeholder="Product category"
-                  required
-                  onFocus={() =>
-                    dispatch({ type: ACTION_TYPES.SET_SUCCESS, payload: "" })
-                  }
-                  onChange={(e) =>
-                    dispatch({
-                      type: ACTION_TYPES.SET_CATEGORY,
-                      payload: e.target.value,
-                    })
-                  }
-                  name="category"
-                  value={state.category}
-                  className="border border-gray-300 w-full p-3 rounded-lg text-cldark focus:outline focus:outline-1"
-                /> */}
               </div>
               <div className="flex flex-col gap-2">
                 <div className="text-xl font-semibold text-cldark">Price</div>
@@ -466,8 +462,8 @@ const EditProduct = () => {
                 <div className="text-xl font-semibold text-cldark">
                   Color & Size
                 </div>
-                {Object.keys(state.customization).map((key, idx) => (
-                  <div className="flex flex-col gap-1">
+                {Object.keys(state.customization).map((key, id) => (
+                  <div key={id} className="flex flex-col gap-1">
                     <div className="grid grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-3">
                       <div className="col-span-2 md:col-span-1">
                         <div className="flex gap-2 items-center">
@@ -480,12 +476,162 @@ const EditProduct = () => {
                       </div>
 
                       <div className="flex flex-col gap-3 col-span-4 md:col-span-5 lg:col-span-7 xl:col-span-9">
-                        {console.log(state.customization)}
-                        {state.customization[key] && Array.isArray(state.customization[key])
+                        {state.customization[key] &&
+                        Array.isArray(state.customization[key])
                           ? state.customization[key].map((data, idx) => (
                               <div key={idx}>
                                 <div>
-                                  <div className="flex gap-2 items-center">
+                                  {state.cholder[id].isColor ? (
+                                    <div>
+                                      <div className="flex gap-2 items-center">
+                                        <div className="flex items-center border rounded-lg w-full  border-gray-300 focus-within:outline focus-within:outline-1">
+                                          <div className="w-full">
+                                            <div
+                                              className={
+                                                colPicker[idx]
+                                                  ? "flex items-center hover:bg-gray-200 bg-gray-200 rounded-l-md cursor-pointer"
+                                                  : "flex items-center hover:bg-gray-200 rounded-l-md cursor-pointer"
+                                              }
+                                            >
+                                              <div
+                                                style={{
+                                                  backgroundColor:
+                                                    state.customization.color[
+                                                      idx
+                                                    ],
+                                                }}
+                                                className="w-8 h-8 border ml-4 rounded-full"
+                                              ></div>
+                                              <div
+                                                onClick={(e) => {
+                                                  e.preventDefault();
+                                                  setColPicker((colPicker) =>
+                                                    colPicker.map((col, i) =>
+                                                      i === idx ? !col : false
+                                                    )
+                                                  );
+                                                }}
+                                                className="focus:outline-none w-full p-3 rounded-lg text-gray-400"
+                                              >
+                                                Select color
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div>
+                                            <div
+                                              onClick={() =>
+                                                handleAddSubCustom(key, idx)
+                                              }
+                                              className="p-2 hover:scale-110 transition-full duration-300"
+                                            >
+                                              <div className="w-4 h-4 cursor-pointer">
+                                                <IconPlus fill="#222" />
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        {state.customization[key].length > 1 ? (
+                                          <div
+                                            onClick={() =>
+                                              handleRemoveSubCustom(key, idx)
+                                            }
+                                            className="w-5 h-5 hover:scale-110 duration-300 transition-all cursor-pointer"
+                                          >
+                                            <IconBin fill="#222" />
+                                          </div>
+                                        ) : (
+                                          ""
+                                        )}
+                                      </div>
+                                      <div
+                                        className={
+                                          colPicker[idx]
+                                            ? "w-fit p-4 pt-2 shadow-md flex flex-col gap-2 mt-4"
+                                            : "hidden"
+                                        }
+                                      >
+                                        <div className="flex justify-end">
+                                          <div
+                                            onClick={(e) => {
+                                              e.preventDefault();
+                                              setColPicker((colPicker) =>
+                                                colPicker.map((col, i) =>
+                                                  i === idx ? !col : false
+                                                )
+                                              );
+                                            }}
+                                            className=" cursor-pointer w-6 h-6 hover:scale-125 transition-all duration-300"
+                                          >
+                                            <IconCross />
+                                          </div>
+                                        </div>
+                                        <SketchPicker
+                                          className=" shadow-none border-none"
+                                          color={state.customization.color[idx]}
+                                          onChangeComplete={(color) =>
+                                            handleColor(color.hex, idx)
+                                          }
+                                        />
+                                      </div>
+                                      {/* <div
+                                        className={
+                                          colPicker[idx] ? "block" : "hidden"
+                                        }
+                                      >
+                                        <SketchPicker
+                                          color={state.customization.color[idx]}
+                                          onChangeComplete={(color) =>
+                                            handleColor(color.hex, idx)
+                                          }
+                                        />
+                                      </div> */}
+                                    </div>
+                                  ) : (
+                                    <div className="flex gap-2 items-center">
+                                      <div className="flex items-center border rounded-lg w-full  border-gray-300 focus-within:outline focus-within:outline-1">
+                                        <input
+                                          type="text"
+                                          placeholder={state.cholder[id].type}
+                                          required
+                                          onFocus={() =>
+                                            dispatch({
+                                              type: ACTION_TYPES.SET_SUCCESS,
+                                              payload: "",
+                                            })
+                                          }
+                                          onChange={(e) =>
+                                            handleChangeSubCustom(e, key, idx)
+                                          }
+                                          value={data}
+                                          name="subCustom"
+                                          className="focus:outline-none w-full p-3 rounded-lg text-cldark"
+                                        />
+                                        <div
+                                          onClick={() =>
+                                            handleAddSubCustom(key, idx)
+                                          }
+                                          className="p-2 hover:scale-110 transition-full duration-300"
+                                        >
+                                          <div className="w-4 h-4 cursor-pointer">
+                                            <IconPlus fill="#222" />
+                                          </div>
+                                        </div>
+                                      </div>
+                                      {state.customization[key].length > 1 ? (
+                                        <div
+                                          onClick={() =>
+                                            handleRemoveSubCustom(key, idx)
+                                          }
+                                          className="w-5 h-5 hover:scale-110 duration-300 transition-all cursor-pointer"
+                                        >
+                                          <IconBin fill="#222" />
+                                        </div>
+                                      ) : (
+                                        ""
+                                      )}
+                                    </div>
+                                  )}
+                                  {/* <div className="flex gap-2 items-center">
                                     <div className="flex items-center border rounded-lg w-full  border-gray-300 focus-within:outline focus-within:outline-1">
                                       <input
                                         type="text"
@@ -527,7 +673,7 @@ const EditProduct = () => {
                                     ) : (
                                       ""
                                     )}
-                                  </div>
+                                  </div> */}
                                 </div>
                               </div>
                             ))

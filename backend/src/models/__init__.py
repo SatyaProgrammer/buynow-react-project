@@ -1,4 +1,4 @@
-from .model import Model
-from .user import User
 from .category import Category
+from .model import Model
 from .product import Product
+from .user import User

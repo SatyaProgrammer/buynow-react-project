@@ -4,11 +4,13 @@ import { FaInfo } from "react-icons/fa";
 import reducer from "../reducers/detail_reducer";
 import { Link } from "react-router-dom";
 
-const CartItem = ({ id, status }) => {
+const CartItem = ({ id, createdAt }) => {
+  let datee = createdAt.split(" ");
+  let date = datee[0] + " " + datee[1] + " " + datee[2] + " " + datee[3];
   return (
     <Wrapper>
       <h5>{id}</h5>
-      <h5 className="price">{status}</h5>
+      <h5 className="price">{date}</h5>
       <Link
         to={`/history/${id}`}
         className="remove-btn"

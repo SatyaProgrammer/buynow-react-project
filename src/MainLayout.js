@@ -23,6 +23,9 @@ import History from "./pages/HistoryPage";
 import { PrivateRoutes } from "./utils/ManageRoute";
 import EditProduct from "./pages/Shop/EditProduct/EditProduct";
 import OrderDetails from "./pages/OrderDetails";
+import ProfilePage from "./pages/Shop/Profile/ProfilePage";
+import ChangePasswordPage from "./pages/ChangePasswordPage";
+import { NormalRoutes } from "./utils/ManageRoute";
 
 const MainLayout = () => {
   return (
@@ -32,9 +35,8 @@ const MainLayout = () => {
       <Routes>
         <Route element={<PrivateRoutes />}>
           <Route path="/checkout" element={<Checkout />} />
-
           <Route
-            path="/shop/dashboard"
+            path="/sell/dashboard"
             element={
               <>
                 <ShopSidebar />
@@ -43,7 +45,7 @@ const MainLayout = () => {
             }
           />
           <Route
-            path="/shop/product"
+            path="/sell/product"
             element={
               <>
                 <ShopSidebar />
@@ -52,7 +54,7 @@ const MainLayout = () => {
             }
           />
           <Route
-            path="/shop/order"
+            path="/sell/order"
             element={
               <>
                 <ShopSidebar />
@@ -61,7 +63,7 @@ const MainLayout = () => {
             }
           />
           <Route
-            path="/shop/customer"
+            path="/sell/customer"
             element={
               <>
                 <ShopSidebar />
@@ -70,7 +72,7 @@ const MainLayout = () => {
             }
           />
           <Route
-            path="/shop/add_product"
+            path="/sell/add_product"
             element={
               <>
                 <ShopSidebar />
@@ -79,7 +81,7 @@ const MainLayout = () => {
             }
           />
           <Route
-            path="/shop/product/edit_product/:id"
+            path="/sell/product/edit_product/:id"
             element={
               <>
                 <ShopSidebar />
@@ -88,7 +90,7 @@ const MainLayout = () => {
             }
           />
           <Route
-            path="/shop/product/:id"
+            path="/sell/product/:id"
             element={
               <>
                 <ShopSidebar />
@@ -115,15 +117,36 @@ const MainLayout = () => {
             }
           />
 
-          <Route path="/shop" element={<Shop />} />
-        </Route>
+          <Route
+            path="/profile"
+            element={
+              <>
+                <ShopSidebar />
+                <ProfilePage />
+              </>
+            }
+          />
 
-        <Route path="/" element={<Products />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/cart" element={<Cart />} />
-        {/* <Route path="/products" element={<Products />} /> */}
-        {/* <Route path="/products/:id" element={<SingleProduct />} /> */}
-        <Route path="/shop" element={<Shop />} />
+          <Route
+            path="/change-password"
+            element={
+              <>
+                <ShopSidebar />
+                <ChangePasswordPage />
+              </>
+            }
+          />
+
+          <Route path="/sell" element={<Shop />} />
+        </Route>
+        <Route element={<NormalRoutes />}>
+          <Route path="/" element={<Products title="BuyNow" />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/cart" element={<Cart />} />
+          {/* <Route path="/products" element={<Products />} /> */}
+          {/* <Route path="/products/:id" element={<SingleProduct />} /> */}
+          <Route path="/sell" element={<Shop />} />
+        </Route>
 
         <Route path="*" element={<Error />} />
       </Routes>

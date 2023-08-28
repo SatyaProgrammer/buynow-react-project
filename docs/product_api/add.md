@@ -1,17 +1,17 @@
 # BuyNow API: Add Product
 
-| Key | Value |
-| --- | --- |
+| Key      | Value                        |
+| -------- | ---------------------------- |
 | Endpoint | `api.localhost/products/add` |
-| Method | `POST` |
-| Auth | `Yes` |
+| Method   | `POST`                       |
+| Auth     | `Yes`                        |
 
 ## Headers
 
-| Key | Value |
-| --- | --- |
-| Content-Type | `application/json` |
-| Authorization | `Basic <token>` |
+| Key           | Value              |
+| ------------- | ------------------ |
+| Content-Type  | `application/json` |
+| Authorization | `Basic <token>`    |
 
 ## Request
 

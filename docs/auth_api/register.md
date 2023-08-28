@@ -1,15 +1,15 @@
 # BuyNow API: Register
 
-| Key | Value |
-| --- | --- |
+| Key      | Value                         |
+| -------- | ----------------------------- |
 | Endpoint | `api.localhost/auth/register` |
-| Method | `POST` |
-| Auth | `No` |
+| Method   | `POST`                        |
+| Auth     | `No`                          |
 
 ## Headers
 
-| Key | Value |
-| --- | --- |
+| Key          | Value              |
+| ------------ | ------------------ |
 | Content-Type | `application/json` |
 
 ## Request
@@ -28,7 +28,8 @@
 
 ```ts
 {
-    "message": string,
+    "uid": number,
+    "token": string
 }
 ```
 

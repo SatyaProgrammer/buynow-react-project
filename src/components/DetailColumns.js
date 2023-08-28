@@ -5,9 +5,11 @@ const DetailColumn = () => {
   return (
     <Wrapper>
       <div className="content">
+        <h5>image</h5>
         <h5>item</h5>
-        <h5>price</h5>
         <h5>quantity</h5>
+        <h5>price</h5>
+        <h5>status</h5>
         <span></span>
       </div>
       <hr />
@@ -21,7 +23,7 @@ const Wrapper = styled.div`
     display: block;
     .content {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
       justify-items: center;
       column-gap: 1rem;
       h5 {

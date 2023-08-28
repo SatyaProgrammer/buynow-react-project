@@ -1,17 +1,17 @@
 # BuyNow API: Update Product
 
-| Key | Value |
-| --- | --- |
+| Key      | Value                           |
+| -------- | ------------------------------- |
 | Endpoint | `api.localhost/products/update` |
-| Method | `POST` |
-| Auth | `Yes` |
+| Method   | `POST`                          |
+| Auth     | `Yes`                           |
 
 ## Headers
 
-| Key | Value |
-| --- | --- |
-| Content-Type | `application/json` |
-| Authorization | `Basic <token>` |
+| Key           | Value              |
+| ------------- | ------------------ |
+| Content-Type  | `application/json` |
+| Authorization | `Basic <token>`    |
 
 ## Request
 

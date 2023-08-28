@@ -1,14 +1,21 @@
 import React from "react";
-import { useReducer, useEffect, useRef } from "react";
+import { useReducer, useEffect, useRef, useState } from "react";
 import {
   addProductReducer,
   INITIAL_STATE,
   ACTION_TYPES,
 } from "./AddProductReducer";
-import { IconPlus, IconBin, IconAlert, IconCheck } from "../utils/Icons";
+import {
+  IconPlus,
+  IconBin,
+  IconAlert,
+  IconCheck,
+  IconCross,
+} from "../utils/Icons";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import { useNavigate, Navigate, useLocation } from "react-router-dom";
+import { SketchPicker } from "react-color";
 
 const AddProduct = () => {
   const [state, dispatch] = useReducer(addProductReducer, INITIAL_STATE);
@@ -17,6 +24,12 @@ const AddProduct = () => {
   const cookies = new Cookies();
   const location = useLocation();
   const navigate = useNavigate();
+  const [colPicker, setColPicker] = useState([false]);
+  const handleColor = (color, idx) => {
+    let inputData = state.customization;
+    inputData.color[idx] = color;
+    dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: inputData });
+  };
 
   const handleAddCustom = () => {
     dispatch({
@@ -41,6 +54,10 @@ const AddProduct = () => {
     let inputData = state.customization;
     inputData[key].push("");
     dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
+
+    inputData = colPicker;
+    inputData.push(false);
+    setColPicker(inputData);
   };
 
   const handleChangeSubCustom = (onChangeValue, key, idx) => {
@@ -53,6 +70,10 @@ const AddProduct = () => {
     let inputData = state.customization;
     inputData[key].splice(idx, 1);
     dispatch({ type: ACTION_TYPES.SET_CUSTOMIZATION, payload: [inputData] });
+
+    inputData = colPicker;
+    inputData.splice(idx, 1);
+    setColPicker(inputData);
   };
 
   const handleAddImage = () => {
@@ -75,7 +96,9 @@ const AddProduct = () => {
 
   const handleFetch = async () => {
     try {
-      const response = await axios.get("http://api.localhost/categories");
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/categories`
+      );
 
       if (response && response.data) {
         dispatch({
@@ -84,7 +107,10 @@ const AddProduct = () => {
         });
       }
     } catch (err) {
-      console.log(err.response);
+      dispatch({
+        type: ACTION_TYPES.SET_GET_CATEGORY,
+        payload: "Something went wrong D:",
+      });
     }
   };
 
@@ -101,7 +127,8 @@ const AddProduct = () => {
     dispatch({ type: ACTION_TYPES.SET_AVAILABILITY, payload: 0 });
     dispatch({ type: ACTION_TYPES.SET_DELIVERYOPTION, payload: "" });
     dispatch({ type: ACTION_TYPES.SET_IMAGE, payload: [""] });
-    dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: {images: []} });
+    dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: { images: [] } });
+    setColPicker([false]);
   }, []);
 
   useEffect(() => {
@@ -182,7 +209,7 @@ const AddProduct = () => {
 
     try {
       const response = await axios.post(
-        "http://api.localhost/products/add",
+        `${process.env.REACT_APP_BACKEND_URL}/products/add`,
         data,
         {
           headers: {
@@ -200,7 +227,7 @@ const AddProduct = () => {
       dispatch({ type: ACTION_TYPES.SET_AVAILABILITY, payload: 0 });
       dispatch({ type: ACTION_TYPES.SET_DELIVERYOPTION, payload: "" });
       dispatch({ type: ACTION_TYPES.SET_IMAGE, payload: [""] });
-      dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: {images: []} });
+      dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: { images: [] } });
       dispatch({
         type: ACTION_TYPES.SET_SUCCESS,
         payload: "Product listed for sale",
@@ -212,7 +239,7 @@ const AddProduct = () => {
         cookies.remove("jwt_authorization");
         navigate("/shop/add_product", { replace: true });
       }
-      dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: {images: []} });
+      dispatch({ type: ACTION_TYPES.SET_IMAGE_URL, payload: { images: [] } });
       dispatch({
         type: ACTION_TYPES.SET_ERROR,
         payload: err?.response.data.error,
@@ -224,8 +251,8 @@ const AddProduct = () => {
 
   return (
     <>
-      {console.log(state.imageUrl)}
-      <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
+      {/* ml-16 md:ml-64 */}
+      <div className="p-4 sm:ml-16 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
         <p className="text-cldark text-4xl font-bold my-4 text-medium">
           Add Product
         </p>
@@ -415,81 +442,12 @@ const AddProduct = () => {
                 />
               </div>
 
-              {/* <div className="flex flex-col gap-2">
-                <div className="text-xl font-semibold text-cldark">
-                  Color & Size
-                </div>
-                {state.customization?.map((custom, i) => (
-                  <div key={i} className="flex flex-col gap-1">
-                    <div className="grid grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-3">
-                      <div className="col-span-2 md:col-span-1">
-                        <div className="flex gap-2 items-center">
-                          <div className="flex items-center  border rounded-lg  border-gray-300 focus-within:outline focus-within:outline-1 w-full">
-                            <div className="w-full p-3 rounded-lg  text-cldark text-center">
-                              {custom.type}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col gap-3 col-span-4 md:col-span-5 lg:col-span-7 xl:col-span-9">
-                        {state.customization[i]["value"].map((t, k) => (
-                          <div key={k}>
-                            <div>
-                              <div className="flex gap-2 items-center">
-                                <div className="flex items-center border rounded-lg w-full  border-gray-300 focus-within:outline focus-within:outline-1">
-                                  <input
-                                    type="text"
-                                    placeholder={state.cholder[i]}
-                                    required
-                                    onFocus={() =>
-                                      dispatch({
-                                        type: ACTION_TYPES.SET_SUCCESS,
-                                        payload: "",
-                                      })
-                                    }
-                                    onChange={(e) =>
-                                      handleChangeSubCustom(e, i, k)
-                                    }
-                                    value={state.customization[i]["value"][k]}
-                                    name="subCustom"
-                                    className="focus:outline-none w-full p-3 rounded-lg text-cldark"
-                                  />
-                                  <div
-                                    onClick={() => handleAddSubCustom(i)}
-                                    className="p-2 hover:scale-110 transition-full duration-300"
-                                  >
-                                    <div className="w-4 h-4 cursor-pointer">
-                                      <IconPlus fill="#222" />
-                                    </div>
-                                  </div>
-                                </div>
-                                {state.customization[i]["value"].length > 1 ? (
-                                  <div
-                                    onClick={() => handleRemoveSubCustom(i, k)}
-                                    className="w-5 h-5 hover:scale-110 duration-300 transition-all cursor-pointer"
-                                  >
-                                    <IconBin fill="#222" />
-                                  </div>
-                                ) : (
-                                  ""
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div> */}
-
               <div className="flex flex-col gap-2">
                 <div className="text-xl font-semibold text-cldark">
                   Color & Size
                 </div>
-                {Object.keys(state.customization).map((key, idx) => (
-                  <div className="flex flex-col gap-1">
+                {Object.keys(state.customization).map((key, id) => (
+                  <div key={id} className="flex flex-col gap-1">
                     <div className="grid grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-3">
                       <div className="col-span-2 md:col-span-1">
                         <div className="flex gap-2 items-center">
@@ -505,93 +463,145 @@ const AddProduct = () => {
                         {state.customization[key].map((data, idx) => (
                           <div key={idx}>
                             <div>
-                              <div className="flex gap-2 items-center">
-                                <div className="flex items-center border rounded-lg w-full  border-gray-300 focus-within:outline focus-within:outline-1">
-                                  <input
-                                    type="text"
-                                    placeholder={state.cholder[idx]}
-                                    required
-                                    onFocus={() =>
-                                      dispatch({
-                                        type: ACTION_TYPES.SET_SUCCESS,
-                                        payload: "",
-                                      })
-                                    }
-                                    onChange={(e) =>
-                                      handleChangeSubCustom(e, key, idx)
-                                    }
-                                    value={data}
-                                    name="subCustom"
-                                    className="focus:outline-none w-full p-3 rounded-lg text-cldark"
-                                  />
-                                  <div
-                                    onClick={() => handleAddSubCustom(key, idx)}
-                                    className="p-2 hover:scale-110 transition-full duration-300"
-                                  >
-                                    <div className="w-4 h-4 cursor-pointer">
-                                      <IconPlus fill="#222" />
+                              {state.cholder[id].isColor ? (
+                                <div>
+                                  <div className="flex gap-2 items-center">
+                                    <div className="flex items-center border rounded-lg w-full  border-gray-300 focus-within:outline focus-within:outline-1">
+                                      <div className="w-full">
+                                        <div
+                                          className={
+                                            colPicker[idx]
+                                              ? "flex items-center hover:bg-gray-200 bg-gray-200 rounded-l-md cursor-pointer"
+                                              : "flex items-center hover:bg-gray-200 rounded-l-md cursor-pointer"
+                                          }
+                                        >
+                                          <div
+                                            style={{
+                                              backgroundColor:
+                                                state.customization.color[idx],
+                                            }}
+                                            className="w-8 h-8 border ml-4 rounded-full"
+                                          ></div>
+                                          <div
+                                            onClick={(e) => {
+                                              e.preventDefault();
+                                              setColPicker((colPicker) =>
+                                                colPicker.map((col, i) =>
+                                                  i === idx ? !col : false
+                                                )
+                                              );
+                                            }}
+                                            className="focus:outline-none w-full p-3 rounded-lg text-gray-400"
+                                          >
+                                            Select color
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div>
+                                        <div
+                                          onClick={() =>
+                                            handleAddSubCustom(key, idx)
+                                          }
+                                          className="p-2 hover:scale-110 transition-full duration-300"
+                                        >
+                                          <div className="w-4 h-4 cursor-pointer">
+                                            <IconPlus fill="#222" />
+                                          </div>
+                                        </div>
+                                      </div>
                                     </div>
+                                    {state.customization[key].length > 1 ? (
+                                      <div
+                                        onClick={() =>
+                                          handleRemoveSubCustom(key, idx)
+                                        }
+                                        className="w-5 h-5 hover:scale-110 duration-300 transition-all cursor-pointer"
+                                      >
+                                        <IconBin fill="#222" />
+                                      </div>
+                                    ) : (
+                                      ""
+                                    )}
+                                  </div>
+                                  <div
+                                    className={
+                                      colPicker[idx]
+                                        ? "w-fit p-4 pt-2 shadow-md flex flex-col gap-2 mt-4"
+                                        : "hidden"
+                                    }
+                                  >
+                                    <div className="flex justify-end">
+                                      <div
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          setColPicker((colPicker) =>
+                                            colPicker.map((col, i) =>
+                                              i === idx ? !col : false
+                                            )
+                                          );
+                                        }}
+                                        className=" cursor-pointer w-6 h-6 hover:scale-125 transition-all duration-300"
+                                      >
+                                        <IconCross />
+                                      </div>
+                                    </div>
+                                    <SketchPicker
+                                      className=" shadow-none border-none"
+                                      color={state.customization.color[idx]}
+                                      onChangeComplete={(color) =>
+                                        handleColor(color.hex, idx)
+                                      }
+                                    />
                                   </div>
                                 </div>
-                                {state.customization[key].length > 1 ? (
-                                  <div
-                                    onClick={() => handleRemoveSubCustom(key, idx)}
-                                    className="w-5 h-5 hover:scale-110 duration-300 transition-all cursor-pointer"
-                                  >
-                                    <IconBin fill="#222" />
+                              ) : (
+                                <div className="flex gap-2 items-center">
+                                  <div className="flex items-center border rounded-lg w-full  border-gray-300 focus-within:outline focus-within:outline-1">
+                                    <input
+                                      type="text"
+                                      placeholder={state.cholder[id].type}
+                                      required
+                                      onFocus={() =>
+                                        dispatch({
+                                          type: ACTION_TYPES.SET_SUCCESS,
+                                          payload: "",
+                                        })
+                                      }
+                                      onChange={(e) =>
+                                        handleChangeSubCustom(e, key, idx)
+                                      }
+                                      value={data}
+                                      name="subCustom"
+                                      className="focus:outline-none w-full p-3 rounded-lg text-cldark"
+                                    />
+                                    <div
+                                      onClick={() =>
+                                        handleAddSubCustom(key, idx)
+                                      }
+                                      className="p-2 hover:scale-110 transition-full duration-300"
+                                    >
+                                      <div className="w-4 h-4 cursor-pointer">
+                                        <IconPlus fill="#222" />
+                                      </div>
+                                    </div>
                                   </div>
-                                ) : (
-                                  ""
-                                )}
-                              </div>
+                                  {state.customization[key].length > 1 ? (
+                                    <div
+                                      onClick={() =>
+                                        handleRemoveSubCustom(key, idx)
+                                      }
+                                      className="w-5 h-5 hover:scale-110 duration-300 transition-all cursor-pointer"
+                                    >
+                                      <IconBin fill="#222" />
+                                    </div>
+                                  ) : (
+                                    ""
+                                  )}
+                                </div>
+                              )}
                             </div>
                           </div>
                         ))}
-                        {/* {state.customization[key].map((t, k) => (
-                          <div key={k}>
-                            <div>
-                              <div className="flex gap-2 items-center">
-                                <div className="flex items-center border rounded-lg w-full  border-gray-300 focus-within:outline focus-within:outline-1">
-                                  <input
-                                    type="text"
-                                    placeholder={""}
-                                    required
-                                    onFocus={() =>
-                                      dispatch({
-                                        type: ACTION_TYPES.SET_SUCCESS,
-                                        payload: "",
-                                      })
-                                    }
-                                    onChange={(e) =>
-                                      // handleChangeSubCustom(e, i, k)
-                                    }
-                                    value={state.customization[i]["value"][k]}
-                                    name="subCustom"
-                                    className="focus:outline-none w-full p-3 rounded-lg text-cldark"
-                                  />
-                                  <div
-                                    // onClick={() => handleAddSubCustom(i)}
-                                    className="p-2 hover:scale-110 transition-full duration-300"
-                                  >
-                                    <div className="w-4 h-4 cursor-pointer">
-                                      <IconPlus fill="#222" />
-                                    </div>
-                                  </div>
-                                </div>
-                                {state.customization[i]["value"].length > 1 ? (
-                                  <div
-                                    // onClick={() => handleRemoveSubCustom(i, k)}
-                                    className="w-5 h-5 hover:scale-110 duration-300 transition-all cursor-pointer"
-                                  >
-                                    <IconBin fill="#222" />
-                                  </div>
-                                ) : (
-                                  ""
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        ))} */}
                       </div>
                     </div>
                   </div>

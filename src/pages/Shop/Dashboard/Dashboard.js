@@ -28,7 +28,7 @@ const Dashboard = () => {
 
     // CUSTOMERS
     const customers_response = await axios
-      .get("http://api.localhost/dashboard/customers", {
+      .get(`${process.env.REACT_APP_BACKEND_URL}/dashboard/customers`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Basic ${token}`,
@@ -54,7 +54,7 @@ const Dashboard = () => {
 
     // ORDER COUNTS
     const order_counts_response = await axios
-      .get("http://api.localhost/dashboard/orders_count", {
+      .get(`${process.env.REACT_APP_BACKEND_URL}/dashboard/orders_count`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Basic ${token}`,
@@ -63,7 +63,7 @@ const Dashboard = () => {
       .catch((err) => {
         if (err?.response.data.error_code == "BX0001") {
           cookies.remove("jwt_authorization");
-          navigate("/shop/dashboard");
+          navigate("/sell/dashboard");
         }
       });
     if (order_counts_response && order_counts_response.data) {
@@ -76,7 +76,7 @@ const Dashboard = () => {
 
     // REVENUE
     const revenue_response = await axios
-      .get("http://api.localhost/dashboard/revenue", {
+      .get(`${process.env.REACT_APP_BACKEND_URL}/dashboard/revenue`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Basic ${token}`,
@@ -85,7 +85,7 @@ const Dashboard = () => {
       .catch((err) => {
         if (err?.response.data.error_code == "BX0001") {
           cookies.remove("jwt_authorization");
-          navigate("/shop/dashboard");
+          navigate("/sell/dashboard");
         }
       });
     if (revenue_response && revenue_response.data) {
@@ -98,7 +98,7 @@ const Dashboard = () => {
 
     // RECENT ORDER
     const recent_order_response = await axios
-      .get("http://api.localhost/dashboard/recent_orders", {
+      .get(`${process.env.REACT_APP_BACKEND_URL}/dashboard/recent_orders`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Basic ${token}`,
@@ -107,8 +107,8 @@ const Dashboard = () => {
       .catch((err) => {
         if (err?.response.data.error_code == "BX0001") {
           cookies.remove("jwt_authorization");
-          navigate("/shop/dashboard");
-        }
+          navigate("/sell/dashboard");
+        } 
       });
     if (recent_order_response && recent_order_response.data) {
       data["recent_order"] = recent_order_response.data;
@@ -120,12 +120,15 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    handleFetch();
+    setTimeout(() => {
+      handleFetch();
+    }, "300");
   }, []);
 
   return (
     <div>
-      <div className="p-4 ml-16 md:ml-64 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
+      {/* ml-16 md:ml-64 */}
+      <div className="p-4 sm:ml-16 bg-gray-100 flex flex-col gap-4 transition-full duration-300">
         <p className="text-cldark text-4xl font-bold my-4">Dashboard</p>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="h-48 bg-white shadow-md flex flex-col justify-evenly px-6 hover:-translate-y-1 hover:shadow-none transition-full duration-300">
@@ -140,7 +143,7 @@ const Dashboard = () => {
                 {state.post.order_counts?.count}
               </div>
             </div>
-            <Link to="/shop/order">
+            <Link to="/sell/order">
               <div>
                 <div className="text-md text-primary4 font-bold">
                   View orders
@@ -204,7 +207,7 @@ const Dashboard = () => {
               <div className="text-cldark text-2xl font-semibold">
                 Recent Orders
               </div>
-              <Link to="/shop/order" className="btn">
+              <Link to="/sell/order" className="btn">
                 View more
               </Link>
             </div>
@@ -213,36 +216,47 @@ const Dashboard = () => {
                 <thead className="sticky top-0 bg-white z-50">
                   <tr>
                     <th className="text-cldark font-semibold text-md mr-2 pb-4 border-b">
-                      OrderID
+                      Product
                     </th>
                     <th className="text-cldark font-semibold text-md pb-4 border-b">
                       Customer
                     </th>
                     <th className="text-cldark font-semibold text-md pb-4 border-b">
-                      Product
-                    </th>
-                    <th className="text-cldark font-semibold text-md pb-4 border-b">
                       Quantity
                     </th>
                     <th className="text-cldark font-semibold text-md pb-4 border-b">
-                      Status
+                      Total
+                    </th>
+                    <th className="text-cldark font-semibold text-md pb-4 border-b">
+                      Order ID
                     </th>
                   </tr>
                 </thead>
                 <tbody className="">
-                  {state.post.recent_order?.order ? (
-                    state.post.recent_order?.orders.map(() => {
-                      <tr>
-                        <td className="text-cldark p-2">001</td>
-                        <td className="text-cldark p-2">001</td>
-                        <td className="text-cldark p-2">001</td>
-                        <td className="text-cldark p-2">001</td>
-                        <td className="text-cldark p-2">001</td>
-                      </tr>;
-                    })
-                  ) : (
-                    <td className="py-2">No order found</td>
-                  )}
+                  {state.post.recent_order?.orders.map((product, idx) => (
+                    <tr key={idx} className="text-left hover:bg-gray-50">
+                      <td className="text-cldark py-4 whitespace-nowrap">
+                        <div className="flex items-center gap-2">
+                          <div className="w-16">
+                            <img
+                              src={product.images.images[0]}
+                              alt="product image"
+                              className="w-full h-10 rounded-md shadow-md object-cover"
+                            />
+                          </div>
+                          <div className="font-semibold overflow-hidden">
+                            {product.name}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="text-cldark py-2">{product.username}</td>
+                      <td className="text-cldark py-2">{product.quantity}</td>
+                      <td className="text-cldark py-2">{product.cost}</td>
+                      <td className="text-cldark py-2">
+                        {product.trackingNumber}
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>

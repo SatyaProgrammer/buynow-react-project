@@ -1,8 +1,10 @@
-from backend.src.utils.table import Table
 import mysql.connector as msc
+
+from backend.src.utils.table import Table
 
 # don't change this variable name
 TABLE_NAME = "reviews"
+
 
 def up():
     table = Table(name=TABLE_NAME)
@@ -10,13 +12,15 @@ def up():
     table.foreign_key("productId", "products", "id")
     table.foreign_key("authorId", "users", "id")
     table.int("rating")
-    table.text("comment")
+    table.text("comment").nullable()
 
-    table.migrate() # always finish with a call to table.migrate()
+    table.migrate()  # always finish with a call to table.migrate()
     return table
-    
+
+
 def down(db_conn: msc.MySQLConnection):
     Table(name=TABLE_NAME).drop(db_conn)
+
 
 # if you need to seed the database
 def seed() -> list[dict]:
